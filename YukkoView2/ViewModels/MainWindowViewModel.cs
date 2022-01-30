@@ -8,14 +8,18 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Livet.EventListeners;
 using Livet.Messaging;
+
 using Shinta;
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 using YukkoView2.ViewModels.MiscWindowViewModels;
@@ -34,6 +38,13 @@ namespace YukkoView2.ViewModels
 		public MainWindowViewModel(SplashWindowViewModel splashWindowViewModel)
 		{
 			_splashWindowViewModel = splashWindowViewModel;
+			_yv2StatusListener = new(Yv2Model.Instance.EnvModel)
+			{
+				{
+					() => Yv2Model.Instance.EnvModel.Yv2Status,
+					Yv2StatusChanged
+				},
+			};
 		}
 
 		// --------------------------------------------------------------------
@@ -43,6 +54,7 @@ namespace YukkoView2.ViewModels
 		{
 			// 警告抑止用にメンバーを null! で初期化
 			_splashWindowViewModel = null!;
+			_yv2StatusListener = null!;
 		}
 
 		// ====================================================================
@@ -96,7 +108,7 @@ namespace YukkoView2.ViewModels
 		}
 
 		// ゆっこビュー 2 の動作状況の背景
-		private Brush _yv2StatusBackground = Yv2Constants.BRUSH_STATUS_RUNNING;
+		private Brush _yv2StatusBackground = Yv2Constants.BRUSH_STATUS_DONE;
 		public Brush Yv2StatusBackground
 		{
 			get => _yv2StatusBackground;
@@ -132,6 +144,11 @@ namespace YukkoView2.ViewModels
 
 				// コメント表示ウィンドウを開く
 				ShowDisplayWindow();
+
+#if DEBUG
+				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Error;
+				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Ready;
+#endif
 			}
 			catch (Exception excep)
 			{
@@ -188,6 +205,9 @@ namespace YukkoView2.ViewModels
 		// コメント表示ウィンドウ
 		private DisplayWindowViewModel? _displayWindowViewModel;
 
+		// Yv2Status 変更監視
+		private PropertyChangedEventListener _yv2StatusListener;
+
 		// Dispose フラグ
 		private Boolean _isDisposed;
 
@@ -234,6 +254,26 @@ namespace YukkoView2.ViewModels
 			_displayWindowViewModel.Messenger.Raise(new InteractionMessage(Yv2Constants.MESSAGE_KEY_WINDOW_ACTIVATE));
 		}
 
-
+		// --------------------------------------------------------------------
+		// Yv2Model.Instance.EnvModel.Yv2Status が変更された
+		// --------------------------------------------------------------------
+		private void Yv2StatusChanged(Object? sender, PropertyChangedEventArgs e)
+		{
+			switch (Yv2Model.Instance.EnvModel.Yv2Status)
+			{
+				case Yv2Status.Ready:
+					Yv2StatusMessage = "コメント表示停止中";
+					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_DONE;
+					break;
+				case Yv2Status.Running:
+					Yv2StatusMessage = "コメント表示中";
+					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_RUNNING;
+					break;
+				default:
+					Yv2StatusMessage = "エラー";
+					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_ERROR;
+					break;
+			}
+		}
 	}
 }

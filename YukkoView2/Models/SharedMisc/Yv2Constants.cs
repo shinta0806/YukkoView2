@@ -8,11 +8,45 @@
 //
 // ----------------------------------------------------------------------------
 
+using Shinta;
 using System;
 using System.Windows.Media;
 
 namespace YukkoView2.Models.SharedMisc
 {
+	// ====================================================================
+	// public 列挙子
+	// ====================================================================
+
+	// --------------------------------------------------------------------
+	// コメント受信方法
+	// --------------------------------------------------------------------
+	public enum CommentReceiveType
+	{
+		Push,       // プッシュ通知
+		Download,   // ダウンロード
+	}
+
+	// --------------------------------------------------------------------
+	// コメントサーバー指定方法
+	// --------------------------------------------------------------------
+	public enum CommentServerType
+	{
+		Auto,   // 自動（ゆかり設定ファイルから取得）
+		Manual, // 手動
+	}
+
+	// --------------------------------------------------------------------
+	// ゆっこビュー 2 の動作状況
+	// --------------------------------------------------------------------
+	public enum Yv2Status
+	{
+		Ready,      // 待機
+		Running,    // 実行中
+		Error,      // エラー
+		__End__,
+	}
+
 	internal class Yv2Constants
 	{
 		// ====================================================================
@@ -49,11 +83,18 @@ namespace YukkoView2.Models.SharedMisc
 		public const String MESSAGE_KEY_WINDOW_CLOSE = "Close";
 
 		// --------------------------------------------------------------------
+		// ファイル名
+		// --------------------------------------------------------------------
+
+		// ゆかり設定ファイル
+		public const String FILE_NAME_YUKARI_CONFIG = "config" + Common.FILE_EXT_INI;
+
+		// --------------------------------------------------------------------
 		// 状態色
 		// --------------------------------------------------------------------
 
 		// 待機中
-		public static readonly Color COLOR_STATUS_QUEUED = Color.FromRgb(0xFA, 0xFA, 0xFA);
+		//public static readonly Color COLOR_STATUS_QUEUED = Color.FromRgb(0xFA, 0xFA, 0xFA);
 
 		// 動作中
 		public static readonly Color COLOR_STATUS_RUNNING = Color.FromRgb(0xE1, 0xFF, 0xE1);
@@ -61,18 +102,24 @@ namespace YukkoView2.Models.SharedMisc
 		// 完了
 		public static readonly Color COLOR_STATUS_DONE = Color.FromRgb(0xE1, 0xE1, 0xFF);
 
+		// エラー
+		public static readonly Color COLOR_STATUS_ERROR = Color.FromRgb(0xFF, 0xE1, 0xE1);
+
 		// --------------------------------------------------------------------
 		// 状態ブラシ
 		// --------------------------------------------------------------------
 
 		// 待機中
-		public static readonly SolidColorBrush BRUSH_STATUS_QUEUED = new(COLOR_STATUS_QUEUED);
+		//public static readonly SolidColorBrush BRUSH_STATUS_QUEUED = new(COLOR_STATUS_QUEUED);
 
 		// 動作中
 		public static readonly SolidColorBrush BRUSH_STATUS_RUNNING = new(COLOR_STATUS_RUNNING);
 
 		// 完了
 		public static readonly SolidColorBrush BRUSH_STATUS_DONE = new(COLOR_STATUS_DONE);
+
+		// エラー
+		public static readonly SolidColorBrush BRUSH_STATUS_ERROR = new(COLOR_STATUS_ERROR);
 
 		// --------------------------------------------------------------------
 		// その他

@@ -36,7 +36,7 @@
     </behaviors:Interaction.Triggers>
 
     <StackPanel >
-        <Label DockPanel.Dock="Top" Content="{Binding Yv2StatusMessage}" Background="{Binding Yv2StatusBackground}" Height="35" Margin="20,5,20,0" VerticalContentAlignment="Center" Padding="5,0" Cursor="{Binding Yv2StatusCursor}" >
+        <Label DockPanel.Dock="Top" Content="{Binding Yv2StatusMessage}" Background="{Binding Yv2StatusBackground}" Height="25" Margin="20,5,20,0" VerticalContentAlignment="Center" Padding="5,0" Cursor="{Binding Yv2StatusCursor}" >
             <Label.InputBindings>
                 <MouseBinding Gesture="LeftClick" Command="{Binding LabelYv2StatusClickedCommand}" />
             </Label.InputBindings>
