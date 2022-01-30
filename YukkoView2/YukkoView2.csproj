@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64</Platforms>
     <Copyright>Copyright © by SHINTA</Copyright>
+    <ApplicationIcon>Icon\YukkoView2アイコン_1.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -37,6 +38,10 @@
     <Compile Include="..\..\_Common\ShintaCommonWindows.cs" Link="_Common\ShintaCommonWindows.cs" />
     <Compile Include="..\..\_Common\SimpleTraceListener.cs" Link="_Common\SimpleTraceListener.cs" />
     <Compile Include="..\..\_Common\WindowsApi.cs" Link="_Common\WindowsApi.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Icon\YukkoView2アイコン_1.ico" />
   </ItemGroup>
 
   <ItemGroup>

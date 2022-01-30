@@ -9,6 +9,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Windows.Media;
 
 namespace YukkoView2.Models.SharedMisc
 {
@@ -46,6 +47,32 @@ namespace YukkoView2.Models.SharedMisc
 
 		// ウィンドウを閉じる
 		public const String MESSAGE_KEY_WINDOW_CLOSE = "Close";
+
+		// --------------------------------------------------------------------
+		// 状態色
+		// --------------------------------------------------------------------
+
+		// 待機中
+		public static readonly Color COLOR_STATUS_QUEUED = Color.FromRgb(0xFA, 0xFA, 0xFA);
+
+		// 動作中
+		public static readonly Color COLOR_STATUS_RUNNING = Color.FromRgb(0xE1, 0xFF, 0xE1);
+
+		// 完了
+		public static readonly Color COLOR_STATUS_DONE = Color.FromRgb(0xE1, 0xE1, 0xFF);
+
+		// --------------------------------------------------------------------
+		// 状態ブラシ
+		// --------------------------------------------------------------------
+
+		// 待機中
+		public static readonly SolidColorBrush BRUSH_STATUS_QUEUED = new(COLOR_STATUS_QUEUED);
+
+		// 動作中
+		public static readonly SolidColorBrush BRUSH_STATUS_RUNNING = new(COLOR_STATUS_RUNNING);
+
+		// 完了
+		public static readonly SolidColorBrush BRUSH_STATUS_DONE = new(COLOR_STATUS_DONE);
 
 		// --------------------------------------------------------------------
 		// その他

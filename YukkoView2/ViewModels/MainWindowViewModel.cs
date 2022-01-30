@@ -14,6 +14,8 @@ using Shinta;
 using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 using YukkoView2.ViewModels.MiscWindowViewModels;
@@ -84,6 +86,30 @@ namespace YukkoView2.ViewModels
 			set => RaisePropertyChangedIfSet(ref _height, value);
 		}
 #endif
+
+		// ゆっこビュー 2 の動作状況
+		private String _yv2StatusMessage = String.Empty;
+		public String Yv2StatusMessage
+		{
+			get => _yv2StatusMessage;
+			set => RaisePropertyChangedIfSet(ref _yv2StatusMessage, value);
+		}
+
+		// ゆっこビュー 2 の動作状況の背景
+		private Brush _yv2StatusBackground = Yv2Constants.BRUSH_STATUS_RUNNING;
+		public Brush Yv2StatusBackground
+		{
+			get => _yv2StatusBackground;
+			set => RaisePropertyChangedIfSet(ref _yv2StatusBackground, value);
+		}
+
+		// ゆっこビュー 2 の動作状況のカーソル
+		private Cursor? _yv2StatusCursor;
+		public Cursor? Yv2StatusCursor
+		{
+			get => _yv2StatusCursor;
+			set => RaisePropertyChangedIfSet(ref _yv2StatusCursor, value);
+		}
 
 		// ====================================================================
 		// public 関数
