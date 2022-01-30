@@ -4,7 +4,7 @@
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
         xmlns:v="clr-namespace:YukkoView2.Views.MiscWindows"
-        Title="DisplayWindow" Height="350" Width="525">
+        AllowsTransparency="True" WindowStyle="None" Background="Transparent" Height="350" Width="525" >
 
     <!--
     If you want to add a ViewModel class to DataContext, then please add your ViewModels namespace to the Window tag like below.
@@ -30,7 +30,7 @@
 
     </behaviors:Interaction.Triggers>
 
-    <Grid>
-
-    </Grid>
+    <StackPanel>
+        <Button Content="ダミー" />
+    </StackPanel>
 </Window>
