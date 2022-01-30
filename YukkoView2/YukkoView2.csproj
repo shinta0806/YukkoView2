@@ -10,6 +10,22 @@
     <Copyright>Copyright © by SHINTA</Copyright>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DISTRIB_STORE;TESTz</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;DISTRIB_STORE;TESTz</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DefineConstants>TRACE;DISTRIB_STORE;TESTz</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DefineConstants>TRACE;DISTRIB_STORE;TESTz</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Icon\YukkoView2アイコン.png" />
   </ItemGroup>
