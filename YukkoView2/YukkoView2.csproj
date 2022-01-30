@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\_Common\LogWriter.cs" Link="_Common\LogWriter.cs" />
+    <Compile Include="..\..\_Common\SerializableSettings.cs" Link="_Common\SerializableSettings.cs" />
     <Compile Include="..\..\_Common\ShintaCommon.cs" Link="_Common\ShintaCommon.cs" />
     <Compile Include="..\..\_Common\SimpleTraceListener.cs" Link="_Common\SimpleTraceListener.cs" />
     <Compile Include="..\..\_Common\WindowsApi.cs" Link="_Common\WindowsApi.cs" />
@@ -22,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\Settings\" />
+    <Folder Include="Models\SharedMisc\" />
+    <Folder Include="Models\YukkoView2Models\" />
     <Folder Include="_Common\" />
   </ItemGroup>
 
