@@ -6,9 +6,8 @@
     xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
     xmlns:v="clr-namespace:YukkoView2.Views"
     xmlns:vm="clr-namespace:YukkoView2.ViewModels"
-    Title="MainWindow"
-    Width="525"
-    Height="350">
+    Title="{Binding Title}" Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}" 
+    Width="600" Height="300" ResizeMode="CanMinimize" Cursor="{Binding Cursor}" >
 
     <Window.DataContext>
         <vm:MainWindowViewModel />
