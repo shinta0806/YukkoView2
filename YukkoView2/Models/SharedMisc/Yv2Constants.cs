@@ -46,5 +46,12 @@ namespace YukkoView2.Models.SharedMisc
 
 		// ウィンドウを閉じる
 		public const String MESSAGE_KEY_WINDOW_CLOSE = "Close";
+
+		// --------------------------------------------------------------------
+		// その他
+		// --------------------------------------------------------------------
+
+		// DPI
+		public const Single DPI = 96.0f;
 	}
 }

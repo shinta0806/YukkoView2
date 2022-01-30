@@ -12,6 +12,7 @@ using Shinta;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,39 +25,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.Views.CustomControls
 {
-	/// <summary>
-	/// このカスタム コントロールを XAML ファイルで使用するには、手順 1a または 1b の後、手順 2 に従います。
-	///
-	/// 手順 1a) 現在のプロジェクトに存在する XAML ファイルでこのカスタム コントロールを使用する場合
-	/// この XmlNamespace 属性を使用場所であるマークアップ ファイルのルート要素に
-	/// 追加します:
-	///
-	///     xmlns:MyNamespace="clr-namespace:YukkoView2.Views.CustomControls"
-	///
-	///
-	/// 手順 1b) 異なるプロジェクトに存在する XAML ファイルでこのカスタム コントロールを使用する場合
-	/// この XmlNamespace 属性を使用場所であるマークアップ ファイルのルート要素に
-	/// 追加します:
-	///
-	///     xmlns:MyNamespace="clr-namespace:YukkoView2.Views.CustomControls;assembly=YukkoView2.Views.CustomControls"
-	///
-	/// また、XAML ファイルのあるプロジェクトからこのプロジェクトへのプロジェクト参照を追加し、
-	/// リビルドして、コンパイル エラーを防ぐ必要があります:
-	///
-	///     ソリューション エクスプローラーで対象のプロジェクトを右クリックし、
-	///     [参照の追加] の [プロジェクト] を選択してから、このプロジェクトを参照し、選択します。
-	///
-	///
-	/// 手順 2)
-	/// コントロールを XAML ファイルで使用します。
-	///
-	///     <MyNamespace:CommentControl/>
-	///
-	/// </summary>
 	public class CommentControl : Control
 	{
 		// ====================================================================
@@ -89,6 +63,34 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// ====================================================================
+		// public 関数
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// 初期化プロセスが完了
+		// --------------------------------------------------------------------
+		public override void EndInit()
+		{
+			base.EndInit();
+
+			try
+			{
+				_timerDraw.Interval = TimeSpan.FromMilliseconds(50);
+				_timerDraw.Tick += new EventHandler((s, e) =>
+				{
+					InvalidateVisual();
+				});
+				_timerDraw.Start();
+
+			}
+			catch (Exception excep)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示コントロール初期化完了時エラー：\n" + excep.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+
+		// ====================================================================
 		// protected 関数
 		// ====================================================================
 
@@ -109,6 +111,9 @@ namespace YukkoView2.Views.CustomControls
 				// test
 				drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, 0, ActualWidth, 20));
 				drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, ActualHeight - 20, ActualWidth, 20));
+				FormattedText text = new(Environment.TickCount.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, CreateDefaultTypeface(FontFamily),
+						FontSize, Foreground, Yv2Constants.DPI);
+				drawingContext.DrawText(text, new Point(20, 60));
 
 				// クリッピング解除
 				drawingContext.Pop();
@@ -119,5 +124,51 @@ namespace YukkoView2.Views.CustomControls
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
 			}
 		}
+
+		// ====================================================================
+		// private 変数
+		// ====================================================================
+
+		// コメント表示用タイマー
+		private readonly DispatcherTimer _timerDraw = new();
+
+		// ====================================================================
+		// private 関数
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// FontFamily の中でデフォルトの Typeface を取得
+		// フォールバックした場合は指定された FontFamily とは異なることに注意
+		// --------------------------------------------------------------------
+		private static Typeface CreateDefaultTypeface(FontFamily fontFamily)
+		{
+			FamilyTypeface? familyTypeface;
+
+			// 線の太さが標準、かつ、横幅が標準
+			familyTypeface = fontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Regular && x.Stretch == FontStretches.Medium);
+
+			if (familyTypeface == null)
+			{
+				// 見つからない場合は、線の太さが標準なら何でも良いとする
+				familyTypeface = fontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Regular);
+			}
+
+			if (familyTypeface == null)
+			{
+				// 見つからない場合は、何でも良いとする
+				familyTypeface = fontFamily.FamilyTypefaces.FirstOrDefault();
+			}
+
+			if (familyTypeface == null)
+			{
+				// それでも見つからない場合は、フォールバック
+				return new Typeface(String.Empty);
+			}
+
+			// 見つかった情報で Typeface 生成
+			return new Typeface(fontFamily, familyTypeface.Style, familyTypeface.Weight, familyTypeface.Stretch);
+		}
+
+
 	}
 }
