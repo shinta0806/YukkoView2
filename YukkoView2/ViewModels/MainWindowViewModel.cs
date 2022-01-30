@@ -8,6 +8,7 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Livet.Messaging;
 using Shinta;
 
 using System;
@@ -15,6 +16,7 @@ using System.Diagnostics;
 using System.Windows;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
+using YukkoView2.ViewModels.MiscWindowViewModels;
 
 namespace YukkoView2.ViewModels
 {
@@ -101,6 +103,9 @@ namespace YukkoView2.ViewModels
 
 				// スプラッシュウィンドウを閉じる
 				_splashWindowViewModel.Close();
+
+				// コメント表示ウィンドウを開く
+				ShowDisplayWindow();
 			}
 			catch (Exception excep)
 			{
@@ -154,6 +159,9 @@ namespace YukkoView2.ViewModels
 		// スプラッシュウィンドウ
 		private readonly SplashWindowViewModel _splashWindowViewModel;
 
+		// コメント表示ウィンドウ
+		private DisplayWindowViewModel? _displayWindowViewModel;
+
 		// Dispose フラグ
 		private Boolean _isDisposed;
 
@@ -171,5 +179,35 @@ namespace YukkoView2.ViewModels
 			Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds = new Rect(Left, Top, Int32.MaxValue, Int32.MaxValue);
 			Yv2Model.Instance.EnvModel.Yv2Settings.Save();
 		}
+
+		// --------------------------------------------------------------------
+		// コメント表示ウィンドウを表示する
+		// --------------------------------------------------------------------
+		private void ShowDisplayWindow()
+		{
+			if (_displayWindowViewModel == null)
+			{
+				// 新規作成
+				_displayWindowViewModel = new();
+				CompositeDisposable.Add(_displayWindowViewModel);
+				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
+			}
+			else if (_displayWindowViewModel.Result != MessageBoxResult.None)
+			{
+				// 閉じられたウィンドウからプロパティーを引き継ぐ
+				DisplayWindowViewModel old = _displayWindowViewModel;
+				_displayWindowViewModel = new();
+				//_displayWindowViewModel.CopyFrom(old);
+				CompositeDisposable.Remove(old);
+				old.Dispose();
+				CompositeDisposable.Add(_displayWindowViewModel);
+				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
+			}
+
+			// ウィンドウを前面に出すなど
+			_displayWindowViewModel.Messenger.Raise(new InteractionMessage(Yv2Constants.MESSAGE_KEY_WINDOW_ACTIVATE));
+		}
+
+
 	}
 }

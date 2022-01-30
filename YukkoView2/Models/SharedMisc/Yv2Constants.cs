@@ -38,6 +38,12 @@ namespace YukkoView2.Models.SharedMisc
 		// メインウィンドウを開く
 		public const String MESSAGE_KEY_OPEN_MAIN_WINDOW = "OpenMainWindow";
 
+		// コメント表示ウィンドウを開く
+		public const String MESSAGE_KEY_OPEN_DISPLAY_WINDOW = "OpenDisplayWindow";
+
+		// ウィンドウをアクティブ化する
+		public const String MESSAGE_KEY_WINDOW_ACTIVATE = "Activate";
+
 		// ウィンドウを閉じる
 		public const String MESSAGE_KEY_WINDOW_CLOSE = "Close";
 	}
