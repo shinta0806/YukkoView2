@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Icon\YukkoView2アイコン.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\..\_Common\LogWriter.cs" Link="_Common\LogWriter.cs" />
     <Compile Include="..\..\_Common\SerializableSettings.cs" Link="_Common\SerializableSettings.cs" />
     <Compile Include="..\..\_Common\ShintaCommon.cs" Link="_Common\ShintaCommon.cs" />
@@ -28,6 +32,10 @@
     <Folder Include="Models\SharedMisc\" />
     <Folder Include="Models\YukkoView2Models\" />
     <Folder Include="_Common\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icon\YukkoView2アイコン.png" />
   </ItemGroup>
 
 </Project>
