@@ -1,5 +1,17 @@
-﻿using System;
+﻿// ============================================================================
+// 
+// コメントを表示するコントロール
+// 
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// 
+// ----------------------------------------------------------------------------
+
+using Shinta;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.Views.CustomControls
 {
@@ -46,9 +59,65 @@ namespace YukkoView2.Views.CustomControls
 	/// </summary>
 	public class CommentControl : Control
 	{
+		// ====================================================================
+		// コンストラクター
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// static コンストラクター
+		// --------------------------------------------------------------------
 		static CommentControl()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(CommentControl), new FrameworkPropertyMetadata(typeof(CommentControl)));
+		}
+
+		// --------------------------------------------------------------------
+		// メインコンストラクター
+		// --------------------------------------------------------------------
+		public CommentControl()
+		{
+			try
+			{
+				// ピクセルぴったり描画
+				SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+			}
+			catch (Exception excep)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示コントロール生成時エラー：\n" + excep.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+
+		// ====================================================================
+		// protected 関数
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// 描画
+		// --------------------------------------------------------------------
+		protected override void OnRender(DrawingContext drawingContext)
+		{
+			try
+			{
+				// クリア
+				Rect drawingRect = new(0, 0, ActualWidth, ActualHeight);
+				drawingContext.DrawRectangle(Background, null, drawingRect);
+
+				// クリッピング
+				drawingContext.PushClip(new RectangleGeometry(drawingRect));
+
+				// test
+				drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, 0, ActualWidth, 20));
+				drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, ActualHeight - 20, ActualWidth, 20));
+
+				// クリッピング解除
+				drawingContext.Pop();
+			}
+			catch (Exception excep)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示コントロール描画時エラー：\n" + excep.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
 		}
 	}
 }
