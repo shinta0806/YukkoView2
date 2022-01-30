@@ -12,7 +12,7 @@ using Shinta;
 
 using System;
 using System.Diagnostics;
-
+using System.Windows;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 
@@ -132,7 +132,7 @@ namespace YukkoView2.ViewModels
 
 				// 終了処理
 				// await するとその間に強制終了されてしまうようなので、await しない
-				//SaveExitStatus();
+				SaveExitStatus();
 				//Common.DeleteTempFolder();
 
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "終了しました：" + Yv2Constants.APP_NAME_J + " "
@@ -156,5 +156,20 @@ namespace YukkoView2.ViewModels
 
 		// Dispose フラグ
 		private Boolean _isDisposed;
+
+		// ====================================================================
+		// private 関数
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// 終了時の状態を保存
+		// --------------------------------------------------------------------
+		private void SaveExitStatus()
+		{
+			Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchPath = Yv2Model.Instance.EnvModel.ExeFullPath;
+			Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer = Yv2Constants.APP_VER;
+			Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds = new Rect(Left, Top, Int32.MaxValue, Int32.MaxValue);
+			Yv2Model.Instance.EnvModel.Yv2Settings.Save();
+		}
 	}
 }

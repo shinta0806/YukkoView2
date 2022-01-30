@@ -66,16 +66,11 @@ namespace YukkoView2.ViewModels
 				paletteHelper.SetTheme(theme);
 
 				// テンポラリフォルダー準備
-				Common.InitializeTempFolder();
+				//Common.InitializeTempFolder();
 
 				// 環境
-				_ = Yv2Model.Instance;
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "test");
-
-				LogWriter logWriter = new(Yv2Constants.APP_ID);
-				logWriter.LogMessage(TraceEventType.Error, "local instance");
 
 				// メインウィンドウ表示
 				_mainWindowViewModel = new MainWindowViewModel(this);
