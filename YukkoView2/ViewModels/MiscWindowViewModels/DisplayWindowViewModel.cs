@@ -21,6 +21,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using YukkoView2.Models.Receiver;
 using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.ViewModels.MiscWindowViewModels
@@ -28,24 +30,46 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 	internal class DisplayWindowViewModel : Yv2ViewModel
 	{
 		// ====================================================================
+		// コンストラクター
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// メインコンストラクター
+		// --------------------------------------------------------------------
+		public DisplayWindowViewModel()
+		{
+
+		}
+
+		// ====================================================================
 		// public 関数
 		// ====================================================================
 
 		// --------------------------------------------------------------------
 		// 初期化
 		// --------------------------------------------------------------------
-		public override void Initialize()
+		public override async void Initialize()
 		{
 			base.Initialize();
 
 			try
 			{
+				await StartAsync();
 			}
-			catch (Exception excep)
+			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示ウィンドウ初期化時エラー：\n" + excep.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示ウィンドウ初期化時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
+		}
+
+		// --------------------------------------------------------------------
+		// コメント表示開始
+		// --------------------------------------------------------------------
+		public async Task StartAsync()
+		{
+			Receiver receiver = new();
+			await receiver.ReceiveLoopAsync();
 		}
 	}
 }

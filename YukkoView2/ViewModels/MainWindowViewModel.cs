@@ -45,6 +45,7 @@ namespace YukkoView2.ViewModels
 					Yv2StatusChanged
 				},
 			};
+			CompositeDisposable.Add(_yv2StatusListener);
 		}
 
 		// --------------------------------------------------------------------
@@ -145,15 +146,15 @@ namespace YukkoView2.ViewModels
 				// コメント表示ウィンドウを開く
 				ShowDisplayWindow();
 
-#if DEBUG
+#if DEBUGz
 				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Error;
 				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Ready;
 #endif
 			}
-			catch (Exception excep)
+			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ初期化時エラー：\n" + excep.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ初期化時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 
@@ -188,10 +189,10 @@ namespace YukkoView2.ViewModels
 
 				_isDisposed = true;
 			}
-			catch (Exception excep)
+			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ破棄時エラー：\n" + excep.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ破棄時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 

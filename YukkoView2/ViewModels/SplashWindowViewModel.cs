@@ -89,14 +89,14 @@ namespace YukkoView2.ViewModels
 				}
 				Messenger.Raise(new TransitionMessage(_mainWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_MAIN_WINDOW));
 			}
-			catch (Exception excep)
+			catch (Exception ex)
 			{
 				// YlModel 未生成の可能性があるためまずはメッセージ表示のみ
-				MessageBox.Show("スプラッシュウィンドウ初期化時エラー：\n" + excep.Message + "\n" + excep.StackTrace, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("スプラッシュウィンドウ初期化時エラー：\n" + ex.Message + "\n" + ex.StackTrace, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
 
 				// 可能であればログする。YlModel 生成中に例外が発生する可能性があるが、それについては集約エラーハンドラーに任せる
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "スプラッシュウィンドウ初期化時エラー：\n" + excep.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "スプラッシュウィンドウ初期化時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 
 				// 継続できないのでアプリを終了する
 				Environment.Exit(1);

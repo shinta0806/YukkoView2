@@ -9,6 +9,7 @@
 // ----------------------------------------------------------------------------
 
 using Shinta;
+
 using System;
 using System.Windows.Media;
 
@@ -25,6 +26,7 @@ namespace YukkoView2.Models.SharedMisc
 	{
 		Push,       // プッシュ通知
 		Download,   // ダウンロード
+		__End__,
 	}
 
 	// --------------------------------------------------------------------
@@ -34,6 +36,7 @@ namespace YukkoView2.Models.SharedMisc
 	{
 		Auto,   // 自動（ゆかり設定ファイルから取得）
 		Manual, // 手動
+		__End__,
 	}
 
 	// --------------------------------------------------------------------
@@ -127,5 +130,9 @@ namespace YukkoView2.Models.SharedMisc
 
 		// DPI
 		public const Single DPI = 96.0f;
+
+		// 通信確認間隔 [ms]
+		public const Int32 CHECK_CONNECTION_INTERVAL = 1000;
+
 	}
 }
