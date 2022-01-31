@@ -14,6 +14,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Web;
 using System.Windows;
 
 using YukkoView2.Models.SharedMisc;
@@ -203,7 +204,7 @@ namespace YukkoView2.Models.Settings
 				String[] config = File.ReadAllLines(YukariConfigPath(), Encoding.UTF8);
 
 				// コメントサーバー URL
-				String serverBase = YukariConfigValue(config, YUKARI_CONFIG_KEY_NAME_SERVER_URL);
+				String serverBase = HttpUtility.UrlDecode(YukariConfigValue(config, YUKARI_CONFIG_KEY_NAME_SERVER_URL));
 				if (!String.IsNullOrEmpty(serverBase))
 				{
 					Int32 slash = serverBase.LastIndexOf("/");
