@@ -13,10 +13,11 @@ using Livet;
 using Shinta;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-
+using System.Windows;
 using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
 
@@ -56,6 +57,23 @@ namespace YukkoView2.Models.YukkoView2Models
 		{
 			get => _yv2Status;
 			set => RaisePropertyChangedIfSet(ref _yv2Status, value);
+		}
+
+		// マルチディスプレイ領域
+		// メインスレッドのみからアクセスするものとする
+		private List<Rect> _monitorRects = new();
+		public List<Rect> MonitorRects
+		{
+			get
+			{
+				Debug.Assert(Environment.CurrentManagedThreadId == DispatcherHelper.UIDispatcher.Thread.ManagedThreadId, "MonitorRects.get() not UI thread");
+				return _monitorRects;
+			}
+			set
+			{
+				Debug.Assert(Environment.CurrentManagedThreadId == DispatcherHelper.UIDispatcher.Thread.ManagedThreadId, "MonitorRects.set() not UI thread");
+				_monitorRects = value;
+			}
 		}
 
 		// ログ

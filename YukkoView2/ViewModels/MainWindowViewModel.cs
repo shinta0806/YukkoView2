@@ -15,6 +15,7 @@ using Livet.Messaging;
 using Shinta;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -247,8 +248,13 @@ namespace YukkoView2.ViewModels
 				}
 
 #if DEBUGz
-				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Error;
-				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Ready;
+				List<Rect> rects = new();
+				Int32 tick = Environment.TickCount;
+				for (Int32 i = 0; i < 1000; i++)
+				{
+					rects = CommonWindows.GetMonitorRects();
+				}
+				Debug.WriteLine("Initialize() " + rects.Count + " time: " + (Environment.TickCount - tick).ToString());
 #endif
 			}
 			catch (Exception ex)

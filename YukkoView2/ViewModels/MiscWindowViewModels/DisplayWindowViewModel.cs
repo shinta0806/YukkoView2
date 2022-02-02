@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using YukkoView2.Models.Receiver;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
@@ -51,6 +52,38 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// View 通信用のプロパティー
 		// --------------------------------------------------------------------
+
+		// ウィンドウ左端
+		private Double _left;
+		public Double Left
+		{
+			get => _left;
+			set => RaisePropertyChangedIfSet(ref _left, value);
+		}
+
+		// ウィンドウ上端
+		private Double _top;
+		public Double Top
+		{
+			get => _top;
+			set => RaisePropertyChangedIfSet(ref _top, value);
+		}
+
+		// ウィンドウ幅
+		private Double _width;
+		public Double Width
+		{
+			get => _width;
+			set => RaisePropertyChangedIfSet(ref _width, value);
+		}
+
+		// ウィンドウ高さ
+		private Double _height;
+		public Double Height
+		{
+			get => _height;
+			set => RaisePropertyChangedIfSet(ref _height, value);
+		}
 
 		// コメント表示中
 		private Boolean _isPlaying;
@@ -111,6 +144,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 			try
 			{
+				MoveWindowIfNeeded();
 			}
 			catch (Exception ex)
 			{
@@ -124,6 +158,12 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		public Task StartAsync()
 		{
+#if DEBUGz
+			Left += 20;
+			Top += 20;
+			Width += 50;
+			Height += 50;
+#endif
 			IsPlaying = true;
 			return _receiver.StartAsync();
 		}
@@ -141,6 +181,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// private 変数
 		// ====================================================================
 
+		// ウィンドウを表示するディスプレイ
+		private Int32 _currentTargetMonitor = -1;
+
 		// 表示中のコメント群
 		// 複数スレッドからアクセスされる想定のため、アクセス時はロックが必要
 		private HashSet<CommentInfo> _commentInfoSet = new();
@@ -150,6 +193,37 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 		// コメント受信用
 		private Receiver _receiver;
+
+		// ====================================================================
+		// private 関数
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// 設定と現実を考慮して表示対象のディスプレイ番号を返す
+		// --------------------------------------------------------------------
+		private Int32 TargetMonitor()
+		{
+			return 0;
+		}
+
+		// --------------------------------------------------------------------
+		// 現在の表示対象ディスプレイが適切でなければ移動
+		// --------------------------------------------------------------------
+		private void MoveWindowIfNeeded()
+		{
+			Int32 target = TargetMonitor();
+			if (_currentTargetMonitor == target)
+			{
+				return;
+			}
+
+			_currentTargetMonitor = target;
+			Rect rect = Yv2Model.Instance.EnvModel.MonitorRects[_currentTargetMonitor];
+			Left = rect.Left;
+			Top = rect.Top;
+			Width = rect.Width;
+			Height = rect.Height;
+		}
 
 
 	}

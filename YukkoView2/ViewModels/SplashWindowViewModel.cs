@@ -71,6 +71,7 @@ namespace YukkoView2.ViewModels
 				// 環境
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);
+				Yv2Model.Instance.EnvModel.MonitorRects = CommonWindows.GetMonitorRects();
 
 				// メインウィンドウ表示
 				_mainWindowViewModel = new MainWindowViewModel(this);

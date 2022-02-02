@@ -120,8 +120,7 @@ namespace YukkoView2.Views.CustomControls
 				drawingContext.PushClip(new RectangleGeometry(drawingRect));
 
 				// test
-				drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, 0, ActualWidth, 20));
-				drawingContext.DrawRectangle(Brushes.Red, null, new Rect(0, ActualHeight - 20, ActualWidth, 20));
+				DrawFrame(drawingContext);
 				FormattedText text = new(Environment.TickCount.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, CreateDefaultTypeface(FontFamily),
 						FontSize, Foreground, Yv2Constants.DPI);
 				drawingContext.DrawText(text, new Point(20, 60));
@@ -178,6 +177,18 @@ namespace YukkoView2.Views.CustomControls
 
 			// 見つかった情報で Typeface 生成
 			return new Typeface(fontFamily, familyTypeface.Style, familyTypeface.Weight, familyTypeface.Stretch);
+		}
+
+		// --------------------------------------------------------------------
+		// 描画領域を示す枠（描画対象ディスプレイ一杯）を描画
+		// --------------------------------------------------------------------
+		private void DrawFrame(DrawingContext drawingContext)
+		{
+			Int32 borderThick = (Int32)ActualHeight / 20;
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, ActualWidth, borderThick));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - borderThick, ActualWidth, borderThick));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, borderThick, ActualHeight));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - borderThick, 0, borderThick, ActualHeight));
 		}
 
 		// --------------------------------------------------------------------
