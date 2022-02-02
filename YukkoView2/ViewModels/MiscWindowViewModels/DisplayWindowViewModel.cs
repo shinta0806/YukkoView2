@@ -86,6 +86,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			set => RaisePropertyChangedIfSet(ref _height, value);
 		}
 
+		// アクティブ
+		private Boolean _isActive;
+		public Boolean IsActive
+		{
+			get => _isActive;
+			set => RaisePropertyChangedIfSet(ref _isActive, value);
+		}
+
 		// コメント表示中
 		private Boolean _isPlaying;
 		public Boolean IsPlaying
@@ -156,24 +164,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		}
 
 		// --------------------------------------------------------------------
-		// 初期化 2
-		// Handle 取得用
-		// --------------------------------------------------------------------
-		public void Initialize2(object sender)
-		{
-			try
-			{
-				Window window = (Window)sender;
-				_windowHandle = new WindowInteropHelper(window).Handle;
-			}
-			catch (Exception excep)
-			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ初期化 (2) 時エラー：\n" + excep.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
-			}
-		}
-
-		// --------------------------------------------------------------------
 		// コメント表示開始
 		// --------------------------------------------------------------------
 		public Task StartAsync()
@@ -200,9 +190,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// ====================================================================
 		// private 変数
 		// ====================================================================
-
-		// ウィンドウハンドル
-		IntPtr _windowHandle;
 
 		// ウィンドウを表示するディスプレイ
 		private Int32 _currentTargetMonitor = -1;
@@ -272,14 +259,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			// 従って、MPC-BE が当該ディスプレイで最前面かどうか判定不能
 			// そこで、このフォームが最前面でない場合は常に最前面に出すことにする
 			// タスクスイッチなどシステム系が最前面になっている場合にこのフォームを最前面にしても、今のところ問題ない模様
-			IntPtr fgHandle = WindowsApi.GetForegroundWindow();
-			if (fgHandle != _windowHandle)
-			{
-				var a = WindowsApi.BringWindowToTop(_windowHandle);
-				Debug.WriteLine("TopMostIfNeeded() " + a);
-			}
+			IsActive = true;
 		}
-
-
 	}
 }
