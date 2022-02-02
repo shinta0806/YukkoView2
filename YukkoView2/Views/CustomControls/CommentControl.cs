@@ -185,10 +185,8 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// 新規コメント投入時の、コメント描画位置（垂直）を算出
 		// --------------------------------------------------------------------
-		private Int32 CalcCommentTop(CommentInfo oNewCommentInfo)
+		private Int32 CalcCommentTop(CommentInfo newCommentInfo)
 		{
-			return 0;
-#if false
 			// 新しいコメントを入れることのできる高さ範囲：Key, Value = 上端, 下端
 			List<KeyValuePair<Int32, Int32>> layoutRange = new();
 			Int32 minTop = 0;
@@ -203,8 +201,14 @@ namespace YukkoView2.Views.CustomControls
 			// 既存コメントがある高さ範囲を除外していく
 			foreach (CommentInfo commentInfo in CommentInfos.Keys)
 			{
-				// ある程度中央に流れているコメントで、かつ、速度が同等以上なら逃げ切れるので範囲がかぶっても構わない
-				if (commentInfo.Right + commentInfo.Height < Width - DeltaLeft(commentInfo) && commentInfo.Speed >= oNewCommentInfo.Speed)
+				// 未準備のものは無視
+				if (!commentInfo.IsDrawDataPrepared)
+				{
+					continue;
+				}
+
+				// 2 文字分以上中央に流れているコメントで、かつ、速度が同等以上なら逃げ切れるので範囲がかぶっても構わない
+				if (commentInfo.Right + commentInfo.Height * 2 < ActualWidth && commentInfo.Speed >= newCommentInfo.Speed)
 				{
 					continue;
 				}
@@ -213,46 +217,45 @@ namespace YukkoView2.Views.CustomControls
 				{
 					if (commentInfo.Top <= layoutRange[i].Key && commentInfo.Bottom >= layoutRange[i].Value)
 					{
-						// aCommentInfo が aLayoutRange[i] を完全に覆っているので、aLayoutRange[i] を削除する
+						// commentInfo が layoutRange[i] を完全に覆っているので、layoutRange[i] を削除する
 						layoutRange.RemoveAt(i);
 					}
 					else if (commentInfo.Top <= layoutRange[i].Key && (layoutRange[i].Key <= commentInfo.Bottom && commentInfo.Bottom < layoutRange[i].Value))
 					{
-						// aCommentInfo が aLayoutRange[i] の上方を覆っているので、aLayoutRange[i] の上端を下げる
+						// commentInfo が layoutRange[i] の上方を覆っているので、layoutRange[i] の上端を下げる
 						layoutRange[i] = new KeyValuePair<Int32, Int32>(commentInfo.Bottom + 1, layoutRange[i].Value);
 					}
 					else if ((layoutRange[i].Key < commentInfo.Top && commentInfo.Top <= layoutRange[i].Value) && commentInfo.Bottom >= layoutRange[i].Value)
 					{
-						// aCommentInfo が aLayoutRange[i] の下方を覆っているので、aLayoutRange[i] の下端を上げる
+						// commentInfo が layoutRange[i] の下方を覆っているので、layoutRange[i] の下端を上げる
 						layoutRange[i] = new KeyValuePair<Int32, Int32>(layoutRange[i].Key, commentInfo.Top - 1);
 					}
 					else if (commentInfo.Top > layoutRange[i].Key && commentInfo.Bottom < layoutRange[i].Value)
 					{
-						// aCommentInfo が aLayoutRange[i] の内側にあるので、aLayoutRange[i] を分割する
-						KeyValuePair<Int32, Int32> aRange = layoutRange[i];
-						layoutRange[i] = new KeyValuePair<Int32, Int32>(aRange.Key, commentInfo.Top - 1);
-						layoutRange.Add(new KeyValuePair<Int32, Int32>(commentInfo.Bottom + 1, aRange.Value));
+						// commentInfo が layoutRange[i] の内側にあるので、layoutRange[i] を分割する
+						KeyValuePair<Int32, Int32> range = layoutRange[i];
+						layoutRange[i] = new KeyValuePair<Int32, Int32>(range.Key, commentInfo.Top - 1);
+						layoutRange.Add(new KeyValuePair<Int32, Int32>(commentInfo.Bottom + 1, range.Value));
 					}
 					else
 					{
-						// aCommentInfo は覆っていない
+						// commentInfo は覆っていない
 					}
 				}
 			}
 
 			// 新しいコメントが入る範囲があるなら位置決め
-			foreach (KeyValuePair<Int32, Int32> aRange in layoutRange)
+			foreach (KeyValuePair<Int32, Int32> range in layoutRange)
 			{
-				if (aRange.Value - aRange.Key + 1 >= oNewCommentInfo.Height)
+				if (range.Value - range.Key + 1 >= newCommentInfo.Height)
 				{
-					return aRange.Key;
+					return range.Key;
 				}
 			}
 
 			// 新しいコメントが入る範囲がないので弾幕モードとする
-			Random aRand = new Random();
-			return aRand.Next(maxBottom - minTop - oNewCommentInfo.Height) + minTop;
-#endif
+			Random rand = new();
+			return rand.Next(maxBottom - minTop - newCommentInfo.Height) + minTop;
 		}
 
 		// --------------------------------------------------------------------
