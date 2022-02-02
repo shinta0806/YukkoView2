@@ -37,6 +37,6 @@
     </behaviors:Interaction.Triggers>
 
     <DockPanel>
-        <vcc:CommentControl CommentInfos="{Binding CommentInfos}"  IsEnabled="{Binding IsPlaying}" />
+        <vcc:CommentControl CommentInfos="{Binding CommentInfos}"  IsEnabled="{Binding IsPlaying}" FontWeight="Bold" FontFamily="MS UI Gothic" />
     </DockPanel>
 </Window>

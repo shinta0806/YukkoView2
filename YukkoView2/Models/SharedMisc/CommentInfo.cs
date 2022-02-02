@@ -79,11 +79,17 @@ namespace YukkoView2.Models.SharedMisc
 		// 描画情報
 		// --------------------------------------------------------------------
 
-		// 描画用データ設定済かどうか
-		public Boolean IsDrawDataSet { get; set; }
+		// 描画用データ準備済かどうか
+		public Boolean IsDrawDataPrepared { get; set; }
 
-		// 描画用データ
-		public FormattedText? FormattedText { get; set; }
+		// 描画用ジオメトリ
+		public Geometry? MessageGeometry { get; set; }
+
+		// 文字の中身のブラシ
+		public Brush? Brush { get; set; }
+
+		// 文字の縁
+		public Pen? Pen { get; set; }
 
 #if false
 		// コメント描画用グラフィックスパス
