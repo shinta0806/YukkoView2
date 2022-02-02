@@ -15,7 +15,6 @@ using Livet.Messaging;
 using Shinta;
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -236,10 +235,6 @@ namespace YukkoView2.ViewModels
 					return;
 				}
 
-#if DEBUGz
-				await Task.Delay(3000);
-#endif
-
 				CommentInfo commentInfo = new(Comment, Yv2Constants.DEFAULT_YUKARI_FONT_SIZE, COMMENT_COLORS[_commentColorIndex]);
 
 				// 色番号調整
@@ -287,16 +282,6 @@ namespace YukkoView2.ViewModels
 				{
 					_ = PlayAsync();
 				}
-
-#if DEBUGz
-				List<Rect> rects = new();
-				Int32 tick = Environment.TickCount;
-				for (Int32 i = 0; i < 1000; i++)
-				{
-					rects = CommonWindows.GetMonitorRects();
-				}
-				Debug.WriteLine("Initialize() " + rects.Count + " time: " + (Environment.TickCount - tick).ToString());
-#endif
 			}
 			catch (Exception ex)
 			{

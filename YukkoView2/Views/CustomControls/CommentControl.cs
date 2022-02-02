@@ -140,14 +140,6 @@ namespace YukkoView2.Views.CustomControls
 				// 描画
 				DrawCommentInfosIfNeeded(offScreenContext);
 
-
-#if false
-				// test
-				FormattedText text = new(Environment.TickCount.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, CreateDefaultTypeface(FontFamily),
-						FontSize, Foreground, Yv2Constants.DPI);
-				offScreenContext.DrawText(text, new Point(20, 100));
-#endif
-
 				// オンスクリーンへ転写
 				offScreenContext.Close();
 				offScreen.Render(offScreenVisual);
@@ -169,6 +161,9 @@ namespace YukkoView2.Views.CustomControls
 
 		// 画面の高さに対するフォントサイズの比率（フォントサイズ 1 の時）
 		private const Double FONT_UNIT_SCALE = 0.023;
+
+		// コメントが画面端から端まで到達するのに要する時間 [ms]
+		private const Int32 COMMENT_VIEWING_TIME = 12000;
 
 		// ====================================================================
 		// private 変数
@@ -192,10 +187,93 @@ namespace YukkoView2.Views.CustomControls
 		// フォントサイズ "1" に対するピクセル数
 		private Double _fontUnit;
 
-
 		// ====================================================================
 		// private 関数
 		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// コメント描画位置（水平）を算出
+		// --------------------------------------------------------------------
+		private Int32 CalcCommentLeft(CommentInfo commentInfo)
+		{
+			return (Int32)ActualWidth - /*DeltaLeft(commentInfo) -*/ commentInfo.Speed * (Environment.TickCount - commentInfo.InitialTick) / 1000;
+		}
+
+		// --------------------------------------------------------------------
+		// 新規コメント投入時の、コメント描画位置（垂直）を算出
+		// --------------------------------------------------------------------
+		private Int32 CalcCommentTop(CommentInfo oNewCommentInfo)
+		{
+			return 0;
+#if false
+			// 新しいコメントを入れることのできる高さ範囲：Key, Value = 上端, 下端
+			List<KeyValuePair<Int32, Int32>> aLayoutRange = new List<KeyValuePair<Int32, Int32>>();
+			Int32 aMinTop = 0;
+			Int32 aMaxBottom = Height;
+			if (mFormControl.YukkoViewSettings.EnableMargin)
+			{
+				aMinTop = Height * mFormControl.YukkoViewSettings.MarginPercent / 100;
+				aMaxBottom = Height * (100 - mFormControl.YukkoViewSettings.MarginPercent) / 100;
+			}
+			aLayoutRange.Add(new KeyValuePair<Int32, Int32>(aMinTop, aMaxBottom));
+
+			// 既存コメントがある高さ範囲を除外していく
+			lock (mCommentInfosLock)
+			{
+				foreach (CommentInfo aCommentInfo in mCommentInfos)
+				{
+					// ある程度中央に流れているコメントで、かつ、速度が同等以上なら逃げ切れるので範囲がかぶっても構わない
+					if (aCommentInfo.Right + aCommentInfo.Height < Width - DeltaLeft(aCommentInfo) && aCommentInfo.Speed >= oNewCommentInfo.Speed)
+					{
+						continue;
+					}
+
+					for (Int32 i = aLayoutRange.Count - 1; i >= 0; i--)
+					{
+						if (aCommentInfo.Top <= aLayoutRange[i].Key && aCommentInfo.Bottom >= aLayoutRange[i].Value)
+						{
+							// aCommentInfo が aLayoutRange[i] を完全に覆っているので、aLayoutRange[i] を削除する
+							aLayoutRange.RemoveAt(i);
+						}
+						else if (aCommentInfo.Top <= aLayoutRange[i].Key && (aLayoutRange[i].Key <= aCommentInfo.Bottom && aCommentInfo.Bottom < aLayoutRange[i].Value))
+						{
+							// aCommentInfo が aLayoutRange[i] の上方を覆っているので、aLayoutRange[i] の上端を下げる
+							aLayoutRange[i] = new KeyValuePair<Int32, Int32>(aCommentInfo.Bottom + 1, aLayoutRange[i].Value);
+						}
+						else if ((aLayoutRange[i].Key < aCommentInfo.Top && aCommentInfo.Top <= aLayoutRange[i].Value) && aCommentInfo.Bottom >= aLayoutRange[i].Value)
+						{
+							// aCommentInfo が aLayoutRange[i] の下方を覆っているので、aLayoutRange[i] の下端を上げる
+							aLayoutRange[i] = new KeyValuePair<Int32, Int32>(aLayoutRange[i].Key, aCommentInfo.Top - 1);
+						}
+						else if (aCommentInfo.Top > aLayoutRange[i].Key && aCommentInfo.Bottom < aLayoutRange[i].Value)
+						{
+							// aCommentInfo が aLayoutRange[i] の内側にあるので、aLayoutRange[i] を分割する
+							KeyValuePair<Int32, Int32> aRange = aLayoutRange[i];
+							aLayoutRange[i] = new KeyValuePair<Int32, Int32>(aRange.Key, aCommentInfo.Top - 1);
+							aLayoutRange.Add(new KeyValuePair<Int32, Int32>(aCommentInfo.Bottom + 1, aRange.Value));
+						}
+						else
+						{
+							// aCommentInfo は覆っていない
+						}
+					}
+				}
+			}
+
+			// 新しいコメントが入る範囲があるなら位置決め
+			foreach (KeyValuePair<Int32, Int32> aRange in aLayoutRange)
+			{
+				if (aRange.Value - aRange.Key + 1 >= oNewCommentInfo.Height)
+				{
+					return aRange.Key;
+				}
+			}
+
+			// 新しいコメントが入る範囲がないので弾幕モードとする
+			Random aRand = new Random();
+			return aRand.Next(aMaxBottom - aMinTop - oNewCommentInfo.Height) + aMinTop;
+#endif
+		}
 
 		// --------------------------------------------------------------------
 		// IsEnabled プロパティーが更新された
@@ -279,7 +357,7 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
-		// コメントを描画
+		// コメントを移動して描画
 		// --------------------------------------------------------------------
 		private void DrawCommentInfosIfNeeded(DrawingContext drawingContext)
 		{
@@ -287,7 +365,14 @@ namespace YukkoView2.Views.CustomControls
 			{
 				if (commentInfo.IsDrawDataPrepared)
 				{
+					Int32 left = CalcCommentLeft(commentInfo);
+					MoveComment(commentInfo, left, 0);
 					DrawCommentInfo(drawingContext, commentInfo);
+					if (left + commentInfo.Width <= 0)
+					{
+						// 移動が完了したので削除
+						//CommentInfos.Remove
+					}
 				}
 			}
 		}
@@ -317,6 +402,15 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
+		// コメント移動
+		// --------------------------------------------------------------------
+		private void MoveComment(CommentInfo commentInfo, Int32 left, Int32 top)
+		{
+			Debug.Assert(commentInfo.MessageGeometry != null, "MoveComment() bad MessageGeometry");
+			commentInfo.MessageGeometry.Transform = new TranslateTransform(left, top);
+		}
+
+		// --------------------------------------------------------------------
 		// 描画データを準備
 		// --------------------------------------------------------------------
 		private void PrepareDrawData(CommentInfo commentInfo)
@@ -327,8 +421,12 @@ namespace YukkoView2.Views.CustomControls
 
 			commentInfo.Brush = new SolidColorBrush(commentInfo.Color);
 
-			commentInfo.Pen = new Pen(Brushes.Black, 3/*commentInfo.YukariSize * _fontUnit / 10*/);
-			//commentInfo.Pen.
+			commentInfo.EdgeWidth = commentInfo.YukariSize * (Int32)_fontUnit / 15;
+			commentInfo.Pen = new Pen(Brushes.Black, commentInfo.EdgeWidth);
+
+			commentInfo.Speed = ((Int32)ActualWidth + commentInfo.Width) / (COMMENT_VIEWING_TIME / 1000);
+
+			//MoveComment(commentInfo, CalcCommentLeft(commentInfo), CalcCommentTop(commentInfo));
 
 			commentInfo.IsDrawDataPrepared = true;
 		}

@@ -66,16 +66,6 @@ namespace YukkoView2.Models.SharedMisc
 		public Int32 InitialTick { get; set; }
 
 		// --------------------------------------------------------------------
-		// ビューア側で計算する情報
-		// --------------------------------------------------------------------
-
-		// 移動速度 [px/s]
-		public Int32 Speed { get; set; }
-
-		// 描画指定位置
-		public Int32 SpecifyLeft { get; set; }
-
-		// --------------------------------------------------------------------
 		// 描画情報
 		// --------------------------------------------------------------------
 
@@ -88,30 +78,18 @@ namespace YukkoView2.Models.SharedMisc
 		// 文字の中身のブラシ
 		public Brush? Brush { get; set; }
 
+		// 文字の縁の幅
+		public Int32 EdgeWidth { get; set; }
+
 		// 文字の縁
 		public Pen? Pen { get; set; }
 
-#if false
-		// コメント描画用グラフィックスパス
-		public GraphicsPath MessagePath
-		{
-			get
-			{
-				return mMessagePath;
-			}
-			set
-			{
-				if (mMessagePath != null)
-				{
-					mMessagePath.Dispose();
-				}
-				mMessagePath = value;
-			}
-		}
-#endif
+		// 移動速度 [px/s]
+		public Int32 Speed { get; set; }
 
-		// ブラシ
-		//public SolidColorBrush Brush { get; set; }
+		// 描画位置
+		public Int32 Left { get; set; }
+
 
 #if false
 		// 表示される位置（縁取り込み）
@@ -139,24 +117,18 @@ namespace YukkoView2.Models.SharedMisc
 				return (Int32)(mMessagePath.GetBounds().Bottom + YukkoViewCommon.EDGE_WIDTH / 2);
 			}
 		}
+#endif
 
 		// 表示されるサイズ（縁取り込み）
 		public Int32 Width
 		{
-			get
-			{
-				return (Int32)(mMessagePath.GetBounds().Width + YukkoViewCommon.EDGE_WIDTH);
-			}
+			get => (Int32)(MessageGeometry?.Bounds.Width ?? 0) + EdgeWidth;
 		}
 
 		public Int32 Height
 		{
-			get
-			{
-				return (Int32)(mMessagePath.GetBounds().Height + YukkoViewCommon.EDGE_WIDTH);
-			}
+			get => (Int32)(MessageGeometry?.Bounds.Height ?? 0) + EdgeWidth;
 		}
-#endif
 
 		// ====================================================================
 		// public メンバー関数
