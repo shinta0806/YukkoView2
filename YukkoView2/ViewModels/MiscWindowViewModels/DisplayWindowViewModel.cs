@@ -79,9 +79,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			set => RaisePropertyChangedIfSet(ref _height, value);
 		}
 
-		// フォントファミリー
-		//public FontFamily? FontFamily { get; set; }
-
 		// アクティブ
 		private Boolean _isActive;
 		public Boolean IsActive

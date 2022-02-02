@@ -90,34 +90,20 @@ namespace YukkoView2.Models.SharedMisc
 		// 描画位置
 		public Int32 Left { get; set; }
 
+		// 描画位置
+		public Int32 Top { get; set; }
 
-#if false
 		// 表示される位置（縁取り込み）
-		// ※位置指定は MessagePath の Transform で行う
-		public Int32 Top
-		{
-			get
-			{
-				return (Int32)(mMessagePath.GetBounds().Top - YukkoViewCommon.EDGE_WIDTH / 2);
-			}
-		}
-
 		public Int32 Right
 		{
-			get
-			{
-				return (Int32)(mMessagePath.GetBounds().Right + YukkoViewCommon.EDGE_WIDTH / 2);
-			}
+			get => Left + Width;
 		}
 
+		// 表示される位置（縁取り込み）
 		public Int32 Bottom
 		{
-			get
-			{
-				return (Int32)(mMessagePath.GetBounds().Bottom + YukkoViewCommon.EDGE_WIDTH / 2);
-			}
+			get => Top + Height;
 		}
-#endif
 
 		// 表示されるサイズ（縁取り込み）
 		public Int32 Width
@@ -125,6 +111,7 @@ namespace YukkoView2.Models.SharedMisc
 			get => (Int32)(MessageGeometry?.Bounds.Width ?? 0) + EdgeWidth;
 		}
 
+		// 表示されるサイズ（縁取り込み）
 		public Int32 Height
 		{
 			get => (Int32)(MessageGeometry?.Bounds.Height ?? 0) + EdgeWidth;
@@ -144,33 +131,5 @@ namespace YukkoView2.Models.SharedMisc
 					&& YukariSize == comp.YukariSize
 					&& Color == comp.Color;
 		}
-
-		// --------------------------------------------------------------------
-		// 後始末
-		// --------------------------------------------------------------------
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		// ====================================================================
-		// protected メンバー関数
-		// ====================================================================
-
-		// --------------------------------------------------------------------
-		// 後始末
-		// --------------------------------------------------------------------
-		protected virtual void Dispose(bool oDisposing)
-		{
-		}
-
-		// ====================================================================
-		// private メンバー変数
-		// ====================================================================
-
-		// MessagePath
-		//private GraphicsPath mMessagePath;
-
 	}
 }

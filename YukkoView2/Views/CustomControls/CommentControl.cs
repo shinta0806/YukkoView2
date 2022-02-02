@@ -87,24 +87,6 @@ namespace YukkoView2.Views.CustomControls
 				{
 					InvalidateVisual();
 				});
-
-#if DEBUGz
-				ConcurrentBag<Int32> concurrentBag = new();
-				for (Int32 i = 0; i < 10; i++)
-				{
-					concurrentBag.Add(i);
-				}
-				foreach(Int32 i in concurrentBag)
-				{
-					Debug.WriteLine("EndInit() foreach " + i);
-				}
-				for (Int32 i = 0; i < 10; i++)
-				{
-					concurrentBag.TryPeek(out Int32 result);
-					Debug.WriteLine("EndInit() TryPeek " + result);
-				}
-#endif
-
 			}
 			catch (Exception ex)
 			{
@@ -195,9 +177,9 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// コメント描画位置（水平）を算出
 		// --------------------------------------------------------------------
-		private Int32 CalcCommentLeft(CommentInfo commentInfo)
+		private void CalcCommentLeft(CommentInfo commentInfo)
 		{
-			return (Int32)ActualWidth - /*DeltaLeft(commentInfo) -*/ commentInfo.Speed * (Environment.TickCount - commentInfo.InitialTick) / 1000;
+			commentInfo.Left = (Int32)ActualWidth - commentInfo.Speed * (Environment.TickCount - commentInfo.InitialTick) / 1000;
 		}
 
 		// --------------------------------------------------------------------
@@ -208,61 +190,58 @@ namespace YukkoView2.Views.CustomControls
 			return 0;
 #if false
 			// 新しいコメントを入れることのできる高さ範囲：Key, Value = 上端, 下端
-			List<KeyValuePair<Int32, Int32>> aLayoutRange = new List<KeyValuePair<Int32, Int32>>();
-			Int32 aMinTop = 0;
-			Int32 aMaxBottom = Height;
-			if (mFormControl.YukkoViewSettings.EnableMargin)
+			List<KeyValuePair<Int32, Int32>> layoutRange = new();
+			Int32 minTop = 0;
+			Int32 maxBottom = (Int32)ActualHeight;
+			if (Yv2Model.Instance.EnvModel.Yv2Settings.EnableMargin)
 			{
-				aMinTop = Height * mFormControl.YukkoViewSettings.MarginPercent / 100;
-				aMaxBottom = Height * (100 - mFormControl.YukkoViewSettings.MarginPercent) / 100;
+				minTop = (Int32)ActualHeight * Yv2Model.Instance.EnvModel.Yv2Settings.MarginPercent / 100;
+				maxBottom = (Int32)ActualHeight * (100 - Yv2Model.Instance.EnvModel.Yv2Settings.MarginPercent) / 100;
 			}
-			aLayoutRange.Add(new KeyValuePair<Int32, Int32>(aMinTop, aMaxBottom));
+			layoutRange.Add(new KeyValuePair<Int32, Int32>(minTop, maxBottom));
 
 			// 既存コメントがある高さ範囲を除外していく
-			lock (mCommentInfosLock)
+			foreach (CommentInfo commentInfo in CommentInfos.Keys)
 			{
-				foreach (CommentInfo aCommentInfo in mCommentInfos)
+				// ある程度中央に流れているコメントで、かつ、速度が同等以上なら逃げ切れるので範囲がかぶっても構わない
+				if (commentInfo.Right + commentInfo.Height < Width - DeltaLeft(commentInfo) && commentInfo.Speed >= oNewCommentInfo.Speed)
 				{
-					// ある程度中央に流れているコメントで、かつ、速度が同等以上なら逃げ切れるので範囲がかぶっても構わない
-					if (aCommentInfo.Right + aCommentInfo.Height < Width - DeltaLeft(aCommentInfo) && aCommentInfo.Speed >= oNewCommentInfo.Speed)
-					{
-						continue;
-					}
+					continue;
+				}
 
-					for (Int32 i = aLayoutRange.Count - 1; i >= 0; i--)
+				for (Int32 i = layoutRange.Count - 1; i >= 0; i--)
+				{
+					if (commentInfo.Top <= layoutRange[i].Key && commentInfo.Bottom >= layoutRange[i].Value)
 					{
-						if (aCommentInfo.Top <= aLayoutRange[i].Key && aCommentInfo.Bottom >= aLayoutRange[i].Value)
-						{
-							// aCommentInfo が aLayoutRange[i] を完全に覆っているので、aLayoutRange[i] を削除する
-							aLayoutRange.RemoveAt(i);
-						}
-						else if (aCommentInfo.Top <= aLayoutRange[i].Key && (aLayoutRange[i].Key <= aCommentInfo.Bottom && aCommentInfo.Bottom < aLayoutRange[i].Value))
-						{
-							// aCommentInfo が aLayoutRange[i] の上方を覆っているので、aLayoutRange[i] の上端を下げる
-							aLayoutRange[i] = new KeyValuePair<Int32, Int32>(aCommentInfo.Bottom + 1, aLayoutRange[i].Value);
-						}
-						else if ((aLayoutRange[i].Key < aCommentInfo.Top && aCommentInfo.Top <= aLayoutRange[i].Value) && aCommentInfo.Bottom >= aLayoutRange[i].Value)
-						{
-							// aCommentInfo が aLayoutRange[i] の下方を覆っているので、aLayoutRange[i] の下端を上げる
-							aLayoutRange[i] = new KeyValuePair<Int32, Int32>(aLayoutRange[i].Key, aCommentInfo.Top - 1);
-						}
-						else if (aCommentInfo.Top > aLayoutRange[i].Key && aCommentInfo.Bottom < aLayoutRange[i].Value)
-						{
-							// aCommentInfo が aLayoutRange[i] の内側にあるので、aLayoutRange[i] を分割する
-							KeyValuePair<Int32, Int32> aRange = aLayoutRange[i];
-							aLayoutRange[i] = new KeyValuePair<Int32, Int32>(aRange.Key, aCommentInfo.Top - 1);
-							aLayoutRange.Add(new KeyValuePair<Int32, Int32>(aCommentInfo.Bottom + 1, aRange.Value));
-						}
-						else
-						{
-							// aCommentInfo は覆っていない
-						}
+						// aCommentInfo が aLayoutRange[i] を完全に覆っているので、aLayoutRange[i] を削除する
+						layoutRange.RemoveAt(i);
+					}
+					else if (commentInfo.Top <= layoutRange[i].Key && (layoutRange[i].Key <= commentInfo.Bottom && commentInfo.Bottom < layoutRange[i].Value))
+					{
+						// aCommentInfo が aLayoutRange[i] の上方を覆っているので、aLayoutRange[i] の上端を下げる
+						layoutRange[i] = new KeyValuePair<Int32, Int32>(commentInfo.Bottom + 1, layoutRange[i].Value);
+					}
+					else if ((layoutRange[i].Key < commentInfo.Top && commentInfo.Top <= layoutRange[i].Value) && commentInfo.Bottom >= layoutRange[i].Value)
+					{
+						// aCommentInfo が aLayoutRange[i] の下方を覆っているので、aLayoutRange[i] の下端を上げる
+						layoutRange[i] = new KeyValuePair<Int32, Int32>(layoutRange[i].Key, commentInfo.Top - 1);
+					}
+					else if (commentInfo.Top > layoutRange[i].Key && commentInfo.Bottom < layoutRange[i].Value)
+					{
+						// aCommentInfo が aLayoutRange[i] の内側にあるので、aLayoutRange[i] を分割する
+						KeyValuePair<Int32, Int32> aRange = layoutRange[i];
+						layoutRange[i] = new KeyValuePair<Int32, Int32>(aRange.Key, commentInfo.Top - 1);
+						layoutRange.Add(new KeyValuePair<Int32, Int32>(commentInfo.Bottom + 1, aRange.Value));
+					}
+					else
+					{
+						// aCommentInfo は覆っていない
 					}
 				}
 			}
 
 			// 新しいコメントが入る範囲があるなら位置決め
-			foreach (KeyValuePair<Int32, Int32> aRange in aLayoutRange)
+			foreach (KeyValuePair<Int32, Int32> aRange in layoutRange)
 			{
 				if (aRange.Value - aRange.Key + 1 >= oNewCommentInfo.Height)
 				{
@@ -272,7 +251,7 @@ namespace YukkoView2.Views.CustomControls
 
 			// 新しいコメントが入る範囲がないので弾幕モードとする
 			Random aRand = new Random();
-			return aRand.Next(aMaxBottom - aMinTop - oNewCommentInfo.Height) + aMinTop;
+			return aRand.Next(maxBottom - minTop - oNewCommentInfo.Height) + minTop;
 #endif
 		}
 
@@ -366,10 +345,10 @@ namespace YukkoView2.Views.CustomControls
 			{
 				if (commentInfo.IsDrawDataPrepared)
 				{
-					Int32 left = CalcCommentLeft(commentInfo);
-					MoveComment(commentInfo, left, 0);
+					CalcCommentLeft(commentInfo);
+					MoveComment(commentInfo);
 					DrawCommentInfo(drawingContext, commentInfo);
-					if (left + commentInfo.Width <= 0)
+					if (commentInfo.Right <= 0)
 					{
 						// 移動が完了したので削除
 						CommentInfos.TryRemove(commentInfo, out _);
@@ -406,10 +385,10 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// コメント移動
 		// --------------------------------------------------------------------
-		private void MoveComment(CommentInfo commentInfo, Int32 left, Int32 top)
+		private void MoveComment(CommentInfo commentInfo)
 		{
 			Debug.Assert(commentInfo.MessageGeometry != null, "MoveComment() bad MessageGeometry");
-			commentInfo.MessageGeometry.Transform = new TranslateTransform(left, top);
+			commentInfo.MessageGeometry.Transform = new TranslateTransform(commentInfo.Left, commentInfo.Top);
 		}
 
 		// --------------------------------------------------------------------
@@ -428,7 +407,7 @@ namespace YukkoView2.Views.CustomControls
 
 			commentInfo.Speed = ((Int32)ActualWidth + commentInfo.Width) / (COMMENT_VIEWING_TIME / 1000);
 
-			//MoveComment(commentInfo, CalcCommentLeft(commentInfo), CalcCommentTop(commentInfo));
+			commentInfo.Top = CalcCommentTop(commentInfo);
 
 			commentInfo.IsDrawDataPrepared = true;
 		}
@@ -463,8 +442,5 @@ namespace YukkoView2.Views.CustomControls
 		{
 			Debug.WriteLine("SourceCommentInfosPropertyPropertyChanged");
 		}
-
-
-
 	}
 }

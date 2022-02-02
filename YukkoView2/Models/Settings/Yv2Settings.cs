@@ -48,6 +48,12 @@ namespace YukkoView2.Models.Settings
 		// 起動と同時にコメント表示を開始する
 		public Boolean PlayOnStart { get; set; } = true;
 
+		// 上下の指定パーセントにコメントを表示しない
+		public Boolean EnableMargin { get; set; }
+
+		// パーセント
+		public Int32 MarginPercent { get; set; } = 10;
+
 		// --------------------------------------------------------------------
 		// コメント受信
 		// --------------------------------------------------------------------
