@@ -158,11 +158,11 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		public Task StartAsync()
 		{
-#if DEBUGz
+#if DEBUG
 			Left += 20;
 			Top += 20;
-			Width += 50;
-			Height += 50;
+			Width -= 40;
+			Height -= 40;
 #endif
 			IsPlaying = true;
 			return _receiver.StartAsync();

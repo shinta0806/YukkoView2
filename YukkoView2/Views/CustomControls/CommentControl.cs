@@ -18,6 +18,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 using YukkoView2.Models.SharedMisc;
@@ -44,12 +45,15 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		public CommentControl()
 		{
+			IsEnabledChanged += CommentControl_IsEnabledChanged;
+			SizeChanged += CommentControl_SizeChanged;
+			offScreen = CreateOffScreen();
+
 			try
 			{
-				IsEnabledChanged += IsEnabledChangedEventHandler;
 
 				// ピクセルぴったり描画
-				SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+				//SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
 			}
 			catch (Exception ex)
 			{
@@ -113,20 +117,25 @@ namespace YukkoView2.Views.CustomControls
 			try
 			{
 				// クリア
-				Rect drawingRect = new(0, 0, ActualWidth, ActualHeight);
-				drawingContext.DrawRectangle(Background, null, drawingRect);
+				offScreen.Clear();
 
-				// クリッピング
-				drawingContext.PushClip(new RectangleGeometry(drawingRect));
+				// オフスクリーン描画
+				Rect drawingRect = new(0, 0, offScreen.Width, offScreen.Height);
+				DrawingVisual offScreenVisual = new();
+				using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
+
+				// 枠
+				DrawFrame(offScreenContext);
 
 				// test
-				DrawFrame(drawingContext);
 				FormattedText text = new(Environment.TickCount.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, CreateDefaultTypeface(FontFamily),
 						FontSize, Foreground, Yv2Constants.DPI);
-				drawingContext.DrawText(text, new Point(20, 60));
+				offScreenContext.DrawText(text, new Point(20, 100));
 
-				// クリッピング解除
-				drawingContext.Pop();
+				// 描画
+				offScreenContext.Close();
+				offScreen.Render(offScreenVisual);
+				drawingContext.DrawImage(offScreen, drawingRect);
 			}
 			catch (Exception ex)
 			{
@@ -142,9 +151,36 @@ namespace YukkoView2.Views.CustomControls
 		// コメント表示用タイマー
 		private readonly DispatcherTimer _timerDraw = new();
 
+		// オフスクリーン
+		private RenderTargetBitmap offScreen;
+
 		// ====================================================================
 		// private 関数
 		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// IsEnabled プロパティーが更新された
+		// --------------------------------------------------------------------
+		private void CommentControl_IsEnabledChanged(Object sender, DependencyPropertyChangedEventArgs e)
+		{
+			Debug.WriteLine("CommentControl.IsEnabledChangedEventHandler() " + IsEnabled);
+			if (IsEnabled)
+			{
+				_timerDraw.Start();
+			}
+			else
+			{
+				_timerDraw.Stop();
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// ActualHeight, ActualWidthIsEnabled プロパティーが更新された
+		// --------------------------------------------------------------------
+		private void CommentControl_SizeChanged(Object sender, SizeChangedEventArgs e)
+		{
+			offScreen = CreateOffScreen();
+		}
 
 		// --------------------------------------------------------------------
 		// FontFamily の中でデフォルトの Typeface を取得
@@ -180,6 +216,20 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
+		// オフスクリーン作成
+		// --------------------------------------------------------------------
+		private RenderTargetBitmap CreateOffScreen()
+		{
+			Debug.WriteLine("CreateOffScreen() " + ActualWidth + ", " + ActualHeight);
+			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)ActualHeight, 1), Yv2Constants.DPI, Yv2Constants.DPI, PixelFormats.Pbgra32);
+
+			// ピクセルぴったり描画
+			offScreen.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
+			return offScreen;
+		}
+
+		// --------------------------------------------------------------------
 		// 描画領域を示す枠（描画対象ディスプレイ一杯）を描画
 		// --------------------------------------------------------------------
 		private void DrawFrame(DrawingContext drawingContext)
@@ -189,22 +239,6 @@ namespace YukkoView2.Views.CustomControls
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - borderThick, ActualWidth, borderThick));
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, borderThick, ActualHeight));
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - borderThick, 0, borderThick, ActualHeight));
-		}
-
-		// --------------------------------------------------------------------
-		// IsEnabled プロパティーが更新された
-		// --------------------------------------------------------------------
-		private void IsEnabledChangedEventHandler(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			Debug.WriteLine("CommentControl.IsEnabledChangedEventHandler() " + IsEnabled);
-			if (IsEnabled)
-			{
-				_timerDraw.Start();
-			}
-			else
-			{
-				_timerDraw.Stop();
-			}
 		}
 
 	}
