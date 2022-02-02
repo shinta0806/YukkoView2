@@ -93,24 +93,6 @@ namespace YukkoView2.ViewModels
 			set => RaisePropertyChangedIfSet(ref _top, value);
 		}
 
-#if false
-		// ウィンドウ幅
-		private Double _width;
-		public Double Width
-		{
-			get => _width;
-			set => RaisePropertyChangedIfSet(ref _width, value);
-		}
-
-		// ウィンドウ高さ
-		private Double _height;
-		public Double Height
-		{
-			get => _height;
-			set => RaisePropertyChangedIfSet(ref _height, value);
-		}
-#endif
-
 		// ゆっこビュー 2 の動作状況
 		private String _yv2StatusMessage = String.Empty;
 		public String Yv2StatusMessage
@@ -140,7 +122,13 @@ namespace YukkoView2.ViewModels
 		public String? Comment
 		{
 			get => _comment;
-			set => RaisePropertyChangedIfSet(ref _comment, value);
+			set
+			{
+				if (RaisePropertyChangedIfSet(ref _comment, value))
+				{
+					ButtonCommentClickedCommand.RaiseCanExecuteChanged();
+				}
+			}
 		}
 
 		// --------------------------------------------------------------------
@@ -214,6 +202,63 @@ namespace YukkoView2.ViewModels
 			catch (Exception ex)
 			{
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "停止ボタンクリック時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
+		#region 投稿ボタンの制御
+		private ViewModelCommand? _buttonCommentClickedCommand;
+
+		public ViewModelCommand ButtonCommentClickedCommand
+		{
+			get
+			{
+				if (_buttonCommentClickedCommand == null)
+				{
+					_buttonCommentClickedCommand = new ViewModelCommand(ButtonCommentClicked, CanButtonCommentClicked);
+				}
+				return _buttonCommentClickedCommand;
+			}
+		}
+
+		public Boolean CanButtonCommentClicked()
+		{
+			return !String.IsNullOrEmpty(Comment);
+		}
+
+		public async void ButtonCommentClicked()
+		{
+			try
+			{
+				if (String.IsNullOrEmpty(Comment))
+				{
+					return;
+				}
+
+#if DEBUG
+				await Task.Delay(3000);
+#endif
+
+				CommentInfo commentInfo = new();
+				commentInfo.Message = Comment;
+				commentInfo.YukariSize = Yv2Constants.DEFAULT_YUKARI_FONT_SIZE;
+				commentInfo.Color = COMMENT_COLORS[_commentColorIndex];
+				commentInfo.InitialTick = Environment.TickCount;
+
+				// 色番号調整
+				_commentColorIndex++;
+				if (_commentColorIndex >= COMMENT_COLORS.Length)
+				{
+					_commentColorIndex = 0;
+				}
+
+				// コメント追加
+				_displayWindowViewModel.AddComment(commentInfo);
+			}
+			catch (Exception ex)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "投稿ボタンクリック時エラー：\n" + ex.Message);
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
@@ -303,6 +348,14 @@ namespace YukkoView2.ViewModels
 		}
 
 		// ====================================================================
+		// private 定数
+		// ====================================================================
+
+		// テストコメント投稿用の色
+		private readonly Color[] COMMENT_COLORS = { Colors.White, Colors.Gray, Colors.Pink, Colors.Red, Colors.Orange, Colors.Yellow,
+				Colors.Lime, Colors.Cyan, Colors.Blue, Colors.Purple, Color.FromRgb(0x11, 0x11, 0x11) };
+
+		// ====================================================================
 		// private 変数
 		// ====================================================================
 
@@ -317,6 +370,9 @@ namespace YukkoView2.ViewModels
 
 		// コメント表示中
 		private Boolean _isPlaying;
+
+		// コメント色番号
+		private Int32 _commentColorIndex;
 
 		// Dispose フラグ
 		private Boolean _isDisposed;

@@ -47,19 +47,7 @@ namespace YukkoView2.Views.CustomControls
 		{
 			IsEnabledChanged += CommentControl_IsEnabledChanged;
 			SizeChanged += CommentControl_SizeChanged;
-			offScreen = CreateOffScreen();
-
-			try
-			{
-
-				// ピクセルぴったり描画
-				//SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-			}
-			catch (Exception ex)
-			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示コントロール生成時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
-			}
+			//_offScreen = CreateOffScreen();
 		}
 
 		// ====================================================================
@@ -116,10 +104,10 @@ namespace YukkoView2.Views.CustomControls
 		{
 			try
 			{
-				// クリア
-				offScreen.Clear();
-
 				// オフスクリーン描画
+				// オフスクリーンをクラスメンバーにすると、ガベージコレクトが遅延するのか、一時的に数 GB のメモリを消費してしまう
+				// 仕方ないので、オフスクリーンは都度生成する
+				RenderTargetBitmap offScreen = CreateOffScreen();
 				Rect drawingRect = new(0, 0, offScreen.Width, offScreen.Height);
 				DrawingVisual offScreenVisual = new();
 				using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
@@ -152,7 +140,7 @@ namespace YukkoView2.Views.CustomControls
 		private readonly DispatcherTimer _timerDraw = new();
 
 		// オフスクリーン
-		private RenderTargetBitmap offScreen;
+		//private RenderTargetBitmap _offScreen;
 
 		// ====================================================================
 		// private 関数
@@ -179,7 +167,7 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private void CommentControl_SizeChanged(Object sender, SizeChangedEventArgs e)
 		{
-			offScreen = CreateOffScreen();
+			//_offScreen = CreateOffScreen();
 		}
 
 		// --------------------------------------------------------------------
@@ -220,7 +208,7 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private RenderTargetBitmap CreateOffScreen()
 		{
-			Debug.WriteLine("CreateOffScreen() " + ActualWidth + ", " + ActualHeight);
+			//Debug.WriteLine("CreateOffScreen() " + ActualWidth + ", " + ActualHeight);
 			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)ActualHeight, 1), Yv2Constants.DPI, Yv2Constants.DPI, PixelFormats.Pbgra32);
 
 			// ピクセルぴったり描画

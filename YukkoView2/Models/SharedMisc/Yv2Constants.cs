@@ -93,11 +93,15 @@ namespace YukkoView2.Models.SharedMisc
 		public const String FILE_NAME_YUKARI_CONFIG = "config" + Common.FILE_EXT_INI;
 
 		// --------------------------------------------------------------------
-		// 状態色
+		// ゆかり関連
 		// --------------------------------------------------------------------
 
-		// 待機中
-		//public static readonly Color COLOR_STATUS_QUEUED = Color.FromRgb(0xFA, 0xFA, 0xFA);
+		// デフォルトコメントフォントサイズ（ゆかりから送られてくるサイズの中）
+		public const Int32 DEFAULT_YUKARI_FONT_SIZE = 3;
+
+		// --------------------------------------------------------------------
+		// 状態色
+		// --------------------------------------------------------------------
 
 		// 動作中
 		public static readonly Color COLOR_STATUS_RUNNING = Color.FromRgb(0xE1, 0xFF, 0xE1);
@@ -112,9 +116,6 @@ namespace YukkoView2.Models.SharedMisc
 		// 状態ブラシ
 		// --------------------------------------------------------------------
 
-		// 待機中
-		//public static readonly SolidColorBrush BRUSH_STATUS_QUEUED = new(COLOR_STATUS_QUEUED);
-
 		// 動作中
 		public static readonly SolidColorBrush BRUSH_STATUS_RUNNING = new(COLOR_STATUS_RUNNING);
 
@@ -127,6 +128,9 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		// その他
 		// --------------------------------------------------------------------
+
+		// ツールチップを長く表示する場合の時間 [ms]
+		public const Int32 TOOL_TIP_LONG_DURATION = 20 * 1000;
 
 		// DPI
 		public const Single DPI = 96.0f;

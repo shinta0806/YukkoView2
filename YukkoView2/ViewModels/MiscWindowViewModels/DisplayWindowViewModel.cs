@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using YukkoView2.Models.Receiver;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
@@ -110,8 +111,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			}
 			_prevCommentInfo = commentInfo;
 
-			//TopMostIfNeeded();
-
 			// 描画情報設定
 			//SetCommentMessagePath(commentInfo);
 			//SetCommentBrush(commentInfo);
@@ -133,6 +132,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				_commentInfoSet.Add(commentInfo);
 				Debug.WriteLine("AddCommentInfo() 追加: 残: " + _commentInfoSet.Count);
 			}
+
+			// 描画環境調整
+			TopMostIfNeeded();
 		}
 
 		// --------------------------------------------------------------------
@@ -154,11 +156,29 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		}
 
 		// --------------------------------------------------------------------
+		// 初期化 2
+		// Handle 取得用
+		// --------------------------------------------------------------------
+		public void Initialize2(object sender)
+		{
+			try
+			{
+				Window window = (Window)sender;
+				_windowHandle = new WindowInteropHelper(window).Handle;
+			}
+			catch (Exception excep)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ初期化 (2) 時エラー：\n" + excep.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+
+		// --------------------------------------------------------------------
 		// コメント表示開始
 		// --------------------------------------------------------------------
 		public Task StartAsync()
 		{
-#if DEBUG
+#if DEBUGz
 			Left += 20;
 			Top += 20;
 			Width -= 40;
@@ -181,6 +201,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// private 変数
 		// ====================================================================
 
+		// ウィンドウハンドル
+		IntPtr _windowHandle;
+
 		// ウィンドウを表示するディスプレイ
 		private Int32 _currentTargetMonitor = -1;
 
@@ -199,14 +222,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// ====================================================================
 
 		// --------------------------------------------------------------------
-		// 設定と現実を考慮して表示対象のディスプレイ番号を返す
-		// --------------------------------------------------------------------
-		private Int32 TargetMonitor()
-		{
-			return 0;
-		}
-
-		// --------------------------------------------------------------------
 		// 現在の表示対象ディスプレイが適切でなければ移動
 		// --------------------------------------------------------------------
 		private void MoveWindowIfNeeded()
@@ -223,6 +238,46 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Top = rect.Top;
 			Width = rect.Width;
 			Height = rect.Height;
+		}
+
+		// --------------------------------------------------------------------
+		// 設定と現実を考慮して表示対象のディスプレイ番号を返す
+		// --------------------------------------------------------------------
+		private Int32 TargetMonitor()
+		{
+			return 0;
+		}
+
+		// --------------------------------------------------------------------
+		// ウィンドウを最前面に出す（必要に応じて）
+		// --------------------------------------------------------------------
+		private void TopMostIfNeeded()
+		{
+			if (!IsPlaying)
+			{
+				return;
+			}
+			lock (_commentInfoSet)
+			{
+				if (_commentInfoSet.Count == 0)
+				{
+					return;
+				}
+			}
+
+			// MPC-BE のフルスクリーンは通常の最大化とは異なり、このフォームの TopMost が効かない
+			// MPC-BE が最前面に来ている時は、このフォームを最前面に持って行く必要がある
+			// GetForegroundWindow() はマルチディスプレイに関係なく最前面を報告するので、
+			// ディスプレイ 2 の最前面が MPC-BE でも、ディスプレイ 1 に他のアプリがあってそれが最前面ならそれを報告する
+			// 従って、MPC-BE が当該ディスプレイで最前面かどうか判定不能
+			// そこで、このフォームが最前面でない場合は常に最前面に出すことにする
+			// タスクスイッチなどシステム系が最前面になっている場合にこのフォームを最前面にしても、今のところ問題ない模様
+			IntPtr fgHandle = WindowsApi.GetForegroundWindow();
+			if (fgHandle != _windowHandle)
+			{
+				var a = WindowsApi.BringWindowToTop(_windowHandle);
+				Debug.WriteLine("TopMostIfNeeded() " + a);
+			}
 		}
 
 

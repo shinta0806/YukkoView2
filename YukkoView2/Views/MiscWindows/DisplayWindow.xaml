@@ -7,6 +7,7 @@
         xmlns:vcc="clr-namespace:YukkoView2.Views.CustomControls"
         xmlns:vmmwvm="clr-namespace:YukkoView2.ViewModels.MiscWindowViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Name="CommentDisplayWindow"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent" 
         Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" 
         mc:Ignorable="d" d:Width="400" d:Height="200" >
@@ -19,6 +20,7 @@
         <!-- When ContentRendered event raised, Initialize method of ViewModel would be called. -->
         <behaviors:EventTrigger EventName="ContentRendered">
             <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize" />
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize2" MethodParameter="{Binding ElementName=CommentDisplayWindow}" />
         </behaviors:EventTrigger>
 
         <!-- Dispose method is called, when Window closing. -->
