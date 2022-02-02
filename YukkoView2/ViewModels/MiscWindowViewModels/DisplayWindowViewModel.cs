@@ -131,10 +131,10 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// コメント表示停止
 		// --------------------------------------------------------------------
-		public void Stop()
+		public Task StopAsync()
 		{
 			IsPlaying = false;
-			_receiver.Stop();
+			return _receiver.StopAsync();
 		}
 
 		// ====================================================================

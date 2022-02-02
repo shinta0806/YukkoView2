@@ -9,11 +9,10 @@
 // ----------------------------------------------------------------------------
 
 using Shinta;
+
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -21,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Media;
+
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 using YukkoView2.ViewModels.MiscWindowViewModels;
@@ -68,9 +68,32 @@ namespace YukkoView2.Models.Receiver
 		// --------------------------------------------------------------------
 		// コメント受信を停止
 		// --------------------------------------------------------------------
-		public void Stop()
+		public Task StopAsync()
 		{
-			_cancellationTokenSource.Cancel();
+			return Task.Run(() =>
+			{
+				try
+				{
+					_cancellationTokenSource.Cancel();
+
+					if (Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType == CommentReceiveType.Push)
+					{
+						// ダミーコメントを投稿してプッシュ受信を終了させる
+						TcpClient client = new(HOST_NAME_LOCAL_HOST, Yv2Model.Instance.EnvModel.Yv2Settings.PushPort);
+						using NetworkStream networkStream = client.GetStream();
+						networkStream.ReadTimeout = TCP_TIMEOUT;
+						networkStream.WriteTimeout = TCP_TIMEOUT;
+						Byte[] sendBytes = Encoding.UTF8.GetBytes("\r\n" + COMMENT_BEGIN_MARK + "X30FFFFFF" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " \t");
+						networkStream.Write(sendBytes, 0, sendBytes.Length);
+						client.Close();
+					}
+				}
+				catch (Exception ex)
+				{
+					Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "コメント停止時エラー：\n" + ex.Message);
+					Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "　スタックトレース：\n" + ex.StackTrace);
+				}
+			});
 		}
 
 		// ====================================================================
@@ -79,6 +102,9 @@ namespace YukkoView2.Models.Receiver
 
 		// 古すぎて無視するコメントの閾値 [時間]
 		private const Int32 IGNORE_HOUR = 12;
+
+		// ローカルホスト
+		private const String HOST_NAME_LOCAL_HOST = "localhost";
 
 		// TCP タイムアウト [ms]
 		private const Int32 TCP_TIMEOUT = 5 * 1000;

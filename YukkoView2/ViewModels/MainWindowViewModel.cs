@@ -17,6 +17,7 @@ using Shinta;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -173,7 +174,7 @@ namespace YukkoView2.ViewModels
 		{
 			try
 			{
-				Play();
+				_ = PlayAsync();
 			}
 			catch (Exception ex)
 			{
@@ -207,7 +208,7 @@ namespace YukkoView2.ViewModels
 		{
 			try
 			{
-				Stop();
+				_ = StopAsync();
 			}
 			catch (Exception ex)
 			{
@@ -242,7 +243,7 @@ namespace YukkoView2.ViewModels
 				// コメント表示開始
 				if (Yv2Model.Instance.EnvModel.Yv2Settings.PlayOnStart)
 				{
-					Play();
+					_ = PlayAsync();
 				}
 
 #if DEBUGz
@@ -321,14 +322,15 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		// コメント表示開始
 		// --------------------------------------------------------------------
-		private void Play()
+		private Task PlayAsync()
 		{
 			// ウィンドウを前面に出すなど
 			_displayWindowViewModel.Messenger.Raise(new InteractionMessage(Yv2Constants.MESSAGE_KEY_WINDOW_ACTIVATE));
 
 			// 開始
-			_displayWindowViewModel.StartAsync();
+			Task task = _displayWindowViewModel.StartAsync();
 			SetIsPlaying(true);
+			return task;
 		}
 
 		// --------------------------------------------------------------------
@@ -355,10 +357,11 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		// コメント表示停止
 		// --------------------------------------------------------------------
-		private void Stop()
+		private Task StopAsync()
 		{
-			_displayWindowViewModel.Stop();
+			Task task = _displayWindowViewModel.StopAsync();
 			SetIsPlaying(false);
+			return task;
 		}
 
 		// --------------------------------------------------------------------
