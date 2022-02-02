@@ -27,6 +27,6 @@
     </behaviors:Interaction.Triggers>
 
     <DockPanel>
-        <vcc:CommentControl />
+        <vcc:CommentControl IsEnabled="{Binding IsPlaying}" />
     </DockPanel>
 </Window>

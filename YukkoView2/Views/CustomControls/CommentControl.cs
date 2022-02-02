@@ -46,6 +46,8 @@ namespace YukkoView2.Views.CustomControls
 		{
 			try
 			{
+				IsEnabledChanged += IsEnabledChangedEventHandler;
+
 				// ピクセルぴったり描画
 				SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
 			}
@@ -55,6 +57,22 @@ namespace YukkoView2.Views.CustomControls
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
+
+		// ====================================================================
+		// public プロパティー
+		// ====================================================================
+
+#if false
+		// ゆかり検索対象フォルダーの情報
+		public static readonly DependencyProperty TargetFolderInfoProperty
+				= DependencyProperty.Register("TargetFolderInfo", typeof(TargetFolderInfo), typeof(FolderTreeControl),
+				new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceTargetFolderInfoPropertyChanged));
+		public TargetFolderInfo? TargetFolderInfo
+		{
+			get => (TargetFolderInfo?)GetValue(TargetFolderInfoProperty);
+			set => SetValue(TargetFolderInfoProperty, value);
+		}
+#endif
 
 		// ====================================================================
 		// public 関数
@@ -74,7 +92,6 @@ namespace YukkoView2.Views.CustomControls
 				{
 					InvalidateVisual();
 				});
-				_timerDraw.Start();
 
 			}
 			catch (Exception ex)
@@ -163,6 +180,21 @@ namespace YukkoView2.Views.CustomControls
 			return new Typeface(fontFamily, familyTypeface.Style, familyTypeface.Weight, familyTypeface.Stretch);
 		}
 
+		// --------------------------------------------------------------------
+		// IsEnabled プロパティーが更新された
+		// --------------------------------------------------------------------
+		private void IsEnabledChangedEventHandler(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			Debug.WriteLine("CommentControl.IsEnabledChangedEventHandler() " + IsEnabled);
+			if (IsEnabled)
+			{
+				_timerDraw.Start();
+			}
+			else
+			{
+				_timerDraw.Stop();
+			}
+		}
 
 	}
 }

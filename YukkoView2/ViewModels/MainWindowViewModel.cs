@@ -8,6 +8,7 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Livet.Commands;
 using Livet.EventListeners;
 using Livet.Messaging;
 
@@ -140,6 +141,82 @@ namespace YukkoView2.ViewModels
 			set => RaisePropertyChangedIfSet(ref _comment, value);
 		}
 
+		// --------------------------------------------------------------------
+		// 一般プロパティー
+		// --------------------------------------------------------------------
+
+		// --------------------------------------------------------------------
+		// コマンド
+		// --------------------------------------------------------------------
+
+		#region 開始ボタンの制御
+		private ViewModelCommand? _buttonPlayClickedCommand;
+
+		public ViewModelCommand ButtonPlayClickedCommand
+		{
+			get
+			{
+				if (_buttonPlayClickedCommand == null)
+				{
+					_buttonPlayClickedCommand = new ViewModelCommand(ButtonPlayClicked, CanButtonPlayClicked);
+				}
+				return _buttonPlayClickedCommand;
+			}
+		}
+
+		public Boolean CanButtonPlayClicked()
+		{
+			return !_isPlaying;
+		}
+
+		public void ButtonPlayClicked()
+		{
+			try
+			{
+				Play();
+			}
+			catch (Exception ex)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "開始ボタンクリック時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
+		#region 停止ボタンの制御
+		private ViewModelCommand? _buttonStopClickedCommand;
+
+		public ViewModelCommand ButtonStopClickedCommand
+		{
+			get
+			{
+				if (_buttonStopClickedCommand == null)
+				{
+					_buttonStopClickedCommand = new ViewModelCommand(ButtonStopClicked, CanButtonStopClicked);
+				}
+				return _buttonStopClickedCommand;
+			}
+		}
+
+		public Boolean CanButtonStopClicked()
+		{
+			return _isPlaying;
+		}
+
+		public void ButtonStopClicked()
+		{
+			try
+			{
+				Stop();
+			}
+			catch (Exception ex)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "停止ボタンクリック時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
 		// ====================================================================
 		// public 関数
 		// ====================================================================
@@ -231,6 +308,9 @@ namespace YukkoView2.ViewModels
 		// Yv2Status 変更監視
 		private PropertyChangedEventListener _yv2StatusListener;
 
+		// コメント表示中
+		private Boolean _isPlaying;
+
 		// Dispose フラグ
 		private Boolean _isDisposed;
 
@@ -248,6 +328,7 @@ namespace YukkoView2.ViewModels
 
 			// 開始
 			_displayWindowViewModel.StartAsync();
+			SetIsPlaying(true);
 		}
 
 		// --------------------------------------------------------------------
@@ -259,6 +340,25 @@ namespace YukkoView2.ViewModels
 			Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer = Yv2Constants.APP_VER;
 			Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds = new Rect(Left, Top, Int32.MaxValue, Int32.MaxValue);
 			Yv2Model.Instance.EnvModel.Yv2Settings.Save();
+		}
+
+		// --------------------------------------------------------------------
+		// _isPlaying の設定
+		// --------------------------------------------------------------------
+		private void SetIsPlaying(Boolean isPlaying)
+		{
+			_isPlaying = isPlaying;
+			ButtonPlayClickedCommand.RaiseCanExecuteChanged();
+			ButtonStopClickedCommand.RaiseCanExecuteChanged();
+		}
+
+		// --------------------------------------------------------------------
+		// コメント表示停止
+		// --------------------------------------------------------------------
+		private void Stop()
+		{
+			_displayWindowViewModel.Stop();
+			SetIsPlaying(false);
 		}
 
 		// --------------------------------------------------------------------
