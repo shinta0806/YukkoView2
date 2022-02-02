@@ -41,7 +41,7 @@
                 <MouseBinding Gesture="LeftClick" Command="{Binding LabelYv2StatusClickedCommand}" />
             </Label.InputBindings>
         </Label>
-        <StackPanel Orientation="Horizontal" Margin="20,10,20,20" >
+        <StackPanel Orientation="Horizontal" Margin="20,10,20,0" >
             <Button ToolTip="開始" Width="100" Height="25" VerticalAlignment="Center" Command="{Binding ButtonPlayClickedCommand}" >
                 <materialDesign:PackIcon Kind="Play" Height="18" Width="18" />
             </Button>
@@ -51,7 +51,7 @@
             <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="ディスプレイ選択" Width="50" Height="25" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonYukaListerSettingsClickedCommand}" Margin="50,0,0,0" >
                 <materialDesign:PackIcon Kind="MonitorMultiple" Height="18" Width="18" />
             </Button>
-            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="環境設定" Width="50" Height="25" Margin="10,-1,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonYukaListerSettingsClickedCommand}" >
+            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="環境設定" Width="50" Height="25" Margin="10,0,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonYukaListerSettingsClickedCommand}" >
                 <materialDesign:PackIcon Kind="SettingsOutline" Height="18" Width="18" />
             </Button>
             <Button Name="ButtonHelp" Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="ヘルプ" Width="50" Height="25" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="10,0,0,0">
@@ -73,6 +73,13 @@
                 <materialDesign:PackIcon Kind="HelpCircleOutline" Height="18" Width="18" />
             </Button>
         </StackPanel>
+        <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" Height="3" VerticalAlignment="Center" Margin="20,10,20,0"/>
+        <DockPanel Margin="20,10,20,20" >
+            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="コメント投稿" Width="50" Height="25" Margin="10,0,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonCommentClickedCommand}" >
+                <materialDesign:PackIcon Kind="CommentProcessingOutline" Height="18" Width="18" />
+            </Button>
+            <TextBox Text="{Binding Comment}" />
+        </DockPanel>
 
     </StackPanel>
 </Window>

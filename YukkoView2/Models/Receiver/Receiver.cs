@@ -46,20 +46,13 @@ namespace YukkoView2.Models.Receiver
 		// ====================================================================
 
 		// --------------------------------------------------------------------
-		// コメント受信を終了
+		// 停止を指示されるまでコメントを受信し続ける
 		// --------------------------------------------------------------------
-		public void Quite()
-		{
-			_cancellationTokenSource.Cancel();
-		}
-
-		// --------------------------------------------------------------------
-		// 終了を指示されるまでコメントを受信し続ける
-		// --------------------------------------------------------------------
-		public Task ReceiveLoopAsync()
+		public Task StartAsync()
 		{
 			return Task.Run(async () =>
 			{
+				_cancellationTokenSource = new();
 				switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType)
 				{
 					case CommentReceiveType.Download:
@@ -70,6 +63,14 @@ namespace YukkoView2.Models.Receiver
 						break;
 				}
 			});
+		}
+
+		// --------------------------------------------------------------------
+		// コメント受信を停止
+		// --------------------------------------------------------------------
+		public void Stop()
+		{
+			_cancellationTokenSource.Cancel();
 		}
 
 		// ====================================================================
@@ -303,6 +304,7 @@ namespace YukkoView2.Models.Receiver
 			catch (OperationCanceledException)
 			{
 				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントプッシュ受信処理を終了しました。");
+				Debug.WriteLine("コメントプッシュ受信処理を終了しました。");
 			}
 			catch (Exception ex)
 			{
@@ -311,10 +313,7 @@ namespace YukkoView2.Models.Receiver
 			}
 			finally
 			{
-				if (listener != null)
-				{
-					listener.Stop();
-				}
+				listener?.Stop();
 			}
 		}
 

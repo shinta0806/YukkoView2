@@ -5,7 +5,9 @@
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// 
+// コメントコンテナを兼ねる
+// コメント表示ウィンドウは常に表示されている仕様とする
+// コメント停止中は全透明にする
 // ----------------------------------------------------------------------------
 
 using Livet;
@@ -39,7 +41,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		public DisplayWindowViewModel()
 		{
-
+			_receiver = new(this);
 		}
 
 		// ====================================================================
@@ -93,7 +95,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 			try
 			{
-				_ = StartAsync();
 			}
 			catch (Exception ex)
 			{
@@ -107,8 +108,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		public Task StartAsync()
 		{
-			Receiver receiver = new(this);
-			return receiver.ReceiveLoopAsync();
+			return _receiver.StartAsync();
 		}
 
 		// ====================================================================
@@ -121,6 +121,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 		// 前回追加されたコメント
 		private CommentInfo? _prevCommentInfo;
+
+		// コメント受信用
+		private Receiver _receiver;
 
 
 	}

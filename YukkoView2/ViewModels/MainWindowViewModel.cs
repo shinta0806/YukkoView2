@@ -37,7 +37,14 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		public MainWindowViewModel(SplashWindowViewModel splashWindowViewModel)
 		{
+			// スプラッシュウィンドウ
 			_splashWindowViewModel = splashWindowViewModel;
+
+			// コメント表示ウィンドウ
+			_displayWindowViewModel = new();
+			CompositeDisposable.Add(_displayWindowViewModel);
+
+			// Yv2Status 変更監視
 			_yv2StatusListener = new(Yv2Model.Instance.EnvModel)
 			{
 				{
@@ -55,6 +62,7 @@ namespace YukkoView2.ViewModels
 		{
 			// 警告抑止用にメンバーを null! で初期化
 			_splashWindowViewModel = null!;
+			_displayWindowViewModel = null!;
 			_yv2StatusListener = null!;
 		}
 
@@ -124,6 +132,14 @@ namespace YukkoView2.ViewModels
 			set => RaisePropertyChangedIfSet(ref _yv2StatusCursor, value);
 		}
 
+		// コメント
+		private String? _comment = "こんにちは";
+		public String? Comment
+		{
+			get => _comment;
+			set => RaisePropertyChangedIfSet(ref _comment, value);
+		}
+
 		// ====================================================================
 		// public 関数
 		// ====================================================================
@@ -144,7 +160,13 @@ namespace YukkoView2.ViewModels
 				_splashWindowViewModel.Close();
 
 				// コメント表示ウィンドウを開く
-				ShowDisplayWindow();
+				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
+
+				// コメント表示開始
+				if (Yv2Model.Instance.EnvModel.Yv2Settings.PlayOnStart)
+				{
+					Play();
+				}
 
 #if DEBUGz
 				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Error;
@@ -204,7 +226,7 @@ namespace YukkoView2.ViewModels
 		private readonly SplashWindowViewModel _splashWindowViewModel;
 
 		// コメント表示ウィンドウ
-		private DisplayWindowViewModel? _displayWindowViewModel;
+		private DisplayWindowViewModel _displayWindowViewModel;
 
 		// Yv2Status 変更監視
 		private PropertyChangedEventListener _yv2StatusListener;
@@ -217,6 +239,18 @@ namespace YukkoView2.ViewModels
 		// ====================================================================
 
 		// --------------------------------------------------------------------
+		// コメント表示開始
+		// --------------------------------------------------------------------
+		private void Play()
+		{
+			// ウィンドウを前面に出すなど
+			_displayWindowViewModel.Messenger.Raise(new InteractionMessage(Yv2Constants.MESSAGE_KEY_WINDOW_ACTIVATE));
+
+			// 開始
+			_displayWindowViewModel.StartAsync();
+		}
+
+		// --------------------------------------------------------------------
 		// 終了時の状態を保存
 		// --------------------------------------------------------------------
 		private void SaveExitStatus()
@@ -225,34 +259,6 @@ namespace YukkoView2.ViewModels
 			Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer = Yv2Constants.APP_VER;
 			Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds = new Rect(Left, Top, Int32.MaxValue, Int32.MaxValue);
 			Yv2Model.Instance.EnvModel.Yv2Settings.Save();
-		}
-
-		// --------------------------------------------------------------------
-		// コメント表示ウィンドウを表示する
-		// --------------------------------------------------------------------
-		private void ShowDisplayWindow()
-		{
-			if (_displayWindowViewModel == null)
-			{
-				// 新規作成
-				_displayWindowViewModel = new();
-				CompositeDisposable.Add(_displayWindowViewModel);
-				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
-			}
-			else if (_displayWindowViewModel.Result != MessageBoxResult.None)
-			{
-				// 閉じられたウィンドウからプロパティーを引き継ぐ
-				DisplayWindowViewModel old = _displayWindowViewModel;
-				_displayWindowViewModel = new();
-				//_displayWindowViewModel.CopyFrom(old);
-				CompositeDisposable.Remove(old);
-				old.Dispose();
-				CompositeDisposable.Add(_displayWindowViewModel);
-				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
-			}
-
-			// ウィンドウを前面に出すなど
-			_displayWindowViewModel.Messenger.Raise(new InteractionMessage(Yv2Constants.MESSAGE_KEY_WINDOW_ACTIVATE));
 		}
 
 		// --------------------------------------------------------------------
