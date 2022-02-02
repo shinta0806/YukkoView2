@@ -12,6 +12,7 @@ using Shinta;
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -54,13 +55,13 @@ namespace YukkoView2.Views.CustomControls
 		// public プロパティー
 		// ====================================================================
 
-		// 表示中のコメント群
+		// 表示中のコメント群（Int32 はダミー）
 		public static readonly DependencyProperty CommentInfosProperty
-				= DependencyProperty.Register("CommentInfos", typeof(ConcurrentBag<CommentInfo>), typeof(CommentControl),
-				new FrameworkPropertyMetadata(new ConcurrentBag<CommentInfo>(), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceCommentInfosPropertyPropertyChanged));
-		public ConcurrentBag<CommentInfo> CommentInfos
+				= DependencyProperty.Register("CommentInfos", typeof(ConcurrentDictionary<CommentInfo, Int32>), typeof(CommentControl),
+				new FrameworkPropertyMetadata(new ConcurrentDictionary<CommentInfo, Int32>(), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceCommentInfosPropertyPropertyChanged));
+		public ConcurrentDictionary<CommentInfo, Int32> CommentInfos
 		{
-			get => (ConcurrentBag<CommentInfo>)GetValue(CommentInfosProperty);
+			get => (ConcurrentDictionary<CommentInfo, Int32>)GetValue(CommentInfosProperty);
 			set => SetValue(CommentInfosProperty, value);
 		}
 
@@ -361,7 +362,7 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private void DrawCommentInfosIfNeeded(DrawingContext drawingContext)
 		{
-			foreach (CommentInfo commentInfo in CommentInfos)
+			foreach (CommentInfo commentInfo in CommentInfos.Keys)
 			{
 				if (commentInfo.IsDrawDataPrepared)
 				{
@@ -371,7 +372,8 @@ namespace YukkoView2.Views.CustomControls
 					if (left + commentInfo.Width <= 0)
 					{
 						// 移動が完了したので削除
-						//CommentInfos.Remove
+						CommentInfos.TryRemove(commentInfo, out _);
+						Debug.WriteLine("DrawCommentInfosIfNeeded() 削除: 残: " + CommentInfos.Count);
 					}
 				}
 			}
@@ -436,7 +438,7 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private void PrepareDrawDataIfNeeded()
 		{
-			foreach (CommentInfo commentInfo in CommentInfos)
+			foreach (CommentInfo commentInfo in CommentInfos.Keys)
 			{
 				if (!commentInfo.IsDrawDataPrepared)
 				{

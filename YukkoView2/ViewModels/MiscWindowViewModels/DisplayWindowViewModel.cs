@@ -91,8 +91,8 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		}
 
 		// 表示中のコメント群
-		private ConcurrentBag<CommentInfo> _commentInfos = new();
-		public ConcurrentBag<CommentInfo> CommentInfos
+		private ConcurrentDictionary<CommentInfo, Int32> _commentInfos = new();
+		public ConcurrentDictionary<CommentInfo, Int32> CommentInfos
 		{
 			get => _commentInfos;
 			set => RaisePropertyChangedIfSet(ref _commentInfos, value);
@@ -124,7 +124,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			_prevCommentInfo = commentInfo;
 
 			// 追加
-			CommentInfos.Add(commentInfo);
+			CommentInfos[commentInfo] = 0;
 			Debug.WriteLine("AddCommentInfo() 追加: 残: " + CommentInfos.Count);
 
 			// 描画環境調整
