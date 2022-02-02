@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YukkoView2.Models.Receiver;
+using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.ViewModels.MiscWindowViewModels
@@ -46,15 +47,53 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// ====================================================================
 
 		// --------------------------------------------------------------------
+		// コメントを追加
+		// --------------------------------------------------------------------
+		public void AddComment(CommentInfo commentInfo)
+		{
+			// 連続投稿防止
+			if (_prevCommentInfo != null && commentInfo.CompareBasic(_prevCommentInfo) && commentInfo.InitialTick - _prevCommentInfo.InitialTick <= Yv2Constants.CONTINUOUS_PREVENT_TIME)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "連続投稿のため表示しません：" + commentInfo.Message);
+				return;
+			}
+			_prevCommentInfo = commentInfo;
+
+			//TopMostIfNeeded();
+
+			// 描画情報設定
+			//SetCommentMessagePath(commentInfo);
+			//SetCommentBrush(commentInfo);
+			//CalcSpeed(commentInfo);
+
+			// 位置設定（描画情報設定後に実行）
+			// 文字を描画する際、X 位置ぴったりよりも少し右に描画されるので、少し左目に初期位置を設定する
+#if false
+			Int32 aX = CalcCommentLeft(commentInfo);
+			Int32 aY = CalcCommentTop(commentInfo);
+			MoveComment(commentInfo, aX, aY);
+			mLogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントを表示します。初期位置：" + aX + ", " + aY + ", 幅：" + commentInfo.Width
+					+ ", 速度：" + commentInfo.Speed);
+#endif
+
+			// 追加
+			lock (_commentInfoSet)
+			{
+				_commentInfoSet.Add(commentInfo);
+				Debug.WriteLine("AddCommentInfo() 追加: 残: " + _commentInfoSet.Count);
+			}
+		}
+
+		// --------------------------------------------------------------------
 		// 初期化
 		// --------------------------------------------------------------------
-		public override async void Initialize()
+		public override void Initialize()
 		{
 			base.Initialize();
 
 			try
 			{
-				await StartAsync();
+				_ = StartAsync();
 			}
 			catch (Exception ex)
 			{
@@ -66,10 +105,23 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// コメント表示開始
 		// --------------------------------------------------------------------
-		public async Task StartAsync()
+		public Task StartAsync()
 		{
-			Receiver receiver = new();
-			await receiver.ReceiveLoopAsync();
+			Receiver receiver = new(this);
+			return receiver.ReceiveLoopAsync();
 		}
+
+		// ====================================================================
+		// private 変数
+		// ====================================================================
+
+		// 表示中のコメント群
+		// 複数スレッドからアクセスされる想定のため、アクセス時はロックが必要
+		private HashSet<CommentInfo> _commentInfoSet = new();
+
+		// 前回追加されたコメント
+		private CommentInfo? _prevCommentInfo;
+
+
 	}
 }

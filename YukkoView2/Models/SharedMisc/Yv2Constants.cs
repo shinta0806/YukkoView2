@@ -131,6 +131,9 @@ namespace YukkoView2.Models.SharedMisc
 		// DPI
 		public const Single DPI = 96.0f;
 
+		// 連続投稿防止間隔 [ms]
+		public const Int32 CONTINUOUS_PREVENT_TIME = 5000;
+
 		// 通信確認間隔 [ms]
 		public const Int32 CHECK_CONNECTION_INTERVAL = 1000;
 

@@ -139,12 +139,11 @@ namespace YukkoView2.Models.SharedMisc
 		// 基本情報の比較
 		// ＜返値＞ 基本情報が全て等しければ true
 		// --------------------------------------------------------------------
-		public Boolean CompareBase(CommentInfo oComp)
+		public Boolean CompareBasic(CommentInfo comp)
 		{
-			return oComp != null
-					&& Message == oComp.Message
-					&& YukariSize == oComp.YukariSize
-					&& Color == oComp.Color;
+			return Message == comp.Message
+					&& YukariSize == comp.YukariSize
+					&& Color == comp.Color;
 		}
 
 		// --------------------------------------------------------------------

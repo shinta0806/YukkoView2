@@ -23,6 +23,7 @@ using System.Web;
 using System.Windows.Media;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
+using YukkoView2.ViewModels.MiscWindowViewModels;
 
 namespace YukkoView2.Models.Receiver
 {
@@ -35,8 +36,9 @@ namespace YukkoView2.Models.Receiver
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public Receiver()
+		public Receiver(DisplayWindowViewModel displayWindowViewModel)
 		{
+			_commentContainer = displayWindowViewModel;
 		}
 
 		// ====================================================================
@@ -86,6 +88,9 @@ namespace YukkoView2.Models.Receiver
 		// ====================================================================
 		// private 変数
 		// ====================================================================
+
+		// コメントを保持しているインスタンス
+		private DisplayWindowViewModel _commentContainer;
 
 		// 終了指示用
 		private CancellationTokenSource _cancellationTokenSource = new();
@@ -279,7 +284,7 @@ namespace YukkoView2.Models.Receiver
 						if (commentInfo != null)
 						{
 							Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントを受信しました：" + commentInfo.Message);
-							//mFormViewer.AddComment(commentInfo);
+							_commentContainer.AddComment(commentInfo);
 						}
 
 						// 閉じる
