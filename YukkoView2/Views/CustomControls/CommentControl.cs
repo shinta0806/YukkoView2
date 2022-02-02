@@ -47,7 +47,7 @@ namespace YukkoView2.Views.CustomControls
 		{
 			IsEnabledChanged += CommentControl_IsEnabledChanged;
 			SizeChanged += CommentControl_SizeChanged;
-			_defaultTypeFace = new(String.Empty);
+			_typeFace = new(String.Empty);
 		}
 
 		// ====================================================================
@@ -78,7 +78,7 @@ namespace YukkoView2.Views.CustomControls
 			try
 			{
 				// デフォルトタイプフェース
-				_defaultTypeFace = CreateDefaultTypeface(FontFamily);
+				_typeFace = CreateTypeface();
 
 				// コメント表示用タイマー
 				_timerDraw.Interval = TimeSpan.FromMilliseconds(50);
@@ -186,8 +186,8 @@ namespace YukkoView2.Views.CustomControls
 		// 枠を消去する時刻
 		private Int32 _clearFrameTick;
 
-		// デフォルトタイプフェース
-		private Typeface _defaultTypeFace;
+		// フォントタイプフェース
+		private Typeface _typeFace;
 
 		// フォントサイズ "1" に対するピクセル数
 		private Double _fontUnit;
@@ -224,26 +224,26 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
-		// FontFamily の中でデフォルトの Typeface を取得
+		// FontFamily から Typeface を取得
 		// フォールバックした場合は指定された FontFamily とは異なることに注意
 		// --------------------------------------------------------------------
-		private static Typeface CreateDefaultTypeface(FontFamily fontFamily)
+		private Typeface CreateTypeface()
 		{
 			FamilyTypeface? familyTypeface;
 
-			// 線の太さが標準、かつ、横幅が標準
-			familyTypeface = fontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Regular && x.Stretch == FontStretches.Medium);
+			// 線の太さが太く、かつ、横幅が標準
+			familyTypeface = FontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Bold && x.Stretch == FontStretches.Medium);
 
 			if (familyTypeface == null)
 			{
-				// 見つからない場合は、線の太さが標準なら何でも良いとする
-				familyTypeface = fontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Regular);
+				// 見つからない場合は、線の太さが太ければ何でも良いとする
+				familyTypeface = FontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Bold);
 			}
 
 			if (familyTypeface == null)
 			{
 				// 見つからない場合は、何でも良いとする
-				familyTypeface = fontFamily.FamilyTypefaces.FirstOrDefault();
+				familyTypeface = FontFamily.FamilyTypefaces.FirstOrDefault();
 			}
 
 			if (familyTypeface == null)
@@ -253,7 +253,7 @@ namespace YukkoView2.Views.CustomControls
 			}
 
 			// 見つかった情報で Typeface 生成
-			return new Typeface(fontFamily, familyTypeface.Style, familyTypeface.Weight, familyTypeface.Stretch);
+			return new Typeface(FontFamily, familyTypeface.Style, familyTypeface.Weight, familyTypeface.Stretch);
 		}
 
 		// --------------------------------------------------------------------
@@ -321,13 +321,14 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private void PrepareDrawData(CommentInfo commentInfo)
 		{
-			FormattedText formattedText = new(commentInfo.Message, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _defaultTypeFace,
+			FormattedText formattedText = new(commentInfo.Message, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
 					commentInfo.YukariSize * _fontUnit, Brushes.Black, Yv2Constants.DPI);
 			commentInfo.MessageGeometry = formattedText.BuildGeometry(new Point(0, 0));
 
 			commentInfo.Brush = new SolidColorBrush(commentInfo.Color);
 
-			commentInfo.Pen = new Pen(Brushes.Black, 2/*commentInfo.YukariSize * _fontUnit / 10*/);
+			commentInfo.Pen = new Pen(Brushes.Black, 3/*commentInfo.YukariSize * _fontUnit / 10*/);
+			//commentInfo.Pen.
 
 			commentInfo.IsDrawDataPrepared = true;
 		}
