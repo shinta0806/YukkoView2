@@ -154,11 +154,8 @@ namespace YukkoView2.Models.Receiver
 				return null;
 			}
 
-			CommentInfo commentInfo = new();
-			commentInfo.Message = commentMessage;
-			commentInfo.YukariSize = Int32.Parse(comment.Substring(2, 1));
-			commentInfo.Color = Color.FromRgb(Convert.ToByte(comment.Substring(3, 2), 16), Convert.ToByte(comment.Substring(5, 2), 16), Convert.ToByte(comment.Substring(7, 2), 16));
-			commentInfo.InitialTick = Environment.TickCount;
+			CommentInfo commentInfo = new(commentMessage, Int32.Parse(comment.Substring(2, 1)),
+					Color.FromRgb(Convert.ToByte(comment.Substring(3, 2), 16), Convert.ToByte(comment.Substring(5, 2), 16), Convert.ToByte(comment.Substring(7, 2), 16)));
 			return commentInfo;
 		}
 

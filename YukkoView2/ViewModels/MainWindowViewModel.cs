@@ -227,7 +227,7 @@ namespace YukkoView2.ViewModels
 			return !String.IsNullOrEmpty(Comment);
 		}
 
-		public async void ButtonCommentClicked()
+		public void ButtonCommentClicked()
 		{
 			try
 			{
@@ -236,15 +236,11 @@ namespace YukkoView2.ViewModels
 					return;
 				}
 
-#if DEBUG
+#if DEBUGz
 				await Task.Delay(3000);
 #endif
 
-				CommentInfo commentInfo = new();
-				commentInfo.Message = Comment;
-				commentInfo.YukariSize = Yv2Constants.DEFAULT_YUKARI_FONT_SIZE;
-				commentInfo.Color = COMMENT_COLORS[_commentColorIndex];
-				commentInfo.InitialTick = Environment.TickCount;
+				CommentInfo commentInfo = new(Comment, Yv2Constants.DEFAULT_YUKARI_FONT_SIZE, COMMENT_COLORS[_commentColorIndex]);
 
 				// 色番号調整
 				_commentColorIndex++;

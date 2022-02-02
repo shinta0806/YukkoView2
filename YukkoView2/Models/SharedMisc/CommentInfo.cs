@@ -26,8 +26,13 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public CommentInfo()
+		public CommentInfo(String message, Int32 yukariSize, Color color)
 		{
+			Message = message;
+			YukariSize = yukariSize;
+			Color = color;
+
+			InitialTick = Environment.TickCount;
 		}
 
 		// ====================================================================
@@ -39,10 +44,20 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 
 		// コメント内容
-		public String Message { get; set; } = String.Empty;
+		public String Message { get; set; }
 
 		// サイズ（ゆかり指定サイズ）
-		public Int32 YukariSize { get; set; }
+		// ゆかりでは「小=0、中=3、大=6、特大=9」
+		// プログラムの都合上、小=1 とする
+		private Int32 _yukariSize;
+		public Int32 YukariSize
+		{
+			get => _yukariSize;
+			set
+			{
+				_yukariSize = Math.Clamp(value, 1, 9);
+			}
+		}
 
 		// 色
 		public Color Color { get; set; }
@@ -63,6 +78,12 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		// 描画情報
 		// --------------------------------------------------------------------
+
+		// 描画用データ設定済かどうか
+		public Boolean IsDrawDataSet { get; set; }
+
+		// 描画用データ
+		public FormattedText? FormattedText { get; set; }
 
 #if false
 		// コメント描画用グラフィックスパス

@@ -18,14 +18,18 @@ using Livet.Messaging.IO;
 using Livet.Messaging.Windows;
 using Shinta;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Threading;
 using YukkoView2.Models.Receiver;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
@@ -86,12 +90,23 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			set => RaisePropertyChangedIfSet(ref _height, value);
 		}
 
+		// フォントファミリー
+		//public FontFamily? FontFamily { get; set; }
+
 		// アクティブ
 		private Boolean _isActive;
 		public Boolean IsActive
 		{
 			get => _isActive;
 			set => RaisePropertyChangedIfSet(ref _isActive, value);
+		}
+
+		// 表示中のコメント群
+		private ConcurrentBag<CommentInfo> _commentInfos = new();
+		public ConcurrentBag<CommentInfo> CommentInfos
+		{
+			get => _commentInfos;
+			set => RaisePropertyChangedIfSet(ref _commentInfos, value);
 		}
 
 		// コメント表示中
@@ -120,13 +135,13 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			_prevCommentInfo = commentInfo;
 
 			// 描画情報設定
-			//SetCommentMessagePath(commentInfo);
-			//SetCommentBrush(commentInfo);
-			//CalcSpeed(commentInfo);
+#if false
+			SetCommentFormattedText(commentInfo);
+			SetCommentBrush(commentInfo);
+			CalcSpeed(commentInfo);
 
 			// 位置設定（描画情報設定後に実行）
 			// 文字を描画する際、X 位置ぴったりよりも少し右に描画されるので、少し左目に初期位置を設定する
-#if false
 			Int32 aX = CalcCommentLeft(commentInfo);
 			Int32 aY = CalcCommentTop(commentInfo);
 			MoveComment(commentInfo, aX, aY);
@@ -135,11 +150,8 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 #endif
 
 			// 追加
-			lock (_commentInfoSet)
-			{
-				_commentInfoSet.Add(commentInfo);
-				Debug.WriteLine("AddCommentInfo() 追加: 残: " + _commentInfoSet.Count);
-			}
+			CommentInfos.Add(commentInfo);
+			Debug.WriteLine("AddCommentInfo() 追加: 残: " + CommentInfos.Count);
 
 			// 描画環境調整
 			TopMostIfNeeded();
@@ -155,6 +167,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			try
 			{
 				MoveWindowIfNeeded();
+
+				// 最前面表示用タイマー
+				_timerTopMost.Interval = TimeSpan.FromSeconds(5);
+				_timerTopMost.Tick += new EventHandler((s, e) =>
+				{
+					TopMostIfNeeded();
+				});
+				_timerTopMost.Start();
 			}
 			catch (Exception ex)
 			{
@@ -196,7 +216,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 		// 表示中のコメント群
 		// 複数スレッドからアクセスされる想定のため、アクセス時はロックが必要
-		private HashSet<CommentInfo> _commentInfoSet = new();
+		//private HashSet<CommentInfo> _commentInfoSet = new();
 
 		// 前回追加されたコメント
 		private CommentInfo? _prevCommentInfo;
@@ -204,9 +224,50 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// コメント受信用
 		private Receiver _receiver;
 
+		// 最前面表示用タイマー
+		private readonly DispatcherTimer _timerTopMost = new();
+
 		// ====================================================================
 		// private 関数
 		// ====================================================================
+
+#if false
+		// --------------------------------------------------------------------
+		// FontFamily の中でデフォルトの Typeface を取得
+		// フォールバックした場合は指定された FontFamily とは異なることに注意
+		// --------------------------------------------------------------------
+		private Typeface CreateDefaultTypeface()
+		{
+			FamilyTypeface? familyTypeface;
+
+			if (FontFamily != null)
+			{
+				// 線の太さが標準、かつ、横幅が標準
+				familyTypeface = FontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Regular && x.Stretch == FontStretches.Medium);
+
+				if (familyTypeface == null)
+				{
+					// 見つからない場合は、線の太さが標準なら何でも良いとする
+					familyTypeface = FontFamily.FamilyTypefaces.FirstOrDefault(x => x.Weight == FontWeights.Regular);
+				}
+
+				if (familyTypeface == null)
+				{
+					// 見つからない場合は、何でも良いとする
+					familyTypeface = FontFamily.FamilyTypefaces.FirstOrDefault();
+				}
+
+				if (familyTypeface != null)
+				{
+					// 見つかった情報で Typeface 生成
+					return new Typeface(FontFamily, familyTypeface.Style, familyTypeface.Weight, familyTypeface.Stretch);
+				}
+			}
+
+			// 見つからない場合は、フォールバック
+			return new Typeface(String.Empty);
+		}
+#endif
 
 		// --------------------------------------------------------------------
 		// 現在の表示対象ディスプレイが適切でなければ移動
@@ -244,6 +305,8 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			{
 				return;
 			}
+
+#if false
 			lock (_commentInfoSet)
 			{
 				if (_commentInfoSet.Count == 0)
@@ -251,6 +314,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 					return;
 				}
 			}
+#endif
 
 			// MPC-BE のフルスクリーンは通常の最大化とは異なり、このフォームの TopMost が効かない
 			// MPC-BE が最前面に来ている時は、このフォームを最前面に持って行く必要がある

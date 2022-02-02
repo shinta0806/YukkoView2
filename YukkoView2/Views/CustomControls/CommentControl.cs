@@ -5,13 +5,13 @@
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// 
+// CommentInfo の描画データ管理も担当する
 // ----------------------------------------------------------------------------
 
 using Shinta;
 
 using System;
-
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -26,7 +26,7 @@ using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.Views.CustomControls
 {
-	public class CommentControl : Control
+	internal class CommentControl : Control
 	{
 		// ====================================================================
 		// コンストラクター
@@ -54,17 +54,15 @@ namespace YukkoView2.Views.CustomControls
 		// public プロパティー
 		// ====================================================================
 
-#if false
-		// ゆかり検索対象フォルダーの情報
-		public static readonly DependencyProperty TargetFolderInfoProperty
-				= DependencyProperty.Register("TargetFolderInfo", typeof(TargetFolderInfo), typeof(FolderTreeControl),
-				new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceTargetFolderInfoPropertyChanged));
-		public TargetFolderInfo? TargetFolderInfo
+		// 表示中のコメント群
+		public static readonly DependencyProperty CommentInfosProperty
+				= DependencyProperty.Register("CommentInfos", typeof(ConcurrentBag<CommentInfo>), typeof(CommentControl),
+				new FrameworkPropertyMetadata(new ConcurrentBag<CommentInfo>(), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceCommentInfosPropertyPropertyChanged));
+		public ConcurrentBag<CommentInfo> CommentInfos
 		{
-			get => (TargetFolderInfo?)GetValue(TargetFolderInfoProperty);
-			set => SetValue(TargetFolderInfoProperty, value);
+			get => (ConcurrentBag<CommentInfo>)GetValue(CommentInfosProperty);
+			set => SetValue(CommentInfosProperty, value);
 		}
-#endif
 
 		// ====================================================================
 		// public 関数
@@ -79,11 +77,29 @@ namespace YukkoView2.Views.CustomControls
 
 			try
 			{
+				// コメント表示用タイマー
 				_timerDraw.Interval = TimeSpan.FromMilliseconds(50);
 				_timerDraw.Tick += new EventHandler((s, e) =>
 				{
 					InvalidateVisual();
 				});
+
+#if DEBUGz
+				ConcurrentBag<Int32> concurrentBag = new();
+				for (Int32 i = 0; i < 10; i++)
+				{
+					concurrentBag.Add(i);
+				}
+				foreach(Int32 i in concurrentBag)
+				{
+					Debug.WriteLine("EndInit() foreach " + i);
+				}
+				for (Int32 i = 0; i < 10; i++)
+				{
+					concurrentBag.TryPeek(out Int32 result);
+					Debug.WriteLine("EndInit() TryPeek " + result);
+				}
+#endif
 
 			}
 			catch (Exception ex)
@@ -115,10 +131,15 @@ namespace YukkoView2.Views.CustomControls
 				// 枠
 				DrawFrame(offScreenContext);
 
+				Debug.WriteLine("OnRender() " + CommentInfos.Count);
+
+
+#if false
 				// test
 				FormattedText text = new(Environment.TickCount.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, CreateDefaultTypeface(FontFamily),
 						FontSize, Foreground, Yv2Constants.DPI);
 				offScreenContext.DrawText(text, new Point(20, 100));
+#endif
 
 				// 描画
 				offScreenContext.Close();
@@ -141,6 +162,10 @@ namespace YukkoView2.Views.CustomControls
 
 		// オフスクリーン
 		//private RenderTargetBitmap _offScreen;
+
+		// フォントサイズ "1" に対するピクセル数
+		private Double _fontUnit;
+
 
 		// ====================================================================
 		// private 関数
@@ -170,6 +195,18 @@ namespace YukkoView2.Views.CustomControls
 			//_offScreen = CreateOffScreen();
 		}
 
+		// --------------------------------------------------------------------
+		// 描画用データ設定
+		// --------------------------------------------------------------------
+		private void SetCommentFormattedText(CommentInfo commentInfo)
+		{
+			//FormattedText formattedText = new(commentInfo.Message, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, CreateDefaultTypeface(),
+			//FontSize, Foreground, Yv2Constants.DPI);
+
+		}
+
+
+#if false
 		// --------------------------------------------------------------------
 		// FontFamily の中でデフォルトの Typeface を取得
 		// フォールバックした場合は指定された FontFamily とは異なることに注意
@@ -202,6 +239,7 @@ namespace YukkoView2.Views.CustomControls
 			// 見つかった情報で Typeface 生成
 			return new Typeface(fontFamily, familyTypeface.Style, familyTypeface.Weight, familyTypeface.Stretch);
 		}
+#endif
 
 		// --------------------------------------------------------------------
 		// オフスクリーン作成
@@ -228,6 +266,16 @@ namespace YukkoView2.Views.CustomControls
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, borderThick, ActualHeight));
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - borderThick, 0, borderThick, ActualHeight));
 		}
+
+		// --------------------------------------------------------------------
+		// ViewModel 側で DependencyProperty が変更された（TargetFolderInfoProperty）
+		// --------------------------------------------------------------------
+		private static void SourceCommentInfosPropertyPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			Debug.WriteLine("SourceCommentInfosPropertyPropertyChanged");
+		}
+
+
 
 	}
 }

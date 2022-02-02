@@ -11,7 +11,7 @@
         Name="CommentDisplayWindow"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent" 
         Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" 
-        mc:Ignorable="d" d:Width="400" d:Height="200" >
+        MinWidth="200" MinHeight="100" >
 
     <Window.DataContext>
         <vmmwvm:DisplayWindowViewModel />
@@ -37,6 +37,6 @@
     </behaviors:Interaction.Triggers>
 
     <DockPanel>
-        <vcc:CommentControl IsEnabled="{Binding IsPlaying}" />
+        <vcc:CommentControl CommentInfos="{Binding CommentInfos}"  IsEnabled="{Binding IsPlaying}" />
     </DockPanel>
 </Window>
