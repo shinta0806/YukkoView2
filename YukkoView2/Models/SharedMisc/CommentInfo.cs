@@ -28,7 +28,7 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		public CommentInfo(String message, Int32 yukariSize, Color color)
 		{
-			Message = message;
+			Message = message.Trim();
 			YukariSize = yukariSize;
 			Color = color;
 

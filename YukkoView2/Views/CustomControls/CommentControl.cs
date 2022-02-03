@@ -425,6 +425,13 @@ namespace YukkoView2.Views.CustomControls
 				if (!commentInfo.IsDrawDataPrepared)
 				{
 					PrepareDrawData(commentInfo);
+					Debug.Assert(commentInfo.MessageGeometry != null, "PrepareDrawDataIfNeeded() bad MessageGeometry");
+					if (commentInfo.MessageGeometry.Bounds.IsEmpty)
+					{
+						// スペース等、描画できない文字のみで構成されたコメント
+						CommentInfos.TryRemove(commentInfo, out _);
+						Debug.WriteLine("PrepareDrawDataIfNeeded() 無効コメント削除: 残: " + CommentInfos.Count);
+					}
 				}
 			}
 		}
