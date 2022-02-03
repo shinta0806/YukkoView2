@@ -40,6 +40,15 @@ namespace YukkoView2.Models.SharedMisc
 	}
 
 	// --------------------------------------------------------------------
+	// 環境設定ウィンドウのタブアイテム
+	// --------------------------------------------------------------------
+	public enum Yv2SettingsTabItem
+	{
+		Settings,
+		__End__,
+	}
+
+	// --------------------------------------------------------------------
 	// ゆっこビュー 2 の動作状況
 	// --------------------------------------------------------------------
 	public enum Yv2Status
@@ -73,11 +82,14 @@ namespace YukkoView2.Models.SharedMisc
 		// MessageKey
 		// --------------------------------------------------------------------
 
+		// コメント表示ウィンドウを開く
+		public const String MESSAGE_KEY_OPEN_DISPLAY_WINDOW = "OpenDisplayWindow";
+
 		// メインウィンドウを開く
 		public const String MESSAGE_KEY_OPEN_MAIN_WINDOW = "OpenMainWindow";
 
-		// コメント表示ウィンドウを開く
-		public const String MESSAGE_KEY_OPEN_DISPLAY_WINDOW = "OpenDisplayWindow";
+		// 環境設定ウィンドウを開く
+		public const String MESSAGE_KEY_OPEN_YV2_SETTINGS_WINDOW = "OpenYv2SettingsWindow";
 
 		// ウィンドウをアクティブ化する
 		public const String MESSAGE_KEY_WINDOW_ACTIVATE = "Activate";

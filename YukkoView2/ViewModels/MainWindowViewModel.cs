@@ -35,7 +35,7 @@ namespace YukkoView2.ViewModels
 		// ====================================================================
 
 		// --------------------------------------------------------------------
-		// プログラム中で使うべき引数付きコンストラクター
+		// メインコンストラクター
 		// --------------------------------------------------------------------
 		public MainWindowViewModel(SplashWindowViewModel splashWindowViewModel)
 		{
@@ -201,6 +201,37 @@ namespace YukkoView2.ViewModels
 			catch (Exception ex)
 			{
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "停止ボタンクリック時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
+		#region 環境設定ボタンの制御
+		private ViewModelCommand? _buttonYv2SettingsClickedCommand;
+
+		public ViewModelCommand ButtonYv2SettingsClickedCommand
+		{
+			get
+			{
+				if (_buttonYv2SettingsClickedCommand == null)
+				{
+					_buttonYv2SettingsClickedCommand = new ViewModelCommand(ButtonYv2SettingsClicked);
+				}
+				return _buttonYv2SettingsClickedCommand;
+			}
+		}
+
+		public void ButtonYv2SettingsClicked()
+		{
+			try
+			{
+				// ViewModel 経由でウィンドウを開く
+				using Yv2SettingsWindowViewModel yv2SettingsWindowViewModel = new();
+				Messenger.Raise(new TransitionMessage(yv2SettingsWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_YV2_SETTINGS_WINDOW));
+			}
+			catch (Exception ex)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "環境設定ボタンクリック時エラー：\n" + ex.Message);
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
