@@ -14,6 +14,7 @@ using Livet.Messaging;
 
 using Shinta;
 using Shinta.ViewModels;
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -76,22 +77,6 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		// View 通信用のプロパティー
 		// --------------------------------------------------------------------
-
-		// ウィンドウ左端
-		private Double _left;
-		public Double Left
-		{
-			get => _left;
-			set => RaisePropertyChangedIfSet(ref _left, value);
-		}
-
-		// ウィンドウ上端
-		private Double _top;
-		public Double Top
-		{
-			get => _top;
-			set => RaisePropertyChangedIfSet(ref _top, value);
-		}
 
 		// ゆっこビュー 2 の動作状況
 		private String _yv2StatusMessage = String.Empty;

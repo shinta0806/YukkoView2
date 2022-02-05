@@ -5,17 +5,16 @@
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// 本クラスは Yv2Model 未生成時に生成されるため、BasicWindowViewModel を継承しない
+// 本クラスは Yv2Model 未生成時に生成されるため、基底クラスに LogWriter を渡さない
 // ----------------------------------------------------------------------------
 
-using Livet;
 using Livet.Messaging;
-using Livet.Messaging.Windows;
 
 using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 
 using Shinta;
+using Shinta.ViewModels;
 
 using System;
 using System.Collections.Generic;
@@ -29,25 +28,19 @@ using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.ViewModels
 {
-	internal class SplashWindowViewModel : ViewModel
+	internal class SplashWindowViewModel : BasicWindowViewModel
 	{
 		// ====================================================================
 		// public 関数
 		// ====================================================================
 
 		// --------------------------------------------------------------------
-		// ウィンドウを閉じる
-		// --------------------------------------------------------------------
-		public void Close()
-		{
-			Messenger.Raise(new WindowActionMessage(Common.MESSAGE_KEY_WINDOW_CLOSE));
-		}
-
-		// --------------------------------------------------------------------
 		// 初期化
 		// --------------------------------------------------------------------
-		public void Initialize()
+		public override void Initialize()
 		{
+			base.Initialize();
+
 			try
 			{
 				// マテリアルデザインの外観を変更
@@ -89,8 +82,6 @@ namespace YukkoView2.ViewModels
 					Rect adjustedRect = CommonWindows.AdjustWindowRect(Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds);
 					_mainWindowViewModel.Left = adjustedRect.Left;
 					_mainWindowViewModel.Top = adjustedRect.Top;
-					//_mainWindowViewModel.Width = adjustedRect.Width;
-					//_mainWindowViewModel.Height = adjustedRect.Height;
 				}
 				Messenger.Raise(new TransitionMessage(_mainWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_MAIN_WINDOW));
 			}

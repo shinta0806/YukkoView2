@@ -9,6 +9,7 @@
 // ----------------------------------------------------------------------------
 
 using Shinta.ViewModels;
+
 using System;
 
 using YukkoView2.Models.YukkoView2Models;

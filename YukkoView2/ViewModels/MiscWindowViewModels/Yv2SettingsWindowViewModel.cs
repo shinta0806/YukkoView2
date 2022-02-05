@@ -8,21 +8,12 @@
 // 
 // ----------------------------------------------------------------------------
 
-using Livet;
-using Livet.Commands;
-using Livet.EventListeners;
-using Livet.Messaging;
-using Livet.Messaging.IO;
-using Livet.Messaging.Windows;
 using Shinta;
 using Shinta.ViewModels;
+
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Windows;
+
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 using YukkoView2.ViewModels.Yv2SettingsTabItemViewModels;
@@ -39,6 +30,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// メインコンストラクター
 		// --------------------------------------------------------------------
 		public Yv2SettingsWindowViewModel()
+				: base(Yv2Model.Instance.EnvModel.LogWriter)
 		{
 			Debug.Assert(_tabItemViewModels.Length == (Int32)Yv2SettingsTabItem.__End__, "Yv2SettingsWindowViewModel() bad tab vm nums");
 		}

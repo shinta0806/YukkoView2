@@ -12,6 +12,7 @@
 
 using Shinta;
 using Shinta.ViewModels;
+
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -47,46 +48,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// View 通信用のプロパティー
 		// --------------------------------------------------------------------
-
-		// ウィンドウ左端
-		private Double _left;
-		public Double Left
-		{
-			get => _left;
-			set => RaisePropertyChangedIfSet(ref _left, value);
-		}
-
-		// ウィンドウ上端
-		private Double _top;
-		public Double Top
-		{
-			get => _top;
-			set => RaisePropertyChangedIfSet(ref _top, value);
-		}
-
-		// ウィンドウ幅
-		private Double _width;
-		public Double Width
-		{
-			get => _width;
-			set => RaisePropertyChangedIfSet(ref _width, value);
-		}
-
-		// ウィンドウ高さ
-		private Double _height;
-		public Double Height
-		{
-			get => _height;
-			set => RaisePropertyChangedIfSet(ref _height, value);
-		}
-
-		// アクティブ
-		private Boolean _isActive;
-		public Boolean IsActive
-		{
-			get => _isActive;
-			set => RaisePropertyChangedIfSet(ref _isActive, value);
-		}
 
 		// 表示中のコメント群（Int32 はダミー）
 		private ConcurrentDictionary<CommentInfo, Int32> _commentInfos = new();
@@ -193,10 +154,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 		// ウィンドウを表示するディスプレイ
 		private Int32 _currentTargetMonitor = -1;
-
-		// 表示中のコメント群
-		// 複数スレッドからアクセスされる想定のため、アクセス時はロックが必要
-		//private HashSet<CommentInfo> _commentInfoSet = new();
 
 		// 前回追加されたコメント
 		private CommentInfo? _prevCommentInfo;
