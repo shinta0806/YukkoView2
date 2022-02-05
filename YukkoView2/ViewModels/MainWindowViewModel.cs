@@ -13,7 +13,7 @@ using Livet.EventListeners;
 using Livet.Messaging;
 
 using Shinta;
-
+using Shinta.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -28,7 +28,7 @@ using YukkoView2.ViewModels.MiscWindowViewModels;
 
 namespace YukkoView2.ViewModels
 {
-	internal class MainWindowViewModel : Yv2ViewModel
+	internal class MainWindowViewModel : BasicWindowViewModel
 	{
 		// ====================================================================
 		// コンストラクター
@@ -38,6 +38,7 @@ namespace YukkoView2.ViewModels
 		// メインコンストラクター
 		// --------------------------------------------------------------------
 		public MainWindowViewModel(SplashWindowViewModel splashWindowViewModel)
+				: base(Yv2Model.Instance.EnvModel.LogWriter)
 		{
 			// スプラッシュウィンドウ
 			_splashWindowViewModel = splashWindowViewModel;

@@ -5,7 +5,7 @@
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// 本クラスは Yv2Model 未生成時に生成されるため、Yv2ViewModel を継承しない
+// 本クラスは Yv2Model 未生成時に生成されるため、BasicWindowViewModel を継承しない
 // ----------------------------------------------------------------------------
 
 using Livet;
@@ -40,7 +40,7 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		public void Close()
 		{
-			Messenger.Raise(new WindowActionMessage(Yv2Constants.MESSAGE_KEY_WINDOW_CLOSE));
+			Messenger.Raise(new WindowActionMessage(Common.MESSAGE_KEY_WINDOW_CLOSE));
 		}
 
 		// --------------------------------------------------------------------

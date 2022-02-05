@@ -8,6 +8,7 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Shinta.ViewModels;
 using System;
 
 using YukkoView2.Models.YukkoView2Models;
@@ -23,8 +24,8 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public Yv2SettingsTabItemSettingsViewModel(Yv2ViewModel windowViewModel)
-				: base(windowViewModel)
+		public Yv2SettingsTabItemSettingsViewModel(TabControlWindowViewModel tabControlWindowViewModel)
+				: base(tabControlWindowViewModel, Yv2Model.Instance.EnvModel.LogWriter)
 		{
 		}
 

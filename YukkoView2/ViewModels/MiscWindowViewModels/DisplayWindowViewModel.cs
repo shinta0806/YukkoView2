@@ -11,7 +11,7 @@
 // ----------------------------------------------------------------------------
 
 using Shinta;
-
+using Shinta.ViewModels;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -25,7 +25,7 @@ using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.ViewModels.MiscWindowViewModels
 {
-	internal class DisplayWindowViewModel : Yv2ViewModel
+	internal class DisplayWindowViewModel : BasicWindowViewModel
 	{
 		// ====================================================================
 		// コンストラクター
@@ -35,6 +35,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// メインコンストラクター
 		// --------------------------------------------------------------------
 		public DisplayWindowViewModel()
+				: base(Yv2Model.Instance.EnvModel.LogWriter)
 		{
 			_receiver = new(this);
 		}

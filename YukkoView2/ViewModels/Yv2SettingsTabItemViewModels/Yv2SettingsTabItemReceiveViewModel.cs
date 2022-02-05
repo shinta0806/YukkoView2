@@ -14,6 +14,7 @@ using Livet.EventListeners;
 using Livet.Messaging;
 using Livet.Messaging.IO;
 using Livet.Messaging.Windows;
+using Shinta.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,8 +34,8 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public Yv2SettingsTabItemReceiveViewModel(Yv2ViewModel windowViewModel)
-				: base(windowViewModel)
+		public Yv2SettingsTabItemReceiveViewModel(TabControlWindowViewModel tabControlWindowViewModel)
+				: base(tabControlWindowViewModel, Yv2Model.Instance.EnvModel.LogWriter)
 		{
 		}
 

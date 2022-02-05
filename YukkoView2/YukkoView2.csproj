@@ -40,7 +40,9 @@
     <Compile Include="..\..\_Common\ShintaCommon.cs" Link="_Common\ShintaCommon.cs" />
     <Compile Include="..\..\_Common\ShintaCommonWindows.cs" Link="_Common\ShintaCommonWindows.cs" />
     <Compile Include="..\..\_Common\SimpleTraceListener.cs" Link="_Common\SimpleTraceListener.cs" />
-    <Compile Include="..\..\_Common\ViewModels\BaseViewModel.cs" Link="_Common\ViewModels\BaseViewModel.cs" />
+    <Compile Include="..\..\_Common\ViewModels\BasicWindowViewModel.cs" Link="_Common\ViewModels\BasicWindowViewModel.cs" />
+    <Compile Include="..\..\_Common\ViewModels\TabControlWindowViewModel.cs" Link="_Common\ViewModels\TabControlWindowViewModel.cs" />
+    <Compile Include="..\..\_Common\ViewModels\TabItemViewModel.cs" Link="_Common\ViewModels\TabItemViewModel.cs" />
     <Compile Include="..\..\_Common\WindowsApi.cs" Link="_Common\WindowsApi.cs" />
   </ItemGroup>
 

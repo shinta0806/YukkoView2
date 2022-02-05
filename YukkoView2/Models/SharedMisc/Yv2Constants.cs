@@ -95,9 +95,6 @@ namespace YukkoView2.Models.SharedMisc
 		// ウィンドウをアクティブ化する
 		public const String MESSAGE_KEY_WINDOW_ACTIVATE = "Activate";
 
-		// ウィンドウを閉じる
-		public const String MESSAGE_KEY_WINDOW_CLOSE = "Close";
-
 		// --------------------------------------------------------------------
 		// ファイル名
 		// --------------------------------------------------------------------
