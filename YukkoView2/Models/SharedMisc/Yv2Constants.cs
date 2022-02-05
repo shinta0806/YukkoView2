@@ -45,6 +45,7 @@ namespace YukkoView2.Models.SharedMisc
 	public enum Yv2SettingsTabItem
 	{
 		Settings,
+		Receive,
 		__End__,
 	}
 
@@ -140,6 +141,9 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		// その他
 		// --------------------------------------------------------------------
+
+		// 同時に表示するコメントの最大数
+		public const Int32 NUM_DISPLAY_COMMENTS_MAX = 7;
 
 		// ツールチップを長く表示する場合の時間 [ms]
 		public const Int32 TOOL_TIP_LONG_DURATION = 20 * 1000;

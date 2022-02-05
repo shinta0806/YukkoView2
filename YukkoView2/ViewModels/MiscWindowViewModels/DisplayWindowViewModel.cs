@@ -87,7 +87,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			set => RaisePropertyChangedIfSet(ref _isActive, value);
 		}
 
-		// 表示中のコメント群
+		// 表示中のコメント群（Int32 はダミー）
 		private ConcurrentDictionary<CommentInfo, Int32> _commentInfos = new();
 		public ConcurrentDictionary<CommentInfo, Int32> CommentInfos
 		{
@@ -152,6 +152,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示ウィンドウ初期化時エラー：\n" + ex.Message);
 				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
+		}
+
+		// --------------------------------------------------------------------
+		// コメントの数
+		// --------------------------------------------------------------------
+		public Int32 NumComments()
+		{
+			return CommentInfos.Count;
 		}
 
 		// --------------------------------------------------------------------

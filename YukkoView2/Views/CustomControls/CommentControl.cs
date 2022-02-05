@@ -5,7 +5,7 @@
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// CommentInfo の描画データ管理も担当する
+// CommentInfo のプロパティーのうち描画部分のプロパティーの生成も担当する
 // ----------------------------------------------------------------------------
 
 using Shinta;
@@ -56,6 +56,7 @@ namespace YukkoView2.Views.CustomControls
 		// ====================================================================
 
 		// 表示中のコメント群（Int32 はダミー）
+		// コメントコンテナ（DisplayWindowViewModel）と情報を共有する形になる
 		public static readonly DependencyProperty CommentInfosProperty
 				= DependencyProperty.Register("CommentInfos", typeof(ConcurrentDictionary<CommentInfo, Int32>), typeof(CommentControl),
 				new FrameworkPropertyMetadata(new ConcurrentDictionary<CommentInfo, Int32>(), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceCommentInfosPropertyPropertyChanged));

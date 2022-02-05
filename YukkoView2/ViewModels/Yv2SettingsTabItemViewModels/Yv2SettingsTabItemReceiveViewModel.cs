@@ -1,6 +1,6 @@
 ﻿// ============================================================================
 // 
-// 設定タブアイテムの ViewModel
+// コメント受信タブアイテムの ViewModel
 // 
 // ============================================================================
 
@@ -8,13 +8,23 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Livet;
+using Livet.Commands;
+using Livet.EventListeners;
+using Livet.Messaging;
+using Livet.Messaging.IO;
+using Livet.Messaging.Windows;
 using System;
-
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 
 namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 {
-	internal class Yv2SettingsTabItemSettingsViewModel : TabItemViewModel
+	internal class Yv2SettingsTabItemReceiveViewModel : TabItemViewModel
 	{
 		// ====================================================================
 		// コンストラクター
@@ -23,7 +33,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public Yv2SettingsTabItemSettingsViewModel(Yv2ViewModel windowViewModel)
+		public Yv2SettingsTabItemReceiveViewModel(Yv2ViewModel windowViewModel)
 				: base(windowViewModel)
 		{
 		}
@@ -31,7 +41,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// ダミーコンストラクター（Visual Studio・TransitionMessage 用）
 		// --------------------------------------------------------------------
-		public Yv2SettingsTabItemSettingsViewModel()
+		public Yv2SettingsTabItemReceiveViewModel()
 				: base()
 		{
 		}
@@ -44,12 +54,20 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// View 通信用のプロパティー
 		// --------------------------------------------------------------------
 
-		// 起動と同時にコメント表示を開始する
-		private Boolean _playOnStart;
-		public Boolean PlayOnStart
+		// コメント受信方法：プッシュ通知
+		private Boolean _commentReceivePush;
+		public Boolean CommentReceivePush
 		{
-			get => _playOnStart;
-			set => RaisePropertyChangedIfSet(ref _playOnStart, value);
+			get => _commentReceivePush;
+			set => RaisePropertyChangedIfSet(ref _commentReceivePush, value);
+		}
+
+		// コメント受信方法：ダウンロード
+		private Boolean _commentReceiveDownload;
+		public Boolean CommentReceiveDownload
+		{
+			get => _commentReceiveDownload;
+			set => RaisePropertyChangedIfSet(ref _commentReceiveDownload, value);
 		}
 
 		// ====================================================================
@@ -61,7 +79,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		public override void PropertiesToSettings()
 		{
-			Yv2Model.Instance.EnvModel.Yv2Settings.PlayOnStart = PlayOnStart;
+			Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType = CommentReceivePush ? CommentReceiveType.Push : CommentReceiveType.Download;
 		}
 
 		// --------------------------------------------------------------------
@@ -69,7 +87,17 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		public override void SettingsToProperties()
 		{
-			PlayOnStart = Yv2Model.Instance.EnvModel.Yv2Settings.PlayOnStart;
+			switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType)
+			{
+				case CommentReceiveType.Push:
+					CommentReceivePush = true;
+					break;
+				case CommentReceiveType.Download:
+					CommentReceiveDownload = true;
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }

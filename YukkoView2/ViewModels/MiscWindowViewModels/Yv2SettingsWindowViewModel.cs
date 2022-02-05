@@ -41,9 +41,11 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		{
 			// タブアイテムの ViewModel 初期化
 			_yv2SettingsTabItemSettingsViewModel = new Yv2SettingsTabItemSettingsViewModel(this);
+			_yv2SettingsTabItemReceiveViewModel = new Yv2SettingsTabItemReceiveViewModel(this);
 			_yv2SettingsTabItemViewModels = new TabItemViewModel[]
 			{
 				_yv2SettingsTabItemSettingsViewModel,
+				_yv2SettingsTabItemReceiveViewModel,
 			};
 			Debug.Assert(_yv2SettingsTabItemViewModels.Length == (Int32)Yv2SettingsTabItem.__End__, "Yv2SettingsWindowViewModel() bad tab vm nums");
 			for (Int32 i = 0; i < _yv2SettingsTabItemViewModels.Length; i++)
@@ -66,6 +68,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		{
 			get => _yv2SettingsTabItemSettingsViewModel;
 			set => RaisePropertyChangedIfSet(ref _yv2SettingsTabItemSettingsViewModel, value);
+		}
+
+		// タブアイテム：コメント受信
+		private Yv2SettingsTabItemReceiveViewModel _yv2SettingsTabItemReceiveViewModel;
+		public Yv2SettingsTabItemReceiveViewModel Yv2SettingsTabItemReceiveViewModel
+		{
+			get => _yv2SettingsTabItemReceiveViewModel;
+			set => RaisePropertyChangedIfSet(ref _yv2SettingsTabItemReceiveViewModel, value);
 		}
 
 		// OK ボタンフォーカス

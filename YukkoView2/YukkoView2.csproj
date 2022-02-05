@@ -40,6 +40,7 @@
     <Compile Include="..\..\_Common\ShintaCommon.cs" Link="_Common\ShintaCommon.cs" />
     <Compile Include="..\..\_Common\ShintaCommonWindows.cs" Link="_Common\ShintaCommonWindows.cs" />
     <Compile Include="..\..\_Common\SimpleTraceListener.cs" Link="_Common\SimpleTraceListener.cs" />
+    <Compile Include="..\..\_Common\ViewModels\BaseViewModel.cs" Link="_Common\ViewModels\BaseViewModel.cs" />
     <Compile Include="..\..\_Common\WindowsApi.cs" Link="_Common\WindowsApi.cs" />
   </ItemGroup>
 
@@ -57,6 +58,7 @@
     <Folder Include="Models\Settings\" />
     <Folder Include="Models\YukkoView2Models\" />
     <Folder Include="_Common\Behaviors\" />
+    <Folder Include="_Common\ViewModels\" />
   </ItemGroup>
 
   <ItemGroup>

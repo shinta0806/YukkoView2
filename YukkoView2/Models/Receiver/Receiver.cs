@@ -52,11 +52,12 @@ namespace YukkoView2.Models.Receiver
 		{
 			return Task.Run(async () =>
 			{
+				// ToDo: 再入禁止
 				_cancellationTokenSource = new();
 				switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType)
 				{
 					case CommentReceiveType.Download:
-						DownloadLoop();
+						await DownloadLoopAsync();
 						break;
 					default:
 						await ReceivePushLoopAsync();
@@ -127,6 +128,36 @@ namespace YukkoView2.Models.Receiver
 		// ====================================================================
 
 		// --------------------------------------------------------------------
+		// コメント文字列を解析（拡張／旧仕様両対応）
+		// --------------------------------------------------------------------
+		private CommentInfo? AnalyzeCommentData(Byte[] array)
+		{
+			// 先頭の改行を無視する
+			Int32 beginPos = 0;
+			while (beginPos < array.Length && (array[beginPos] == '\r' || array[beginPos] == '\n'))
+			{
+				beginPos++;
+			}
+			if (beginPos == array.Length)
+			{
+				// コメントの中身が無い
+				return null;
+			}
+
+			// 文字列を解析してコメント情報化
+			CommentInfo? commentInfo;
+			if (array[beginPos] == 'X')
+			{
+				commentInfo = AnalyzeExtendedCommentData(array, beginPos);
+			}
+			else
+			{
+				commentInfo = AnalyzeOldFormatCommentData(array, beginPos);
+			}
+			return commentInfo;
+		}
+
+		// --------------------------------------------------------------------
 		// 拡張コメント文字列を解析
 		// --------------------------------------------------------------------
 		private CommentInfo? AnalyzeExtendedCommentData(Byte[] array, Int32 beginPos)
@@ -156,6 +187,23 @@ namespace YukkoView2.Models.Receiver
 
 			CommentInfo commentInfo = new(commentMessage, Int32.Parse(comment.Substring(2, 1)),
 					Color.FromRgb(Convert.ToByte(comment.Substring(3, 2), 16), Convert.ToByte(comment.Substring(5, 2), 16), Convert.ToByte(comment.Substring(7, 2), 16)));
+			return commentInfo;
+		}
+
+		// --------------------------------------------------------------------
+		// 旧仕様コメント文字列を解析
+		// --------------------------------------------------------------------
+		private CommentInfo? AnalyzeOldFormatCommentData(Byte[] array, Int32 beginPos)
+		{
+			String comment = Encoding.GetEncoding(Common.CODE_PAGE_SHIFT_JIS).GetString(array, beginPos, array.Length - beginPos);
+
+			if (comment == "nothing" || comment.Length <= 7)
+			{
+				return null;
+			}
+
+			CommentInfo commentInfo = new(comment.Substring(7, comment.Length - 8), Int32.Parse(comment.Substring(0, 1)),
+					Color.FromRgb(Convert.ToByte(comment.Substring(1, 2), 16), Convert.ToByte(comment.Substring(3, 2), 16), Convert.ToByte(comment.Substring(5, 2), 16)));
 			return commentInfo;
 		}
 
@@ -190,7 +238,7 @@ namespace YukkoView2.Models.Receiver
 		// コメントサーバーからコメントをダウンロード
 		// ＜返値＞ result: 成功なら true
 		// --------------------------------------------------------------------
-		private async Task<(Boolean result, Byte[] comment)> DownloadCommentAsync(Downloader downloader)
+		private async Task<(Boolean result, Byte[] array)> DownloadCommentAsync(Downloader downloader)
 		{
 			Boolean result = false;
 			Byte[] array = Array.Empty<Byte>();
@@ -215,9 +263,79 @@ namespace YukkoView2.Models.Receiver
 		// --------------------------------------------------------------------
 		// コメントをダウンロードし続ける
 		// --------------------------------------------------------------------
-		private void DownloadLoop()
+		private async Task DownloadLoopAsync()
 		{
+			try
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントダウンロード開始");
 
+				// ダウンローダー
+				Downloader downloader = new();
+				downloader.CancellationToken = _cancellationTokenSource.Token;
+
+				for (; ; )
+				{
+					try
+					{
+						// サーバーに溜まっているコメントをすべて読み込む
+						for (; ; )
+						{
+							// コメント表示数が多い場合はスキップ
+							if (_commentContainer.NumComments() >= Yv2Constants.NUM_DISPLAY_COMMENTS_MAX)
+							{
+								break;
+							}
+
+							// サーバーの負荷軽減のためちょっとだけ休む
+							Thread.Sleep(Common.GENERAL_SLEEP_TIME);
+
+							// ダウンロード
+							(Boolean result, Byte[] array) = await DownloadCommentAsync(downloader);
+							if (!result)
+							{
+								break;
+							}
+
+							// サーバーとの通信に成功したのでエラー表示解除
+							//ClearIsCommentReceiveError();
+
+							// コメント
+							CommentInfo? commentInfo = AnalyzeCommentData(array);
+							if (commentInfo == null)
+							{
+								// 溜まっているコメントが無くなった
+								break;
+							}
+							Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントをダウンロードしました：" + commentInfo.Message);
+
+							// コメント発行
+							_commentContainer.AddComment(commentInfo);
+						}
+
+					}
+					catch (Exception ex)
+					{
+						Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "ダウンロードエラー（リトライします）：\n" + ex.Message);
+						Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "　スタックトレース：\n" + ex.StackTrace);
+						//EnableIsCommentReceiveError();
+					}
+
+					// しばらく休憩
+					Thread.Sleep(Yv2Model.Instance.EnvModel.Yv2Settings.DownloadInterval);
+					ThrowIfCancellationRequested();
+				}
+
+			}
+			catch (OperationCanceledException)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントダウンロード処理を終了しました。");
+				Debug.WriteLine("コメントダウンロード処理を終了しました。");
+			}
+			catch (Exception oExcep)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "コメントダウンロード時エラー：\n" + oExcep.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "　スタックトレース：\n" + oExcep.StackTrace);
+			}
 		}
 
 		// --------------------------------------------------------------------
