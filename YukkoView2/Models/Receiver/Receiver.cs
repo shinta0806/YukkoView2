@@ -227,9 +227,7 @@ namespace YukkoView2.Models.Receiver
 				}
 
 				// エラー有りの場合はループを続ける
-				Yv2Model.Instance.EnvModel.Yv2Status = Yv2Status.Error;
 				Thread.Sleep(Yv2Constants.CHECK_CONNECTION_INTERVAL);
-
 				ThrowIfCancellationRequested();
 			}
 		}
@@ -249,10 +247,16 @@ namespace YukkoView2.Models.Receiver
 				(String serverUrl, String roomName) = Yv2Model.Instance.EnvModel.Yv2Settings.ServerUrlAndRoomName();
 				await downloader.DownloadAsStreamAsync(serverUrl + "?r=" + HttpUtility.UrlEncode(roomName, Encoding.UTF8) + "&v=3", memStream);
 				array = memStream.ToArray();
+
+				// サーバーとの通信に成功したのでエラー表示解除
+				// コメントが存在しない場合は "nothing" が返ってくるので、成功していればここを通る
+				Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.ServerNotConnected] = false;
+
 				result = true;
 			}
 			catch (Exception ex)
 			{
+				Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.ServerNotConnected] = true;
 				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "コメントダウンロード時エラー：\n" + ex.Message);
 				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
@@ -296,9 +300,6 @@ namespace YukkoView2.Models.Receiver
 								break;
 							}
 
-							// サーバーとの通信に成功したのでエラー表示解除
-							//ClearIsCommentReceiveError();
-
 							// コメント
 							CommentInfo? commentInfo = AnalyzeCommentData(array);
 							if (commentInfo == null)
@@ -317,7 +318,6 @@ namespace YukkoView2.Models.Receiver
 					{
 						Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "ダウンロードエラー（リトライします）：\n" + ex.Message);
 						Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "　スタックトレース：\n" + ex.StackTrace);
-						//EnableIsCommentReceiveError();
 					}
 
 					// しばらく休憩
@@ -419,7 +419,7 @@ namespace YukkoView2.Models.Receiver
 
 
 						// サーバーとの通信に成功したのでエラー表示解除
-						//ClearIsCommentReceiveError();
+						Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.ServerNotConnected] = false;
 
 						// コメント発行
 						CommentInfo? commentInfo = AnalyzeExtendedCommentData(comment);
@@ -436,7 +436,7 @@ namespace YukkoView2.Models.Receiver
 					{
 						Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "コメント受信エラー（リトライします）：\n" + ex.Message);
 						Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "　スタックトレース：\n" + ex.StackTrace);
-						//EnableIsCommentReceiveError();
+						Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.ServerNotConnected] = true;
 					}
 
 					ThrowIfCancellationRequested();
@@ -467,6 +467,5 @@ namespace YukkoView2.Models.Receiver
 			_cancellationTokenSource.Token.ThrowIfCancellationRequested();
 			Yv2Model.Instance.EnvModel.AppCancellationTokenSource.Token.ThrowIfCancellationRequested();
 		}
-
 	}
 }

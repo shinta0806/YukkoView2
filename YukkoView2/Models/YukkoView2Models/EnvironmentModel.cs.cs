@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
+
 using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
 
@@ -51,6 +52,7 @@ namespace YukkoView2.Models.YukkoView2Models
 		// 環境設定
 		public Yv2Settings Yv2Settings { get; } = new();
 
+#if false
 		// ゆっこビュー 2 の動作状況
 		private Yv2Status _yv2Status;
 		public Yv2Status Yv2Status
@@ -58,6 +60,10 @@ namespace YukkoView2.Models.YukkoView2Models
 			get => _yv2Status;
 			set => RaisePropertyChangedIfSet(ref _yv2Status, value);
 		}
+#endif
+
+		// エラーが発生しているかどうか（要因ごと）
+		public ObservableSynchronizedCollection<Boolean> Yv2StatusErrorFactors { get; } = new();
 
 		// マルチディスプレイ領域
 		// メインスレッドのみからアクセスするものとする

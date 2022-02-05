@@ -66,6 +66,10 @@ namespace YukkoView2.ViewModels
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);
 				Yv2Model.Instance.EnvModel.MonitorRects = CommonWindows.GetMonitorRects();
+				for (Int32 i = 0; i < (Int32)Yv2StatusErrorFactor.__End__; i++)
+				{
+					Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors.Add(false);
+				}
 
 				// エンコード
 				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);

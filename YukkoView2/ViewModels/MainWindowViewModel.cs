@@ -16,7 +16,7 @@ using Shinta;
 using Shinta.ViewModels;
 
 using System;
-using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -48,15 +48,9 @@ namespace YukkoView2.ViewModels
 			_displayWindowViewModel = new();
 			CompositeDisposable.Add(_displayWindowViewModel);
 
-			// Yv2Status 変更監視
-			_yv2StatusListener = new(Yv2Model.Instance.EnvModel)
-			{
-				{
-					() => Yv2Model.Instance.EnvModel.Yv2Status,
-					Yv2StatusChanged
-				},
-			};
-			CompositeDisposable.Add(_yv2StatusListener);
+			// Yv2StatusErrorFactors 変更監視
+			_yv2StatusErrorFactorsListener = new(Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors, Yv2StatusErrorFactorsChanged);
+			CompositeDisposable.Add(_yv2StatusErrorFactorsListener);
 		}
 
 		// --------------------------------------------------------------------
@@ -67,7 +61,7 @@ namespace YukkoView2.ViewModels
 			// 警告抑止用にメンバーを null! で初期化
 			_splashWindowViewModel = null!;
 			_displayWindowViewModel = null!;
-			_yv2StatusListener = null!;
+			_yv2StatusErrorFactorsListener = null!;
 		}
 
 		// ====================================================================
@@ -87,7 +81,7 @@ namespace YukkoView2.ViewModels
 		}
 
 		// ゆっこビュー 2 の動作状況の背景
-		private Brush _yv2StatusBackground = Yv2Constants.BRUSH_STATUS_DONE;
+		private Brush _yv2StatusBackground = Yv2Constants.BRUSH_STATUS_RUNNING;
 		public Brush Yv2StatusBackground
 		{
 			get => _yv2StatusBackground;
@@ -291,6 +285,9 @@ namespace YukkoView2.ViewModels
 				// スプラッシュウィンドウを閉じる
 				_splashWindowViewModel.Close();
 
+				// プログラムエラーチェック
+				Debug.Assert(Yv2Constants.ERROR_FACTOR_MESSAGE.Length == (Int32)Yv2StatusErrorFactor.__End__, "MainWindow.Initialize() bad ERROR_FACTOR_MESSAGE length");
+
 				// コメント表示ウィンドウを開く
 				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
 
@@ -363,8 +360,8 @@ namespace YukkoView2.ViewModels
 		// コメント表示ウィンドウ
 		private DisplayWindowViewModel _displayWindowViewModel;
 
-		// Yv2Status 変更監視
-		private PropertyChangedEventListener _yv2StatusListener;
+		// Yv2StatusErrorFactors 変更監視
+		private CollectionChangedEventListener _yv2StatusErrorFactorsListener;
 
 		// コメント表示中
 		private Boolean _isPlaying;
@@ -412,6 +409,7 @@ namespace YukkoView2.ViewModels
 		private void SetIsPlaying(Boolean isPlaying)
 		{
 			_isPlaying = isPlaying;
+			UpdateYv2Status();
 			ButtonPlayClickedCommand.RaiseCanExecuteChanged();
 			ButtonStopClickedCommand.RaiseCanExecuteChanged();
 		}
@@ -427,25 +425,39 @@ namespace YukkoView2.ViewModels
 		}
 
 		// --------------------------------------------------------------------
-		// Yv2Model.Instance.EnvModel.Yv2Status が変更された
+		// ゆっこビュー 2 の動作状況表示を更新
 		// --------------------------------------------------------------------
-		private void Yv2StatusChanged(Object? sender, PropertyChangedEventArgs e)
+		private void UpdateYv2Status()
 		{
-			switch (Yv2Model.Instance.EnvModel.Yv2Status)
+			Int32 errorIndex = Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors.IndexOf(true);
+			if (errorIndex >= 0)
 			{
-				case Yv2Status.Ready:
-					Yv2StatusMessage = "コメント表示停止中";
-					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_DONE;
-					break;
-				case Yv2Status.Running:
+				// エラーがある場合はエラー表示
+				Yv2StatusMessage = Yv2Constants.ERROR_FACTOR_MESSAGE[errorIndex];
+				Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_ERROR;
+			}
+			else
+			{
+				if (_isPlaying)
+				{
 					Yv2StatusMessage = "コメント表示中";
 					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_RUNNING;
-					break;
-				default:
-					Yv2StatusMessage = "エラー";
-					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_ERROR;
-					break;
+				}
+				else
+				{
+					Yv2StatusMessage = "コメント表示停止中";
+					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_DONE;
+				}
 			}
+		}
+
+		// --------------------------------------------------------------------
+		// Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors が変更された
+		// --------------------------------------------------------------------
+		private void Yv2StatusErrorFactorsChanged(Object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			Debug.WriteLine("Yv2StatusChanged()");
+			UpdateYv2Status();
 		}
 	}
 }

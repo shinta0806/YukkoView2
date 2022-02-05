@@ -60,6 +60,17 @@ namespace YukkoView2.Models.SharedMisc
 		__End__,
 	}
 
+	// --------------------------------------------------------------------
+	// ゆっこビュー 2 のエラー要因
+	// --------------------------------------------------------------------
+	public enum Yv2StatusErrorFactor
+	{
+		ServerNotConnected,
+		YukariConfigNotFound,
+		YukariConfigBadContents,
+		__End__,
+	}
+
 	internal class Yv2Constants
 	{
 		// ====================================================================
@@ -133,10 +144,23 @@ namespace YukkoView2.Models.SharedMisc
 		public static readonly SolidColorBrush BRUSH_STATUS_ERROR = new(COLOR_STATUS_ERROR);
 
 		// --------------------------------------------------------------------
+		// エラーメッセージ
+		// --------------------------------------------------------------------
+
+		// エラー要因ごとのメッセージ
+		public static readonly String[] ERROR_FACTOR_MESSAGE =
+		{
+			"コメントサーバーと通信できません。　※アプリでのコメント投稿は可能です。",
+			"ゆかり設定ファイルが見つかりませんでした。",
+			"ゆかり設定を読み込めませんでした。",
+		};
+
+		// --------------------------------------------------------------------
 		// その他
 		// --------------------------------------------------------------------
 
 		// 同時に表示するコメントの最大数
+		// サーバーからの取得時の指標であり、UI からの投稿時は無制限
 		public const Int32 NUM_DISPLAY_COMMENTS_MAX = 7;
 
 		// ツールチップを長く表示する場合の時間 [ms]
