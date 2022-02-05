@@ -78,6 +78,10 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			}
 		}
 
+		// ====================================================================
+		// protected 関数
+		// ====================================================================
+
 		// --------------------------------------------------------------------
 		// タブアイテムの ViewModel を生成
 		// --------------------------------------------------------------------
@@ -88,6 +92,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				new Yv2SettingsTabItemSettingsViewModel(this),
 				new Yv2SettingsTabItemReceiveViewModel(this),
 			};
+		}
+
+		// --------------------------------------------------------------------
+		// 設定を保存
+		// --------------------------------------------------------------------
+		protected override void SaveSettings()
+		{
+			Yv2Model.Instance.EnvModel.Yv2Settings.Save();
 		}
 	}
 }

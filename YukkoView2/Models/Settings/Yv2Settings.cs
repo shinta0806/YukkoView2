@@ -88,7 +88,20 @@ namespace YukkoView2.Models.Settings
 		// ディスプレイ選択
 		// --------------------------------------------------------------------
 
+		// ディスプレイ選択方法
+		public SelectMonitorType SelectMonitorType { get; set; }
 
+		// ディスプレイ選択方法：MPC-BE
+		// MPC-BE 64 ビット版のプロセス名
+		public String MpcBe64ProcessName { get; set; } = "mpc-be64";
+
+		// ディスプレイ選択方法：MPC-BE
+		// MPC-BE 32 ビット版のプロセス名
+		public String MpcBe32ProcessName { get; set; } = "mpc-be";
+
+		// ディスプレイ選択方法：手動
+		// ディスプレイ番号（0 オリジン）
+		public Int32 MonitorIndex { get; set; }
 
 		// --------------------------------------------------------------------
 		// 終了時の状態（一般）
@@ -178,6 +191,7 @@ namespace YukkoView2.Models.Settings
 			// 範囲調整
 			CommentServerType = (CommentServerType)Math.Clamp((Int32)CommentServerType, 0, (Int32)CommentServerType.__End__ - 1);
 			CommentReceiveType = (CommentReceiveType)Math.Clamp((Int32)CommentReceiveType, 0, (Int32)CommentReceiveType.__End__ - 1);
+			SelectMonitorType = (SelectMonitorType)Math.Clamp((Int32)SelectMonitorType, 0, (Int32)SelectMonitorType.__End__ - 1);
 
 			// コメントサーバー指定方法が自動の場合は、手動のデフォルト値を設定（未設定の場合のみ）
 			if (CommentServerType == CommentServerType.Auto)

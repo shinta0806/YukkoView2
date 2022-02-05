@@ -188,10 +188,12 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Debug.WriteLine("MoveWindowIfNeeded() new target: " + target);
 			_currentTargetMonitor = target;
 			Rect rect = Yv2Model.Instance.EnvModel.MonitorRects[_currentTargetMonitor];
-			Left = rect.Left;
-			Top = rect.Top;
-			Width = rect.Width;
-			Height = rect.Height;
+
+			// タスクバーが表示されるように上下左右 1 ピクセルずつ縮める
+			Left = rect.Left + 1;
+			Top = rect.Top + 1;
+			Width = rect.Width - 2;
+			Height = rect.Height - 2;
 		}
 
 		// --------------------------------------------------------------------
