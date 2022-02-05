@@ -18,6 +18,7 @@ using Shinta.ViewModels;
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -291,6 +292,13 @@ namespace YukkoView2.ViewModels
 				// 環境の変化に対応
 				DoVerChangedIfNeeded();
 
+				// ゆかり設定ファイル config.ini 監視
+				CompositeDisposable.Add(_fileSystemWatcherYukariConfig);
+				_fileSystemWatcherYukariConfig.Created += new FileSystemEventHandler(FileSystemWatcherYukariConfig_Changed);
+				_fileSystemWatcherYukariConfig.Deleted += new FileSystemEventHandler(FileSystemWatcherYukariConfig_Changed);
+				_fileSystemWatcherYukariConfig.Changed += new FileSystemEventHandler(FileSystemWatcherYukariConfig_Changed);
+				SetFileSystemWatcherYukariConfig();
+
 				// コメント表示ウィンドウを開く
 				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
 
@@ -366,6 +374,9 @@ namespace YukkoView2.ViewModels
 		// Yv2StatusErrorFactors 変更監視
 		private CollectionChangedEventListener _yv2StatusErrorFactorsListener;
 
+		// config.ini 変更監視
+		private readonly FileSystemWatcher _fileSystemWatcherYukariConfig = new();
+
 		// コメント表示中
 		private Boolean _isPlaying;
 
@@ -416,6 +427,16 @@ namespace YukkoView2.ViewModels
 			{
 				NewVersionLaunched();
 			}
+		}
+
+		// --------------------------------------------------------------------
+		// イベントハンドラー
+		// --------------------------------------------------------------------
+		private void FileSystemWatcherYukariConfig_Changed(Object sender, FileSystemEventArgs fileSystemEventArgs)
+		{
+			_logWriter?.LogMessage(TraceEventType.Information, "ゆかり設定ファイルが更新されました。");
+
+			// 現時点では必要な処理無し
 		}
 
 		// --------------------------------------------------------------------
@@ -509,6 +530,27 @@ namespace YukkoView2.ViewModels
 			UpdateYv2Status();
 			ButtonPlayClickedCommand.RaiseCanExecuteChanged();
 			ButtonStopClickedCommand.RaiseCanExecuteChanged();
+		}
+
+		// --------------------------------------------------------------------
+		// ゆかり設定ファイル config.ini の監視設定
+		// --------------------------------------------------------------------
+		private void SetFileSystemWatcherYukariConfig()
+		{
+			if (Yv2Model.Instance.EnvModel.Yv2Settings.IsYukariConfigPathValid())
+			{
+				String? path = Path.GetDirectoryName(Yv2Model.Instance.EnvModel.Yv2Settings.YukariConfigPath());
+				String filter = Path.GetFileName(Yv2Model.Instance.EnvModel.Yv2Settings.YukariConfigPath());
+				if (!String.IsNullOrEmpty(path) && !String.IsNullOrEmpty(filter))
+				{
+					_fileSystemWatcherYukariConfig.Path = path;
+					_fileSystemWatcherYukariConfig.Filter = filter;
+					_fileSystemWatcherYukariConfig.EnableRaisingEvents = true;
+					return;
+				}
+			}
+
+			_fileSystemWatcherYukariConfig.EnableRaisingEvents = false;
 		}
 
 		// --------------------------------------------------------------------

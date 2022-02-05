@@ -14,6 +14,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -245,7 +246,11 @@ namespace YukkoView2.Models.Receiver
 			{
 				using MemoryStream memStream = new();
 				(String serverUrl, String roomName) = Yv2Model.Instance.EnvModel.Yv2Settings.ServerUrlAndRoomName();
-				await downloader.DownloadAsStreamAsync(serverUrl + "?r=" + HttpUtility.UrlEncode(roomName, Encoding.UTF8) + "&v=3", memStream);
+				HttpResponseMessage response = await downloader.DownloadAsStreamAsync(serverUrl + "?r=" + HttpUtility.UrlEncode(roomName, Encoding.UTF8) + "&v=3", memStream);
+				if (!response.IsSuccessStatusCode)
+				{
+					throw new Exception("データを取得できませんでした。");
+				}
 				array = memStream.ToArray();
 
 				// サーバーとの通信に成功したのでエラー表示解除

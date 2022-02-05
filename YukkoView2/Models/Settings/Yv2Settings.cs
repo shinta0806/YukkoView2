@@ -154,7 +154,7 @@ namespace YukkoView2.Models.Settings
 			}
 			else
 			{
-				return Common.MakeAbsolutePath(Yv2Model.Instance.EnvModel.ExeFullFolder, YukariConfigPathSeed);
+				return Path.GetFullPath(YukariConfigPathSeed, Yv2Model.Instance.EnvModel.ExeFullFolder);
 			}
 		}
 
