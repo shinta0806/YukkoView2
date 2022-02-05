@@ -146,8 +146,8 @@ namespace YukkoView2.ViewModels
 			}
 			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "開始ボタンクリック時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "開始ボタンクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 		#endregion
@@ -180,8 +180,8 @@ namespace YukkoView2.ViewModels
 			}
 			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "停止ボタンクリック時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "停止ボタンクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 		#endregion
@@ -211,8 +211,8 @@ namespace YukkoView2.ViewModels
 			}
 			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "環境設定ボタンクリック時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "環境設定ボタンクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 		#endregion
@@ -260,8 +260,8 @@ namespace YukkoView2.ViewModels
 			}
 			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "投稿ボタンクリック時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "投稿ボタンクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 		#endregion
@@ -302,8 +302,8 @@ namespace YukkoView2.ViewModels
 			}
 			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ初期化時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "メインウィンドウ初期化時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 
@@ -333,15 +333,15 @@ namespace YukkoView2.ViewModels
 				SaveExitStatus();
 				//Common.DeleteTempFolder();
 
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "終了しました：" + Yv2Constants.APP_NAME_J + " "
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "終了しました：" + Yv2Constants.APP_NAME_J + " "
 						+ Yv2Constants.APP_VER + " --------------------");
 
 				_isDisposed = true;
 			}
 			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "メインウィンドウ破棄時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "メインウィンドウ破棄時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 
@@ -393,18 +393,18 @@ namespace YukkoView2.ViewModels
 				// ユーザーにメッセージ表示する前にログしておく
 				if (String.IsNullOrEmpty(prevLaunchVer))
 				{
-					Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Information, "新規起動：" + Yv2Constants.APP_VER);
+					_logWriter?.LogMessage(TraceEventType.Information, "新規起動：" + Yv2Constants.APP_VER);
 				}
 				else
 				{
-					Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Information, "更新起動：" + prevLaunchVer + "→" + Yv2Constants.APP_VER);
+					_logWriter?.LogMessage(TraceEventType.Information, "更新起動：" + prevLaunchVer + "→" + Yv2Constants.APP_VER);
 				}
 			}
 			String prevLaunchPath = Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchPath;
 			Boolean pathChanged = (String.Compare(prevLaunchPath, Yv2Model.Instance.EnvModel.ExeFullPath, true) != 0);
 			if (pathChanged && !String.IsNullOrEmpty(prevLaunchPath))
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Information, "パス変更起動：" + prevLaunchPath + "→" + Yv2Model.Instance.EnvModel.ExeFullPath);
+				_logWriter?.LogMessage(TraceEventType.Information, "パス変更起動：" + prevLaunchPath + "→" + Yv2Model.Instance.EnvModel.ExeFullPath);
 			}
 
 			// 更新起動時とパス変更時の処理
@@ -457,7 +457,7 @@ namespace YukkoView2.ViewModels
 			}
 
 			// 表示
-			Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(type, newVerMsg);
+			_logWriter?.ShowLogMessage(type, newVerMsg);
 			SaveExitStatus();
 
 #if !DISTRIB_STORE

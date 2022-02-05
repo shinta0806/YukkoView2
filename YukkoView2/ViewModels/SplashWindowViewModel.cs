@@ -95,8 +95,8 @@ namespace YukkoView2.ViewModels
 				MessageBox.Show("スプラッシュウィンドウ初期化時エラー：\n" + ex.Message + "\n" + ex.StackTrace, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
 
 				// 可能であればログする。YlModel 生成中に例外が発生する可能性があるが、それについては集約エラーハンドラーに任せる
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "スプラッシュウィンドウ初期化時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				_logWriter?.LogMessage(TraceEventType.Error, "スプラッシュウィンドウ初期化時エラー：\n" + ex.Message);
+				_logWriter?.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 
 				// 継続できないのでアプリを終了する
 				Environment.Exit(1);
