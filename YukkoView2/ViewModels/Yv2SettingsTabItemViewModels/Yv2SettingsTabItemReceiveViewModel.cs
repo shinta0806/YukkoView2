@@ -57,7 +57,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 
 		// コメントサーバー指定方法：自動
 		// ゆかり設定ファイルのパス（相対または絶対）
-		private String _yukariConfigPathSeed;
+		private String _yukariConfigPathSeed = String.Empty;
 		public String YukariConfigPathSeed
 		{
 			get => _yukariConfigPathSeed;
@@ -74,7 +74,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 
 		// コメントサーバー指定方法：手動
 		// コメントサーバーの URL
-		private String _serverUrlSeed;
+		private String _serverUrlSeed = String.Empty;
 		public String ServerUrlSeed
 		{
 			get => _serverUrlSeed;
@@ -83,7 +83,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 
 		// コメントサーバー指定方法：手動
 		// ルーム名
-		private String _roomNameSeed;
+		private String _roomNameSeed = String.Empty;
 		public String RoomNameSeed
 		{
 			get => _roomNameSeed;

@@ -288,6 +288,9 @@ namespace YukkoView2.ViewModels
 				// プログラムエラーチェック
 				Debug.Assert(Yv2Constants.ERROR_FACTOR_MESSAGE.Length == (Int32)Yv2StatusErrorFactor.__End__, "MainWindow.Initialize() bad ERROR_FACTOR_MESSAGE length");
 
+				// 環境の変化に対応
+				DoVerChangedIfNeeded();
+
 				// コメント表示ウィンドウを開く
 				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
 
@@ -375,6 +378,100 @@ namespace YukkoView2.ViewModels
 		// ====================================================================
 		// private 関数
 		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// バージョン更新時の処理
+		// --------------------------------------------------------------------
+		private void DoVerChangedIfNeeded()
+		{
+			// 更新起動時とパス変更時の記録
+			// 新規起動時は、両フラグが立つのでダブらないように注意
+			String prevLaunchVer = Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer;
+			Boolean verChanged = prevLaunchVer != Yv2Constants.APP_VER;
+			if (verChanged)
+			{
+				// ユーザーにメッセージ表示する前にログしておく
+				if (String.IsNullOrEmpty(prevLaunchVer))
+				{
+					Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Information, "新規起動：" + Yv2Constants.APP_VER);
+				}
+				else
+				{
+					Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Information, "更新起動：" + prevLaunchVer + "→" + Yv2Constants.APP_VER);
+				}
+			}
+			String prevLaunchPath = Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchPath;
+			Boolean pathChanged = (String.Compare(prevLaunchPath, Yv2Model.Instance.EnvModel.ExeFullPath, true) != 0);
+			if (pathChanged && !String.IsNullOrEmpty(prevLaunchPath))
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Information, "パス変更起動：" + prevLaunchPath + "→" + Yv2Model.Instance.EnvModel.ExeFullPath);
+			}
+
+			// 更新起動時とパス変更時の処理
+			if (verChanged || pathChanged)
+			{
+				Yv2Common.LogEnvironmentInfo();
+			}
+			if (verChanged)
+			{
+				NewVersionLaunched();
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// 新バージョンで初回起動された時の処理を行う
+		// --------------------------------------------------------------------
+		private void NewVersionLaunched()
+		{
+			String newVerMsg;
+			TraceEventType type = TraceEventType.Information;
+
+			// α・β警告、ならびに、更新時のメッセージ（2022/01/23）
+			// 新規・更新のご挨拶
+			if (String.IsNullOrEmpty(Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer))
+			{
+				// 新規
+				newVerMsg = "【初回起動】\n\n";
+				newVerMsg += Yv2Constants.APP_NAME_J + "をダウンロードしていただき、ありがとうございます。";
+			}
+			else
+			{
+				// 更新
+				newVerMsg = "【更新起動】\n\n";
+				newVerMsg += Yv2Constants.APP_NAME_J + "が更新されました。\n";
+				newVerMsg += "更新内容については［ヘルプ→改訂履歴］メニューをご参照ください。";
+			}
+
+			// α・βの注意
+			if (Yv2Constants.APP_VER.Contains('α'))
+			{
+				newVerMsg += "\n\nこのバージョンは開発途上のアルファバージョンです。\n"
+						+ "使用前にヘルプをよく読み、注意してお使い下さい。";
+				type = TraceEventType.Warning;
+			}
+			else if (Yv2Constants.APP_VER.Contains('β'))
+			{
+				newVerMsg += "\n\nこのバージョンは開発途上のベータバージョンです。\n"
+						+ "使用前にヘルプをよく読み、注意してお使い下さい。";
+				type = TraceEventType.Warning;
+			}
+
+			// 表示
+			Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(type, newVerMsg);
+			SaveExitStatus();
+
+#if !DISTRIB_STORE
+			// Zone ID 削除
+			CommonWindows.DeleteZoneID(YlModel.Instance.EnvModel.ExeFullFolder, SearchOption.AllDirectories);
+
+			// パスの注意
+			String? installMsg = InstallWarningMessage();
+			if (!String.IsNullOrEmpty(installMsg))
+			{
+				YlModel.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Warning, installMsg);
+			}
+#endif
+		}
 
 		// --------------------------------------------------------------------
 		// コメント表示開始
