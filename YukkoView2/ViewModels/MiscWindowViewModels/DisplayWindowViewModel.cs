@@ -135,6 +135,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Width -= 40;
 			Height -= 40;
 #endif
+			IsActive = true;
 			IsPlaying = true;
 			return _receiver.StartAsync();
 		}
@@ -160,6 +161,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 		// コメント受信用
 		private Receiver _receiver;
+
+		// コメント表示を停止した時刻
+		private Int32 _stopTick;
 
 		// 最前面表示用タイマー
 		private readonly DispatcherTimer _timerTopMost = new();

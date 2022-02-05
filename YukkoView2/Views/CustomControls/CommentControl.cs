@@ -282,6 +282,7 @@ namespace YukkoView2.Views.CustomControls
 		private void CommentControl_SizeChanged(Object sender, SizeChangedEventArgs e)
 		{
 			_fontUnit = ActualHeight * FONT_UNIT_SCALE;
+			InvalidateDrawData();
 			SetDrawFrame();
 		}
 
@@ -384,6 +385,17 @@ namespace YukkoView2.Views.CustomControls
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - borderThick, ActualWidth, borderThick));
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, borderThick, ActualHeight));
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - borderThick, 0, borderThick, ActualHeight));
+		}
+
+		// --------------------------------------------------------------------
+		// 描画データが再度準備されるようにする
+		// --------------------------------------------------------------------
+		private void InvalidateDrawData()
+		{
+			foreach (CommentInfo commentInfo in CommentInfos.Keys)
+			{
+				commentInfo.IsDrawDataPrepared = false;
+			}
 		}
 
 		// --------------------------------------------------------------------

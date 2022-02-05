@@ -384,12 +384,14 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		private Task PlayAsync()
 		{
-			// ウィンドウを前面に出すなど
-			_displayWindowViewModel.Messenger.Raise(new InteractionMessage(Yv2Constants.MESSAGE_KEY_WINDOW_ACTIVATE));
-
 			// 開始
 			Task task = _displayWindowViewModel.StartAsync();
 			SetIsPlaying(true);
+
+			// 開始コメント投稿
+			CommentInfo commentInfo = new("コメント表示を開始します", Yv2Constants.DEFAULT_YUKARI_FONT_SIZE, Colors.White);
+			_displayWindowViewModel.AddComment(commentInfo);
+
 			return task;
 		}
 

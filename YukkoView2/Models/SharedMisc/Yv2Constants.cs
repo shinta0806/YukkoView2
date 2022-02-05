@@ -92,9 +92,6 @@ namespace YukkoView2.Models.SharedMisc
 		// 環境設定ウィンドウを開く
 		public const String MESSAGE_KEY_OPEN_YV2_SETTINGS_WINDOW = "OpenYv2SettingsWindow";
 
-		// ウィンドウをアクティブ化する
-		public const String MESSAGE_KEY_WINDOW_ACTIVATE = "Activate";
-
 		// --------------------------------------------------------------------
 		// ファイル名
 		// --------------------------------------------------------------------
