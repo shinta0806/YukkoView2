@@ -135,6 +135,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Width -= 40;
 			Height -= 40;
 #endif
+			SlideInitialTicks();
 			IsActive = true;
 			IsPlaying = true;
 			return _receiver.StartAsync();
@@ -146,6 +147,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		public Task StopAsync()
 		{
 			IsPlaying = false;
+			_stopTick = Environment.TickCount;
 			return _receiver.StopAsync();
 		}
 
@@ -189,6 +191,18 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Top = rect.Top;
 			Width = rect.Width;
 			Height = rect.Height;
+		}
+
+		// --------------------------------------------------------------------
+		// 再開始時にコメントがワープするのを防ぐために InitialTick を調整する
+		// --------------------------------------------------------------------
+		private void SlideInitialTicks()
+		{
+			Int32 delta = Environment.TickCount - _stopTick;
+			foreach (CommentInfo commentInfo in CommentInfos.Keys)
+			{
+				commentInfo.InitialTick += delta;
+			}
 		}
 
 		// --------------------------------------------------------------------
