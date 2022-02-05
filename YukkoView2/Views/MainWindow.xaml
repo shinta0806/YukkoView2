@@ -33,6 +33,10 @@
             <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:DisplayWindow}" Mode="Normal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
         </l:InteractionMessageTrigger>
 
+        <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_SELECT_MONITOR_WINDOW}" Messenger="{Binding Messenger}">
+            <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:SelectMonitorWindow}" Mode="Modal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
+        </l:InteractionMessageTrigger>
+
         <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_YV2_SETTINGS_WINDOW}" Messenger="{Binding Messenger}">
             <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:Yv2SettingsWindow}" Mode="Modal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
         </l:InteractionMessageTrigger>
@@ -52,7 +56,7 @@
             <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="停止" Width="100" Height="25" Margin="10,0,0,0" VerticalAlignment="Center" Command="{Binding ButtonStopClickedCommand}" >
                 <materialDesign:PackIcon Kind="Stop" Height="18" Width="18" />
             </Button>
-            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="ディスプレイ選択" Width="50" Height="25" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonYukaListerSettingsClickedCommand}" Margin="50,0,0,0" >
+            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="ディスプレイ選択" Width="50" Height="25" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonSelectMonitorClickedCommand}" Margin="50,0,0,0" >
                 <materialDesign:PackIcon Kind="MonitorMultiple" Height="18" Width="18" />
             </Button>
             <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="環境設定" Width="50" Height="25" Margin="10,0,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonYv2SettingsClickedCommand}" >

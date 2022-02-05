@@ -187,6 +187,38 @@ namespace YukkoView2.ViewModels
 		}
 		#endregion
 
+		#region ディスプレイ選択ボタンの制御
+
+		private ViewModelCommand? _buttonSelectMonitorClickedCommand;
+
+		public ViewModelCommand ButtonSelectMonitorClickedCommand
+		{
+			get
+			{
+				if (_buttonSelectMonitorClickedCommand == null)
+				{
+					_buttonSelectMonitorClickedCommand = new ViewModelCommand(ButtonSelectMonitorClicked);
+				}
+				return _buttonSelectMonitorClickedCommand;
+			}
+		}
+
+		public void ButtonSelectMonitorClicked()
+		{
+			try
+			{
+				// ViewModel 経由でウィンドウを開く
+				using SelectMonitorWindowViewModel selectMonitorWindowViewModel = new();
+				Messenger.Raise(new TransitionMessage(selectMonitorWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_SELECT_MONITOR_WINDOW));
+			}
+			catch (Exception ex)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "ディスプレイ選択ボタンクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
 		#region 環境設定ボタンの制御
 		private ViewModelCommand? _buttonYv2SettingsClickedCommand;
 

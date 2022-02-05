@@ -185,6 +185,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				return;
 			}
 
+			Debug.WriteLine("MoveWindowIfNeeded() new target: " + target);
 			_currentTargetMonitor = target;
 			Rect rect = Yv2Model.Instance.EnvModel.MonitorRects[_currentTargetMonitor];
 			Left = rect.Left;

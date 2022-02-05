@@ -100,6 +100,9 @@ namespace YukkoView2.Models.SharedMisc
 		// メインウィンドウを開く
 		public const String MESSAGE_KEY_OPEN_MAIN_WINDOW = "OpenMainWindow";
 
+		// ディスプレイ選択ウィンドウを開く
+		public const String MESSAGE_KEY_OPEN_SELECT_MONITOR_WINDOW = "OpenSelectMonitorWindow";
+
 		// 環境設定ウィンドウを開く
 		public const String MESSAGE_KEY_OPEN_YV2_SETTINGS_WINDOW = "OpenYv2SettingsWindow";
 

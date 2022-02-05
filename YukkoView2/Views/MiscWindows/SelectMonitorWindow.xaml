@@ -1,24 +1,19 @@
-﻿<Window x:Class="YukkoView2.Views.MiscWindows.DisplayWindow"
+﻿<Window x:Class="YukkoView2.Views.MiscWindows.SelectMonitorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sb="clr-namespace:Shinta.Behaviors"
-        xmlns:vcc="clr-namespace:YukkoView2.Views.CustomControls"
+        xmlns:v="clr-namespace:YukkoView2.Views.MiscWindows"
         xmlns:vmmwvm="clr-namespace:YukkoView2.ViewModels.MiscWindowViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Name="CommentDisplayWindow"
-        AllowsTransparency="True" WindowStyle="None" Background="Transparent" 
-        Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" 
-        MinWidth="200" MinHeight="100" Topmost="True" >
+        Title="{Binding Title}" Height="350" Width="525">
 
     <Window.DataContext>
-        <vmmwvm:DisplayWindowViewModel />
+        <vmmwvm:SelectMonitorWindowViewModel />
     </Window.DataContext>
 
     <behaviors:Interaction.Behaviors>
-        <sb:WindowBindingSupportBehavior IsActive="{Binding IsActive}" />
+        <sb:WindowBindingSupportBehavior IsCascade="True" MinimizeBox="False" />
     </behaviors:Interaction.Behaviors>
 
     <behaviors:Interaction.Triggers>
@@ -36,7 +31,7 @@
 
     </behaviors:Interaction.Triggers>
 
-    <DockPanel>
-        <vcc:CommentControl CommentInfos="{Binding CommentInfos}"  IsEnabled="{Binding IsPlaying}" FontFamily="Meiryo UI" />
-    </DockPanel>
+    <StackPanel>
+
+    </StackPanel>
 </Window>
