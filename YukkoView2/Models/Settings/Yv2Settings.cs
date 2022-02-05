@@ -179,13 +179,24 @@ namespace YukkoView2.Models.Settings
 			CommentServerType = (CommentServerType)Math.Clamp((Int32)CommentServerType, 0, (Int32)CommentServerType.__End__ - 1);
 			CommentReceiveType = (CommentReceiveType)Math.Clamp((Int32)CommentReceiveType, 0, (Int32)CommentReceiveType.__End__ - 1);
 
-			// コメントサーバー指定方法が自動の場合は、手動のデフォルト値を設定
+			// コメントサーバー指定方法が自動の場合は、手動のデフォルト値を設定（未設定の場合のみ）
 			if (CommentServerType == CommentServerType.Auto)
 			{
-				(ServerUrlSeed, RoomNameSeed) = AnalyzeYukariConfig();
+				(String serverUrlSeed, String roomNameSeed) = AnalyzeYukariConfig();
 				if (String.IsNullOrEmpty(ServerUrlSeed))
 				{
-					ServerUrlSeed = "http://localhost/cms/" + FILE_NAME_COMMENT_SERVER_DEFAULT;
+					if (String.IsNullOrEmpty(serverUrlSeed))
+					{
+						ServerUrlSeed = "http://localhost/cms/" + FILE_NAME_COMMENT_SERVER_DEFAULT;
+					}
+					else
+					{
+						ServerUrlSeed = serverUrlSeed;
+					}
+				}
+				if (String.IsNullOrEmpty(RoomNameSeed))
+				{
+					RoomNameSeed = roomNameSeed;
 				}
 			}
 		}

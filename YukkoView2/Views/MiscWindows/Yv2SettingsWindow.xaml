@@ -38,7 +38,7 @@
     </behaviors:Interaction.Triggers>
 
     <StackPanel>
-        <TabControl Height="300" Width="500" Margin="10,10,10,0" >
+        <TabControl Height="350" Width="500" Margin="10,10,10,0" >
             <TabItem Header="設定" >
                 <TabItem.DataContext>
                     <Binding Path="Yv2SettingsTabItemSettingsViewModel" />
@@ -53,6 +53,29 @@
                 </TabItem.DataContext>
                 <StackPanel >
                     <DockPanel Margin="0,10,0,0">
+                        <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" Height="3" VerticalAlignment="Center" Margin="0" Width="20"/>
+                        <Label Content="コメントサーバー指定方法" Margin="10,0"/>
+                        <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" Height="3" VerticalAlignment="Center" Margin="0"/>
+                    </DockPanel>
+                    <StackPanel Margin="20,10,0,0" >
+                        <RadioButton Content="ゆかりの設定を自動取得" IsChecked="{Binding CommentServerAuto}" />
+                        <DockPanel Margin="30,5,20,0" IsEnabled="{Binding CommentServerAuto}" >
+                            <Label Content="ゆかり設定ファイル (_Y)：" Width="130" HorizontalContentAlignment="Right" />
+                            <TextBox Text="{Binding YukariConfigPathSeed}" />
+                        </DockPanel>
+                        <RadioButton Content="手動で指定" IsChecked="{Binding CommentServerManual}" Margin="0,10,0,0" />
+                        <StackPanel Margin="30,5,20,0" IsEnabled="{Binding CommentServerManual}" >
+                            <DockPanel >
+                                <Label Content="コメントサーバー (_C)：" Width="130" HorizontalContentAlignment="Right" />
+                                <TextBox Text="{Binding ServerUrlSeed}" />
+                            </DockPanel>
+                            <DockPanel >
+                                <Label Content="ルーム名 (_R)：" Width="130" HorizontalContentAlignment="Right" />
+                                <TextBox Text="{Binding RoomNameSeed}" />
+                            </DockPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <DockPanel Margin="0,20,0,0">
                         <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" Height="3" VerticalAlignment="Center" Margin="0" Width="20"/>
                         <Label Content="コメント受信方法" Margin="10,0"/>
                         <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" Height="3" VerticalAlignment="Center" Margin="0"/>

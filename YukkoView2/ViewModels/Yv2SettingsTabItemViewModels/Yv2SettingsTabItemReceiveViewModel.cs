@@ -47,6 +47,49 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// View 通信用のプロパティー
 		// --------------------------------------------------------------------
 
+		// コメントサーバー指定方法：自動
+		private Boolean _commentServerAuto;
+		public Boolean CommentServerAuto
+		{
+			get => _commentServerAuto;
+			set => RaisePropertyChangedIfSet(ref _commentServerAuto, value);
+		}
+
+		// コメントサーバー指定方法：自動
+		// ゆかり設定ファイルのパス（相対または絶対）
+		private String _yukariConfigPathSeed;
+		public String YukariConfigPathSeed
+		{
+			get => _yukariConfigPathSeed;
+			set => RaisePropertyChangedIfSet(ref _yukariConfigPathSeed, value);
+		}
+
+		// コメントサーバー指定方法：手動
+		private Boolean _commentServerManual;
+		public Boolean CommentServerManual
+		{
+			get => _commentServerManual;
+			set => RaisePropertyChangedIfSet(ref _commentServerManual, value);
+		}
+
+		// コメントサーバー指定方法：手動
+		// コメントサーバーの URL
+		private String _serverUrlSeed;
+		public String ServerUrlSeed
+		{
+			get => _serverUrlSeed;
+			set => RaisePropertyChangedIfSet(ref _serverUrlSeed, value);
+		}
+
+		// コメントサーバー指定方法：手動
+		// ルーム名
+		private String _roomNameSeed;
+		public String RoomNameSeed
+		{
+			get => _roomNameSeed;
+			set => RaisePropertyChangedIfSet(ref _roomNameSeed, value);
+		}
+
 		// コメント受信方法：プッシュ通知
 		private Boolean _commentReceivePush;
 		public Boolean CommentReceivePush
@@ -72,6 +115,13 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		public override void PropertiesToSettings()
 		{
+			// コメントサーバー指定方法
+			Yv2Model.Instance.EnvModel.Yv2Settings.CommentServerType = CommentServerAuto ? CommentServerType.Auto : CommentServerType.Manual;
+			Yv2Model.Instance.EnvModel.Yv2Settings.YukariConfigPathSeed = YukariConfigPathSeed;
+			Yv2Model.Instance.EnvModel.Yv2Settings.ServerUrlSeed = ServerUrlSeed;
+			Yv2Model.Instance.EnvModel.Yv2Settings.RoomNameSeed = RoomNameSeed;
+
+			// コメント受信方法
 			Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType = CommentReceivePush ? CommentReceiveType.Push : CommentReceiveType.Download;
 		}
 
@@ -80,15 +130,30 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		public override void SettingsToProperties()
 		{
+			// コメントサーバー指定方法
+			switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentServerType)
+			{
+				case CommentServerType.Auto:
+					CommentServerAuto = true;
+					break;
+				case CommentServerType.Manual:
+				default:
+					CommentServerManual = true;
+					break;
+			}
+			YukariConfigPathSeed = Yv2Model.Instance.EnvModel.Yv2Settings.YukariConfigPathSeed;
+			ServerUrlSeed = Yv2Model.Instance.EnvModel.Yv2Settings.ServerUrlSeed;
+			RoomNameSeed = Yv2Model.Instance.EnvModel.Yv2Settings.RoomNameSeed;
+
+			// コメント受信方法
 			switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType)
 			{
 				case CommentReceiveType.Push:
 					CommentReceivePush = true;
 					break;
 				case CommentReceiveType.Download:
-					CommentReceiveDownload = true;
-					break;
 				default:
+					CommentReceiveDownload = true;
 					break;
 			}
 		}
