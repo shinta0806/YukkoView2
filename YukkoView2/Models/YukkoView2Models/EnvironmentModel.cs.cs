@@ -52,16 +52,6 @@ namespace YukkoView2.Models.YukkoView2Models
 		// 環境設定
 		public Yv2Settings Yv2Settings { get; } = new();
 
-#if false
-		// ゆっこビュー 2 の動作状況
-		private Yv2Status _yv2Status;
-		public Yv2Status Yv2Status
-		{
-			get => _yv2Status;
-			set => RaisePropertyChangedIfSet(ref _yv2Status, value);
-		}
-#endif
-
 		// エラーが発生しているかどうか（要因ごと）
 		public ObservableSynchronizedCollection<Boolean> Yv2StatusErrorFactors { get; } = new();
 

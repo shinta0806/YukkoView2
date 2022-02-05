@@ -65,9 +65,9 @@ namespace YukkoView2.Models.SharedMisc
 	// --------------------------------------------------------------------
 	public enum Yv2StatusErrorFactor
 	{
-		ServerNotConnected,
 		YukariConfigNotFound,
 		YukariConfigBadContents,
+		ServerNotConnected,
 		__End__,
 	}
 
@@ -150,9 +150,9 @@ namespace YukkoView2.Models.SharedMisc
 		// エラー要因ごとのメッセージ
 		public static readonly String[] ERROR_FACTOR_MESSAGE =
 		{
-			"コメントサーバーと通信できません。　※アプリでのコメント投稿は可能です。",
 			"ゆかり設定ファイルが見つかりませんでした。",
 			"ゆかり設定を読み込めませんでした。",
+			"コメントサーバーと通信できません。",
 		};
 
 		// --------------------------------------------------------------------

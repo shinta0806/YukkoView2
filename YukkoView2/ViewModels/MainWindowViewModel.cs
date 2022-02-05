@@ -342,7 +342,7 @@ namespace YukkoView2.ViewModels
 				//Common.DeleteTempFolder();
 
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "終了しました：" + Yv2Constants.APP_NAME_J + " "
-						+ Yv2Constants.APP_VER + " --------------------");
+						+ Yv2Constants.APP_VER + "  " + Yv2Constants.APP_DISTRIB + " --------------------");
 
 				_isDisposed = true;
 			}
@@ -572,7 +572,7 @@ namespace YukkoView2.ViewModels
 			if (errorIndex >= 0)
 			{
 				// エラーがある場合はエラー表示
-				Yv2StatusMessage = Yv2Constants.ERROR_FACTOR_MESSAGE[errorIndex];
+				Yv2StatusMessage = Yv2Constants.ERROR_FACTOR_MESSAGE[errorIndex] + "　※アプリでのコメント投稿は可能です。";
 				Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_ERROR;
 			}
 			else

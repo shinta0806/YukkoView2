@@ -226,6 +226,7 @@ namespace YukkoView2.Models.Settings
 
 			try
 			{
+				Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.YukariConfigNotFound] = !IsYukariConfigPathValid();
 				if (!IsYukariConfigPathValid())
 				{
 					throw new Exception("ゆかり設定ファイルが正しく指定されていません。");
