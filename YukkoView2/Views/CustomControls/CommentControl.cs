@@ -112,21 +112,24 @@ namespace YukkoView2.Views.CustomControls
 				// 仕方ないので、オフスクリーンは都度生成する
 				RenderTargetBitmap offScreen = CreateOffScreen();
 				Rect drawingRect = new(0, 0, offScreen.Width, offScreen.Height);
-				DrawingVisual offScreenVisual = new();
-				using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
+				if (IsEnabled)
+				{
+					DrawingVisual offScreenVisual = new();
+					using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
 
-				// 枠
-				DrawFrameIfNeeded(offScreenContext);
+					// 枠
+					DrawFrameIfNeeded(offScreenContext);
 
-				// 描画データ準備
-				PrepareDrawDataIfNeeded();
+					// 描画データ準備
+					PrepareDrawDataIfNeeded();
 
-				// 描画
-				DrawCommentInfosIfNeeded(offScreenContext);
+					// 描画
+					DrawCommentInfosIfNeeded(offScreenContext);
 
-				// オンスクリーンへ転写
-				offScreenContext.Close();
-				offScreen.Render(offScreenVisual);
+					// オンスクリーンへ転写
+					offScreenContext.Close();
+					offScreen.Render(offScreenVisual);
+				}
 				drawingContext.DrawImage(offScreen, drawingRect);
 			}
 			catch (Exception ex)
@@ -155,9 +158,6 @@ namespace YukkoView2.Views.CustomControls
 
 		// コメント表示用タイマー
 		private readonly DispatcherTimer _timerDraw = new();
-
-		// オフスクリーン
-		//private RenderTargetBitmap _offScreen;
 
 		// 枠を描画するかどうか
 		private Boolean _drawFrame;
@@ -273,6 +273,7 @@ namespace YukkoView2.Views.CustomControls
 			else
 			{
 				_timerDraw.Stop();
+				InvalidateVisual();
 			}
 		}
 
@@ -324,7 +325,6 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private RenderTargetBitmap CreateOffScreen()
 		{
-			//Debug.WriteLine("CreateOffScreen() " + ActualWidth + ", " + ActualHeight);
 			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)ActualHeight, 1), Common.DEFAULT_DPI, Common.DEFAULT_DPI, PixelFormats.Pbgra32);
 
 			// ピクセルぴったり描画

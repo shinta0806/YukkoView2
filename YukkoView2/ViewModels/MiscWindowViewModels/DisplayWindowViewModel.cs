@@ -11,6 +11,7 @@
 // ----------------------------------------------------------------------------
 
 using Livet;
+
 using Shinta;
 using Shinta.ViewModels;
 
@@ -20,7 +21,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Threading;
 
 using YukkoView2.Models.Receiver;
@@ -206,20 +206,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Width = rect.Width - 2;
 			Height = rect.Height - 2;
 			_logWriter?.LogMessage(TraceEventType.Verbose, "MoveWindowIfNeeded() " + Left + ", " + Top + ", " + Width + ", " + Height);
-#if DEBUGz
-			Debug.WriteLine("MoveWindowIfNeeded() new target: " + newTargetMonitorIndex);
-			for (Int32 i = 0; i < scaledMonitorRects.Count; i++)
-			{
-				Rect dr = scaledMonitorRects[i];
-				_logWriter?.LogMessage(TraceEventType.Verbose, "Scaled ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
-			}
-			List<Rect> rawRects = monitorManager.GetRawMonitorRects();
-			for (Int32 i = 0; i < rawRects.Count; i++)
-			{
-				Rect dr = rawRects[i];
-				_logWriter?.LogMessage(TraceEventType.Verbose, "Raw ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
-			}
-#endif
 		}
 
 		// --------------------------------------------------------------------
