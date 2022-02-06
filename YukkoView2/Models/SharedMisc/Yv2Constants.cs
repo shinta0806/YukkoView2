@@ -185,5 +185,7 @@ namespace YukkoView2.Models.SharedMisc
 		// 通信確認間隔 [ms]
 		public const Int32 CHECK_CONNECTION_INTERVAL = 1000;
 
+		// 枠描画時の比率
+		public const Int32 FRAME_DIVIDER = 20;
 	}
 }

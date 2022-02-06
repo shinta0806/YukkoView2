@@ -73,7 +73,15 @@ namespace YukkoView2.ViewModels
 				_mainWindowViewModel = new MainWindowViewModel(this);
 				if (Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds.Width == 0.0 || Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds.Height == 0.0)
 				{
-					// デフォルトウィンドウサイズ
+					// デフォルトウィンドウサイズ（コメント表示ウィンドウの枠とかぶらないようにする）
+					MonitorManager monitorManager = new();
+					List<Rect> rects = monitorManager.GetScaledMonitorRects();
+					if (rects.Any())
+					{
+						Double margin = rects[0].Height / Yv2Constants.FRAME_DIVIDER;
+						_mainWindowViewModel.Left = margin;
+						_mainWindowViewModel.Top = margin;
+					}
 				}
 				else
 				{

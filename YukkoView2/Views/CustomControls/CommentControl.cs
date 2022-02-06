@@ -380,11 +380,11 @@ namespace YukkoView2.Views.CustomControls
 			}
 
 			// 描画
-			Int32 borderThick = (Int32)ActualHeight / 20;
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, ActualWidth, borderThick));
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - borderThick, ActualWidth, borderThick));
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, borderThick, ActualHeight));
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - borderThick, 0, borderThick, ActualHeight));
+			Int32 frameThick = (Int32)ActualHeight / Yv2Constants.FRAME_DIVIDER;
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, ActualWidth, frameThick));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - frameThick, ActualWidth, frameThick));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, frameThick, ActualHeight));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - frameThick, 0, frameThick, ActualHeight));
 		}
 
 		// --------------------------------------------------------------------
