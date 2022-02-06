@@ -44,7 +44,7 @@ namespace YukkoView2.Models.SharedMisc
 	// --------------------------------------------------------------------
 	public enum SelectMonitorType
 	{
-		MpcBe,	// MPC-BE が表示されているディスプレイ
+		MpcBe,  // MPC-BE が表示されているディスプレイ
 		Manual, // 手動
 		__End__,
 	}
@@ -183,7 +183,7 @@ namespace YukkoView2.Models.SharedMisc
 		public const Int32 CONTINUOUS_PREVENT_TIME = 5000;
 
 		// 通信確認間隔 [ms]
-		public const Int32 CHECK_CONNECTION_INTERVAL = 1000;
+		public const Int32 CHECK_CONNECTION_INTERVAL = 10 * 1000;
 
 		// 枠描画時の比率
 		public const Int32 FRAME_DIVIDER = 20;

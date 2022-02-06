@@ -109,10 +109,11 @@ namespace YukkoView2.Views.CustomControls
 			try
 			{
 				// 描画の必要性を判定
-				if (IsEnabled && !CommentInfos.Any())
+				if (IsEnabled && !CommentInfos.Any() && !_clearScreen)
 				{
 					return;
 				}
+				_clearScreen = false;
 
 				// オフスクリーン描画
 				// オフスクリーンをクラスメンバーにすると、ガベージコレクトが遅延するのか、一時的に数 GB のメモリを消費してしまう
@@ -138,6 +139,7 @@ namespace YukkoView2.Views.CustomControls
 					offScreen.Render(offScreenVisual);
 				}
 				drawingContext.DrawImage(offScreen, drawingRect);
+				//Debug.WriteLine("OnRender() end");
 			}
 			catch (Exception ex)
 			{
@@ -165,6 +167,9 @@ namespace YukkoView2.Views.CustomControls
 
 		// コメント表示用タイマー
 		private readonly DispatcherTimer _timerDraw = new();
+
+		// 画面を全消去するかどうか
+		private Boolean _clearScreen;
 
 		// 枠を描画するかどうか
 		private Boolean _drawFrame;
@@ -267,6 +272,15 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
+		// 画面消去
+		// --------------------------------------------------------------------
+		private void ClearScreen()
+		{
+			_clearScreen = true;
+			InvalidateVisual();
+		}
+
+		// --------------------------------------------------------------------
 		// IsEnabled プロパティーが更新された
 		// --------------------------------------------------------------------
 		private void CommentControl_IsEnabledChanged(Object sender, DependencyPropertyChangedEventArgs e)
@@ -280,7 +294,7 @@ namespace YukkoView2.Views.CustomControls
 			else
 			{
 				_timerDraw.Stop();
-				InvalidateVisual();
+				ClearScreen();
 			}
 		}
 
@@ -364,6 +378,10 @@ namespace YukkoView2.Views.CustomControls
 					{
 						// 移動が完了したので削除
 						CommentInfos.TryRemove(commentInfo, out _);
+						if (!CommentInfos.Any())
+						{
+							ClearScreen();
+						}
 						Debug.WriteLine("DrawCommentInfosIfNeeded() 削除: 残: " + CommentInfos.Count);
 					}
 				}
@@ -386,12 +404,19 @@ namespace YukkoView2.Views.CustomControls
 				return;
 			}
 
+			// 上下マージン
+			Int32 margin = 0;
+			if (Yv2Model.Instance.EnvModel.Yv2Settings.EnableMargin)
+			{
+				margin = (Int32)ActualHeight * Yv2Model.Instance.EnvModel.Yv2Settings.MarginPercent / 100;
+			}
+
 			// 描画
 			Int32 frameThick = (Int32)ActualHeight / Yv2Constants.FRAME_DIVIDER;
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, ActualWidth, frameThick));
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - frameThick, ActualWidth, frameThick));
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, 0, frameThick, ActualHeight));
-			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - frameThick, 0, frameThick, ActualHeight));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, margin, ActualWidth, frameThick));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - frameThick - margin, ActualWidth, frameThick));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, margin, frameThick, ActualHeight - margin * 2));
+			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - frameThick, margin, frameThick, ActualHeight - margin * 2));
 		}
 
 		// --------------------------------------------------------------------
