@@ -25,6 +25,7 @@
         <!-- When ContentRendered event raised, Initialize method of ViewModel would be called. -->
         <behaviors:EventTrigger EventName="ContentRendered">
             <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize" />
+            <l:LivetCallMethodAction MethodTarget="{Binding}" MethodName="Initialize2" MethodParameter="{Binding ElementName=CommentDisplayWindow}" />
         </behaviors:EventTrigger>
 
         <!-- Dispose method is called, when Window closing. -->

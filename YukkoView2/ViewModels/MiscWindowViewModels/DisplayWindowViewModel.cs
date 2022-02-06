@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Threading;
 
 using YukkoView2.Models.Receiver;
@@ -101,8 +102,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 			try
 			{
-				MoveWindowIfNeeded();
-
 				// 最前面表示用タイマー
 				_timerTopMost.Interval = TimeSpan.FromSeconds(5);
 				_timerTopMost.Tick += new EventHandler((s, e) =>
@@ -115,6 +114,24 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			{
 				_logWriter?.ShowLogMessage(TraceEventType.Error, "コメント表示ウィンドウ初期化時エラー：\n" + ex.Message);
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// 初期化 2
+		// --------------------------------------------------------------------
+		public void Initialize2(object sender)
+		{
+			try
+			{
+				Window window = (Window)sender;
+				_windowHandle = new WindowInteropHelper(window).Handle;
+				MoveWindowIfNeeded();
+			}
+			catch (Exception excep)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "メインウィンドウ初期化 (2) 時エラー：\n" + excep.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
 			}
 		}
 
@@ -169,6 +186,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// コメント表示を停止した時刻
 		private Int32 _stopTick;
 
+		// ウィンドウハンドル
+		private IntPtr _windowHandle;
+
 		// 最前面表示用タイマー
 		private readonly DispatcherTimer _timerTopMost = new();
 
@@ -181,6 +201,11 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		private void MoveWindowIfNeeded()
 		{
+			if (_windowHandle == IntPtr.Zero)
+			{
+				return;
+			}
+
 			MonitorManager monitorManager = new();
 			List<Rect> monitorRects = monitorManager.GetMonitorRects();
 			Int32 newTargetMonitorIndex = TargetMonitorIndex(monitorRects);
@@ -200,11 +225,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			}
 #endif
 
+			WindowsApi.MoveWindow(_windowHandle, (Int32)rect.Left + 1, (Int32)rect.Top + 1, (Int32)rect.Width - 2, (Int32)rect.Height - 2, false);
+#if false
 			// タスクバーが表示されるように上下左右 1 ピクセルずつ縮める
 			Left = rect.Left + 1;
 			Top = rect.Top + 1;
 			Width = rect.Width - 2;
 			Height = rect.Height - 2;
+#endif
 		}
 
 		// --------------------------------------------------------------------
