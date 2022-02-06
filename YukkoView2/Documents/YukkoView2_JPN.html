@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ゆっこビュー 2 Ver 1.0 ヘルプ</title>
+<link rel="stylesheet" href="HelpParts/SHIHelpG2.css" type="text/css">
+<script src="HelpParts/jquery.min.js"></script>
+<script src="HelpParts/Scroll.js"></script>
+</head>
+
+
+<body>
+
+<!-- Float Top Button -->
+<a href="#Top">
+<div id="PageTopButton">
+ <div id="PageTopButtonText">▲</div>
+</div>
+</a>
+
+<!-- ★★★　メインコンテンツ　★★★ -->
+<div id="MainCol">
+
+<a name="Top"></a>
+
+<a name="Hajimeni"></a>
+<h1>はじめに</h1>
+
+<a name="Gaiyou"></a>
+<h2>概要</h2>
+
+<p>
+<img src="HelpParts/YukkoView_Icon.png" alt="" width="128" align="right" hspace="10" vspace="10">
+ゆっこビュー 2は、持ち込みカラオケ用のブラウザリクエストツールである「<a href="https://github.com/bee7813993/KaraokeRequestorWeb/wiki" target="_blank">ゆかり</a>」に書き込まれたコメントを、再生中の動画に重ねて表示するためのツールです。<br clear="right">
+<br>
+<a href="HelpParts/YukkoView_Running.png" target="_blank"><img src="HelpParts/YukkoView_Running.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+「<b>ゆ</b>（かり）　<b>コ</b>（メント）　<b>ビュー</b>（アー）」の略で「ゆっこビュー」です。<br>
+<br>
+なお、本ヘルプで縮小表示されている画像は、クリックすると原寸大で表示されます。<br clear="right">
+</p>
+
+<a name="Dousakankyou"></a>
+<h2>動作環境</h2>
+
+<p>
+<a href="http://shinta.coresv.com/software/yukkoview_jpn/#Support" target="_blank">ゆっこビュー 2公式ページのサポート情報</a>をご覧ください。<br>
+</p>
+
+<a name="Install"></a>
+<h2>インストール</h2>
+
+<p>
+<a href="HelpParts/YukkoView_Install.png" target="_blank"><img src="HelpParts/YukkoView_Install.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+ダウンロードした zip ファイルの中にある YukkoView フォルダを、ゆかりの htdocs フォルダの中に展開して下さい。<br>
+<br>
+ゆかりをゆかり標準のフォルダにインストールした場合、ゆっこビュー 2実行ファイルのフルパスは<br>
+<pre>
+C:\xampp\htdocs\YukkoView\YukkoView.exe
+</pre>
+となります。<br clear="right">
+</p>
+
+<a name="Kido"></a>
+<h2>起動</h2>
+
+<p>
+<a href="HelpParts/YukkoView_MainWindow.png" target="_blank"><img src="HelpParts/YukkoView_MainWindow.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+ゆっこビュー 2を起動すると、メインウィンドウが表示されます。<br>
+<br>
+マルチディスプレイ環境でゆっこビュー 2を使用する場合は、予めマルチディスプレイにしておいた後で、ゆっこビュー 2を起動してください。<br clear="right">
+<br>
+<a href="HelpParts/YukkoView_SmartScreen.png" target="_blank"><img src="HelpParts/YukkoView_SmartScreen.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+SmartScreen によって起動ができない場合（「Windows によって PC が保護されました」という画面が表示される場合）は、「詳細情報」をクリックしてから「実行する」をクリックしてください。<br>
+<br>
+ゆっこビュー 2はゆかりのコメントサーバーと通信しますので、ファイアーウォール等のセキュリティーソフトを使用している場合は、通信を許可して下さい。<br clear="right">
+</p>
+
+
+<a name="Tsukaikata"></a>
+<h1>使い方</h1>
+
+<a name="DougasaiseiapplicationwoSettei"></a>
+<h2>動画再生アプリケーションを設定</h2>
+
+<p>
+動画再生アプリケーション（MPC-BE など）の設定で、Direct 3D を使用しないよう設定して下さい。Direct 3D を使ってしまうと、コメントを映像に重ねて表示できなくなってしまいます。<br>
+<br>
+<a href="HelpParts/YukkoView_MPCVideoSettings.png" target="_blank"><img src="HelpParts/YukkoView_MPCVideoSettings.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+例えば MPC-BE であれば、設定画面を開き、「映像」のところにある「Direct3D フルスクリーン」のチェックを外します。<br clear="right">
+</p>
+
+<a name="YukariwoSettei"></a>
+<h2>ゆかりを設定</h2>
+
+<p>
+ゆっこビュー 2はゆかりのコメントサーバーと通信しますので、ゆっこビュー 2を使うには、まず、ゆかり側でコメントサーバーの設定を行う必要があります。ゆかりは 2018/08/22 以降のバージョンを使用して下さい。<br>
+<br>
+<a href="http://localhost/init.php" target="_blank">ゆかりの設定画面</a>にアクセスし、ユーザー名に「admin」、パスワードを空欄にして、ゆかりの設定画面にログインします。<br>
+<br>
+<a href="HelpParts/YukkoView_YukariCommentSettings.png" target="_blank"><img src="HelpParts/YukkoView_YukariCommentSettings.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+ゆかりの設定画面の真ん中あたりに、「コメントサーバー設定」があるので、「http://localhost/cms/r.php」を選択します。<br>
+<br>
+「ルーム名」は半角英数字 8 文字までで好きな名前を入力します。<br>
+<br>
+設定を終えたら、ゆかり設定画面上部にあるの「設定反映」ボタンをクリックします。<br>
+</p>
+
+<a name="YukarinoSetteiwoTekiyou"></a>
+<h2>ゆかりの設定を適用</h2>
+
+<p>
+<a href="HelpParts/YukkoView_MainWindow.png" target="_blank"><img src="HelpParts/YukkoView_MainWindow.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+先ほどのゆかりの設定を、ゆっこビュー 2に適用します。ゆっこビュー 2を起動して下さい。<br>
+<br>
+初回起動時は、メインウィンドウの「ゆかりの設定を自動取得」が選択されているので、ゆっこビュー 2が正しくインストールされていれば、面倒な設定は不要で自動的にゆかりの設定が適用されます。メインウィンドウ上部に「開始ボタンをクリックして下さい」と表示されていれば、自動的に設定が適用されていて、スタンバイ状態になっています。<br clear="right">
+<br>
+<a href="HelpParts/YukkoView_YukariErrorMessage.png" target="_blank"><img src="HelpParts/YukkoView_YukariErrorMessage.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+もしも、メインウィンドウの上部に「ゆかりの設定を読み込めませんでした」と表示されている場合は、自動取得がうまく行われていません。「ゆかりの設定を読み込めませんでした」と表示されている付近にマウスカーソルを合わせると、原因が表示されます（表示されない場合は、ゆっこビュー 2のウィンドウを一度クリックしてアクティブにしてから、再度、マウスカーソルを合わせて下さい）。<br>
+<br>
+「コメントサーバーが設定されていません」と表示される場合は、ゆかりのコメントサーバー設定が正しく行われていませんので見直して下さい。<br>
+<br>
+「ファイル○○が見つかりませんでした」と表示される場合は、ゆかりの設定ファイルの保存場所を自動的に見つけることができませんでした。その場合は、再度ゆっこビュー 2をインストールし直すか、あるいは、「参照」ボタンをクリックして、ゆかりの設定ファイルを指定します。ゆかりの設定ファイルは、htdocs フォルダーの中にある config.ini です。<br>
+<br>
+何らかの原因で自動設定がうまくいかない場合は、「手動で設定」を選択すると、手動での設定ができるようになります。<br>
+<br>
+コメントサーバーは通常、「http://localhost/cms/c.php」です。また、「ルーム名」は、ゆかりの設定画面で設定したルーム名を入力します。<br clear="right">
+</p>
+
+<a name="ViewerWindownoIchigime"></a>
+<h2>ビューアウィンドウの位置決め</h2>
+
+<p>
+<a href="HelpParts/YukkoView_ViewerWindow.png" target="_blank"><img src="HelpParts/YukkoView_ViewerWindow.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+青い枠で表示されているウィンドウがビューアウィンドウで、ここにゆかりに書き込まれたコメントが表示されます。通常は、動画再生アプリケーション（MPC-BE など）に重ねてコメントを表示しますので、動画再生アプリケーションのウィンドウとビューアウィンドウの大きさを揃えるようにします。<br>
+<br>
+メインウィンドウの「ビューアウィンドウ」で、動画再生アプリケーションが表示されているディスプレイを指定します。また、「最大化」か「通常」でビューアウィンドウのサイズを指定します。通常は、動画再生アプリケーションを最大化して使うと思いますので、その場合は「最大化」を選びます。<br>
+<br>
+ビューアウィンドウの設定を終えたら、「移動」ボタンを押すと、設定通りの場所にビューアウィンドウが移動します。<br>
+<br>
+もしくは、ビューアウィンドウ右上の最大化ボタンでウィンドウサイズを変更したり、青い枠をドラッグ＆ドロップして位置を変更したりできます。また、最大化ボタンの左隣にある三角のようなボタンをクリックすると、ディスプレイを切り替えることができます（ディスプレイが 1 つのみの場合は、ボタンをクリックできません）。<br>
+</p>
+
+<a name="CommentHyoji"></a>
+<h2>コメント表示</h2>
+
+<p>
+<a href="HelpParts/YukkoView_Running.png" target="_blank"><img src="HelpParts/YukkoView_Running.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+ビューアウィンドウの位置決めを終えたら、メインウィンドウ上部にある「開始」ボタンをクリックします。<br>
+<br>
+ビューアウィンドウの青い枠が消え、「コメント表示を開始します」というコメントが表示され、以降、ゆかりに書き込まれたコメントが表示されるようになります。<br clear="right">
+<br>
+<a href="HelpParts/YukkoView_YukariComment.png" target="_blank"><img src="HelpParts/YukkoView_YukariComment.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+ゆかりにコメントを書き込むには、ゆかりのメニューから「コメント」をクリックします（画面が小さい場合は、ゆかり右上のハンバーガーメニューからコメントメニューが選べます）。コメント投稿画面にコメントを入力して「コメント送信」をクリックすると、コメントが書き込めます。<br>
+<br>
+コメント表示中は、（青枠は非表示になっていますが）ビューアウィンドウが最前面に来ているため、メインウィンドウの操作が困難となります。メインウィンドウで設定などを変更したい場合は、一旦コメント表示を停止してから行うことをお薦めします。<br clear="right">
+</p>
+
+<a name="KankyosetteiWindow"></a>
+<h1>環境設定</h1>
+
+<p>
+<a href="HelpParts/YukkoView_SettingsWindow.png" target="_blank"><img src="HelpParts/YukkoView_SettingsWindow.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+メインウィンドウの「環境設定」ボタンをクリックすることで、ゆっこビュー 2の設定を行うことができます。
+</p>
+
+<a name="Kankyosettei"></a>
+<h2>環境設定</h2>
+
+<a name="KidoutoDoujiniCommenthyojiwoKaishisuru"></a>
+<h3>起動と同時にコメント表示を開始する</h3>
+
+<p>
+この設定を有効にすると、ゆっこビュー 2の起動と同時にコメント表示が開始されます。<br>
+<br>
+ビューアウィンドウの位置決めをしたい場合は、一旦「停止」ボタンを押してから位置決めをする必要があります。<br>
+</p>
+
+<a name="ViewerWindownoJogeniCommentwoHyojishinai"></a>
+<h3>ビューアウィンドウの上下にコメントを表示しない</h3>
+
+<p>
+通常、ビューアウィンドウの上から順にコメントが表示されていきますが、この設定を有効にすると、ビューアウィンドウの上から少し隙間を空けてコメントが表示されるようになります。同様にビューアウィンドウの下側にも隙間が空きます。<br>
+<br>
+どのくらい隙間を空けるか、パーセントで指定できます。例えば、フル HD（縦 1080 ピクセル）のディスプレイを使っていて、ビューアウィンドウを最大化している環境で、「10」パーセントを指定すると、上下それぞれ 108 ピクセルにはコメントが表示されなくなります。<br>
+</p>
+
+<a name="YukarikaranoCommentjushinhouhou"></a>
+<h3>ゆかりからのコメント受信方法</h3>
+
+<p>
+ゆっこビュー 2がゆかりからコメントを受信する方法を選択します。<br>
+<br>
+通常は「プッシュ通知」を選択して下さい。コメントを書き込んでから画面に表示されるまでのタイムラグが短く、また、余計な通信を抑えてパソコンの負荷も軽くなります。<br>
+<br>
+プッシュ通知でうまくコメントが受信できない場合は、ゆかりのバージョンが最新かどうか確認して下さい。<br>
+<br>
+どうしてもプッシュ通知でうまくコメントが受信できない場合のみ、「ダウンロード」を選択して下さい。<br>
+</p>
+
+<a name="Maintenance"></a>
+<h2>メンテナンス</h2>
+
+<a name="Jidokoshin"></a>
+<h3>ゆっこビュー 2の最新情報・更新版を自動的に確認する</h3>
+
+<p>
+「ゆっこビュー 2の最新情報・更新版を自動的に確認する」を有効にすると、ゆっこビュー 2のホームページからゆっこビュー 2関連の最新情報を取得し、ブラウザで表示します。またゆっこビュー 2の更新版（新バージョン）がリリースされた場合は、更新版をインストールします。Ver 1.0 現在、最新情報の確認は 3 日ごとに行います。<br>
+<br>
+最新情報表示・更新版のインストール前には、表示・インストールをするかどうかの確認が行われます。表示・インストールをしないを選択した場合、次回以降は表示されませんのでご注意下さい。<br>
+<br>
+「今すぐ最新情報を確認する」ボタンをクリックすると、直ちに確認が行われます。<br>
+<br>
+なお、ゆっこビュー 2に限らず、世の中のアプリケーション全般に言えることですが、最新情報の取得や更新版のインストールを行う設定を有効にしている場合、悪意ある第三者に配信サーバーが乗っ取られた場合など、誤情報や悪意あるアプリケーションなどが紛れ込むリスクがありますのでご承知おき下さい。一方で、正常に機能していれば、バグ修正が速やかに適用されるなど、安全性が高まるメリットもあります。<br>
+</p>
+
+<a name="Loghozon"></a>
+<h3>ログ保存</h3>
+
+<p>
+ゆっこビュー 2の動作の記録であるログなどを保存することができます。ゆっこビュー 2に不具合があった場合の原因究明などに役立つ場合があります。<br>
+</p>
+
+<a name="Komattatokiwa"></a>
+<h1>困ったときは</h1>
+
+<p>
+ゆっこビュー 2のサポートページをご覧ください。<br>
+</p>
+<ul>
+<li><a href="http://shinta.coresv.com/software/yukkoview_jpn/#Support" target="_blank">ゆっこビュー 2　サポートページ</a></li>
+</ul>
+
+<a name="Sonota"></a>
+<h1>その他</h1>
+
+<a name="Database"></a>
+<h2>データベース</h2>
+
+<table>
+<tr><th>種類別</th><td>フリーソフトウェア</td></tr>
+<tr><th>名称</th><td>コメントビューアー</td></tr>
+<tr><th>ソフトウェア名</th><td>ゆっこビュー 2</td></tr>
+<tr><th>ダウンロード</th><td><a href="http://shinta.coresv.com/software/yukkoview_jpn/#Download" target="_blank">http://shinta.coresv.com/software/yukkoview_jpn/#Download</a>（メイン）<br><a href="http://shinta0806be.ldblog.jp/archives/9212448.html" target="_blank">http://shinta0806be.ldblog.jp/archives/9212448.html</a>（バックアップ）</td></tr>
+<tr><th>作者</th><td>SHINTA</td></tr>
+<tr><th>作者 E メール</th><td><img src="HelpParts/MailAddrG2.png" border="0"></td></tr>
+<tr><th>製品番号</th><td>SHWI-041-F</td></tr>
+</table>
+
+<a name="License"></a>
+<h2>ライセンス</h2>
+
+<p>
+ゆっこビュー 2には以下のライセンスが適用されます。<br>
+</p>
+<ul>
+<li><a href="http://creativecommons.org/licenses/by-nc-nd/2.1/jp/" target="_blank">クリエイティブ・コモンズ・ライセンス（表示 - 非営利 - 改変禁止 2.1 日本）</a></li>
+</ul>
+<p>
+※営利目的で使用したい場合は、個別に応じられる場合がありますので事前にご相談下さい。<br>
+</p>
+
+<a name="Kaiteirireki"></a>
+<h2>改訂履歴</h2>
+
+<p>
+ゆっこビュー 2の改訂履歴は以下をご覧ください。<br>
+</p>
+<ul>
+<li><a href="YukkoView_History_JPN.txt" target="_blank">YukkoView_History_JPN.txt</a></li>
+</ul>
+
+</div><!-- MainCol -->
+
+<!-- ★★★　左側メニュー　★★★ -->
+<a name="LColMenu"></a>
+<div id="LCol">
+
+<!-- CFileMerge:IndexBegin -->
+<div class="SideMenuItemH1"><a href="#Hajimeni">はじめに</a></div>
+<div class="SideMenuItemH2"><a href="#Gaiyou">概要</a></div>
+<div class="SideMenuItemH2"><a href="#Dousakankyou">動作環境</a></div>
+<div class="SideMenuItemH2"><a href="#Install">インストール</a></div>
+<div class="SideMenuItemH2"><a href="#Kido">起動</a></div>
+<div class="SideMenuItemH1"><a href="#Tsukaikata">使い方</a></div>
+<div class="SideMenuItemH2"><a href="#DougasaiseiapplicationwoSettei">動画再生アプリケーションを設定</a></div>
+<div class="SideMenuItemH2"><a href="#YukariwoSettei">ゆかりを設定</a></div>
+<div class="SideMenuItemH2"><a href="#YukarinoSetteiwoTekiyou">ゆかりの設定を適用</a></div>
+<div class="SideMenuItemH2"><a href="#ViewerWindownoIchigime">ビューアウィンドウの位置決め</a></div>
+<div class="SideMenuItemH2"><a href="#CommentHyoji">コメント表示</a></div>
+<div class="SideMenuItemH1"><a href="#KankyosetteiWindow">環境設定</a></div>
+<div class="SideMenuItemH2"><a href="#Kankyosettei">環境設定</a></div>
+<div class="SideMenuItemH2"><a href="#Maintenance">メンテナンス</a></div>
+<div class="SideMenuItemH1"><a href="#Komattatokiwa">困ったときは</a></div>
+<div class="SideMenuItemH1"><a href="#Sonota">その他</a></div>
+<div class="SideMenuItemH2"><a href="#Database">データベース</a></div>
+<div class="SideMenuItemH2"><a href="#License">ライセンス</a></div>
+<div class="SideMenuItemH2"><a href="#Kaiteirireki">改訂履歴</a></div>
+<!-- CFileMerge:IndexEnd -->
+
+</div><!-- LCol -->
+
+
+</body>
+
+</html>

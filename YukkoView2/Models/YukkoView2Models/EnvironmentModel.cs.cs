@@ -9,15 +9,13 @@
 // ----------------------------------------------------------------------------
 
 using Livet;
-
+using Livet.Commands;
 using Shinta;
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Windows;
 
 using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
@@ -61,25 +59,6 @@ namespace YukkoView2.Models.YukkoView2Models
 		// エラーが発生しているかどうか（要因ごと）
 		public ObservableSynchronizedCollection<Boolean> Yv2StatusErrorFactors { get; } = new();
 
-#if false
-		// マルチディスプレイ領域
-		// メインスレッドのみからアクセスするものとする
-		private List<Rect> _monitorRects = new();
-		public List<Rect> MonitorRects
-		{
-			get
-			{
-				Debug.Assert(Environment.CurrentManagedThreadId == DispatcherHelper.UIDispatcher.Thread.ManagedThreadId, "MonitorRects.get() not UI thread");
-				return _monitorRects;
-			}
-			set
-			{
-				Debug.Assert(Environment.CurrentManagedThreadId == DispatcherHelper.UIDispatcher.Thread.ManagedThreadId, "MonitorRects.set() not UI thread");
-				_monitorRects = value;
-			}
-		}
-#endif
-
 		// ログ
 		public LogWriter LogWriter { get; } = new(Yv2Constants.APP_ID);
 
@@ -119,6 +98,53 @@ namespace YukkoView2.Models.YukkoView2Models
 		// アプリケーション終了時タスク安全中断用
 		public CancellationTokenSource AppCancellationTokenSource { get; } = new();
 
+		// --------------------------------------------------------------------
+		// コマンド
+		// --------------------------------------------------------------------
+
+		#region ヘルプリンクの制御
+		private ListenerCommand<String>? _helpClickedCommand;
+
+		public ListenerCommand<String> HelpClickedCommand
+		{
+			get
+			{
+				if (_helpClickedCommand == null)
+				{
+					_helpClickedCommand = new ListenerCommand<String>(HelpClicked);
+				}
+				return _helpClickedCommand;
+			}
+		}
+
+		public void HelpClicked(String parameter)
+		{
+			try
+			{
+				ShowHelp(parameter);
+			}
+			catch (Exception excep)
+			{
+				LogWriter.ShowLogMessage(TraceEventType.Error, "ヘルプ表示時エラー：\n" + excep.Message);
+				LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+		#endregion
+
+		// ====================================================================
+		// private 定数
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// ファイル名
+		// --------------------------------------------------------------------
+		private const String FILE_NAME_HELP_PREFIX = Yv2Constants.APP_ID + "_JPN";
+
+		// --------------------------------------------------------------------
+		// フォルダー名
+		// --------------------------------------------------------------------
+		private const String FOLDER_NAME_HELP_PARTS = "HelpParts\\";
+
 		// ====================================================================
 		// private 関数
 		// ====================================================================
@@ -138,6 +164,41 @@ namespace YukkoView2.Models.YukkoView2Models
 #endif
 			LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "プロセス動作モード：" + (Environment.Is64BitProcess ? "64" : "32"));
 			LogWriter.ShowLogMessage(TraceEventType.Verbose, "Path: " + ExeFullPath);
+		}
+
+		// --------------------------------------------------------------------
+		// ヘルプの表示
+		// --------------------------------------------------------------------
+		private void ShowHelp(String? anchor = null)
+		{
+			String? helpPath = null;
+
+			try
+			{
+				// アンカーが指定されている場合は状況依存型ヘルプを表示
+				if (!String.IsNullOrEmpty(anchor))
+				{
+					helpPath = ExeFullFolder + Yv2Constants.FOLDER_NAME_DOCUMENTS + FOLDER_NAME_HELP_PARTS + FILE_NAME_HELP_PREFIX + "_" + anchor + Common.FILE_EXT_HTML;
+					try
+					{
+						Common.ShellExecute(helpPath);
+						return;
+					}
+					catch (Exception ex)
+					{
+						LogWriter.ShowLogMessage(TraceEventType.Error, "状況に応じたヘルプを表示できませんでした：\n" + ex.Message + "\n" + helpPath
+								+ "\n通常のヘルプを表示します。");
+					}
+				}
+
+				// アンカーが指定されていない場合・状況依存型ヘルプを表示できなかった場合は通常のヘルプを表示
+				helpPath = ExeFullFolder + Yv2Constants.FOLDER_NAME_DOCUMENTS + FILE_NAME_HELP_PREFIX + Common.FILE_EXT_HTML;
+				Common.ShellExecute(helpPath);
+			}
+			catch (Exception ex)
+			{
+				LogWriter.ShowLogMessage(TraceEventType.Error, "ヘルプを表示できませんでした。\n" + ex.Message + "\n" + helpPath);
+			}
 		}
 	}
 }

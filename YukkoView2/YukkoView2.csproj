@@ -71,4 +71,13 @@
     <Resource Include="Icon\YukkoView2アイコン.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Documents\YukkoView2_History_JPN.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Documents\YukkoView2_JPN.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

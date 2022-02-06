@@ -290,6 +290,13 @@ namespace YukkoView2.ViewModels
 		}
 		#endregion
 
+		#region ヘルプメニューアイテムの制御
+		public static ListenerCommand<String>? MenuItemHelpClickedCommand
+		{
+			get => Yv2Model.Instance.EnvModel.HelpClickedCommand;
+		}
+		#endregion
+
 		#region 投稿ボタンの制御
 		private ViewModelCommand? _buttonCommentClickedCommand;
 
@@ -370,6 +377,9 @@ namespace YukkoView2.ViewModels
 				_fileSystemWatcherYukariConfig.Deleted += new FileSystemEventHandler(FileSystemWatcherYukariConfig_Changed);
 				_fileSystemWatcherYukariConfig.Changed += new FileSystemEventHandler(FileSystemWatcherYukariConfig_Changed);
 				SetFileSystemWatcherYukariConfig();
+
+				// その他準備
+				UpdateYv2Status();
 
 				// コメント表示ウィンドウを開く
 				Messenger.Raise(new TransitionMessage(_displayWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW));
