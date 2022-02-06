@@ -312,7 +312,7 @@ namespace YukkoView2.ViewModels
 			}
 		}
 
-		public static void MenuItemHistoryClicked()
+		public void MenuItemHistoryClicked()
 		{
 			try
 			{
@@ -320,8 +320,52 @@ namespace YukkoView2.ViewModels
 			}
 			catch (Exception excep)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "改訂履歴メニュークリック時エラー：\n" + excep.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "改訂履歴メニュークリック時エラー：\n" + excep.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+		#endregion
+
+		#region バージョン情報メニューアイテムの制御
+		private ViewModelCommand? _menuItemAboutClickedCommand;
+
+		public ViewModelCommand MenuItemAboutClickedCommand
+		{
+			get
+			{
+				if (_menuItemAboutClickedCommand == null)
+				{
+					_menuItemAboutClickedCommand = new ViewModelCommand(MenuItemAboutClicked);
+				}
+				return _menuItemAboutClickedCommand;
+			}
+		}
+
+		public void MenuItemAboutClicked()
+		{
+			try
+			{
+				// コメント表示中の場合は一時的に停止
+				Boolean isPlayingBak = _isPlaying;
+				if (isPlayingBak)
+				{
+					_ = StopAsync();
+				}
+
+				// ViewModel 経由でウィンドウを開く
+				using AboutWindowViewModel aboutWindowViewModel = new();
+				Messenger.Raise(new TransitionMessage(aboutWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_ABOUT_WINDOW));
+
+				// コメント表示を一時停止した場合は再開
+				if (isPlayingBak)
+				{
+					_ = PlayAsync();
+				}
+			}
+			catch (Exception excep)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "バージョン情報メニュークリック時エラー：\n" + excep.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
 			}
 		}
 		#endregion

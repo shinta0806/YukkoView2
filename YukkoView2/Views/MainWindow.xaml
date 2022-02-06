@@ -34,8 +34,8 @@
 
         <!--  If you make user choose 'OK or Cancel' closing Window, then please use Window Close cancel Behavior.  -->
 
-        <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW}" Messenger="{Binding Messenger}">
-            <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:DisplayWindow}" Mode="Normal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
+        <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_ABOUT_WINDOW}" Messenger="{Binding Messenger}">
+            <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:AboutWindow}" Mode="Modal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
         </l:InteractionMessageTrigger>
 
         <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_SELECT_MONITOR_WINDOW}" Messenger="{Binding Messenger}">
@@ -44,6 +44,11 @@
 
         <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_YV2_SETTINGS_WINDOW}" Messenger="{Binding Messenger}">
             <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:Yv2SettingsWindow}" Mode="Modal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
+        </l:InteractionMessageTrigger>
+
+        <!-- モードレスウィンドウ -->
+        <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW}" Messenger="{Binding Messenger}">
+            <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:DisplayWindow}" Mode="Normal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
         </l:InteractionMessageTrigger>
 
     </behaviors:Interaction.Triggers>

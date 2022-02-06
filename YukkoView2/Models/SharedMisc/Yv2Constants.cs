@@ -104,6 +104,9 @@ namespace YukkoView2.Models.SharedMisc
 		// MessageKey
 		// --------------------------------------------------------------------
 
+		// バージョン情報ウィンドウを開く
+		public const String MESSAGE_KEY_OPEN_ABOUT_WINDOW = "OpenAboutWindow";
+
 		// コメント表示ウィンドウを開く
 		public const String MESSAGE_KEY_OPEN_DISPLAY_WINDOW = "OpenDisplayWindow";
 
@@ -129,6 +132,31 @@ namespace YukkoView2.Models.SharedMisc
 
 		// ゆかり設定ファイル
 		public const String FILE_NAME_YUKARI_CONFIG = "config" + Common.FILE_EXT_INI;
+
+		// --------------------------------------------------------------------
+		// URL
+		// --------------------------------------------------------------------
+
+		// メールアドレス
+		public const String EMAIL_ADDRESS = "shinta.0806@gmail.com";
+
+		// ホームページ
+		public const String URL_AUTHOR_WEB = "https://shinta.coresv.com";
+
+		// Twitter
+		public const String URL_TWITTER = "https://twitter.com/shinta0806";
+
+		// Fantia
+		public const String URL_FANTIA = "https://fantia.jp/fanclubs/65509";
+
+		// アプリ配布ページ
+		public const String URL_APP_WEB = "https://shinta.coresv.com/software/yukkoview2-jpn/";
+
+		// アプリサポートページ
+		public const String URL_APP_WEB_SUPPORT = URL_APP_WEB + "#Support";
+
+		// よくある質問
+		public const String URL_FAQ = "https://github.com/shinta0806/YukkoView2/issues?q=label%3Aquestion+sort%3Aupdated-desc";
 
 		// --------------------------------------------------------------------
 		// ゆかり関連
