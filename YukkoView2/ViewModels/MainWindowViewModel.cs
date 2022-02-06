@@ -207,9 +207,22 @@ namespace YukkoView2.ViewModels
 		{
 			try
 			{
+				// コメント表示中の場合は一時的に停止
+				Boolean isPlayingBak = _isPlaying;
+				if (isPlayingBak)
+				{
+					_ = StopAsync();
+				}
+
 				// ViewModel 経由でウィンドウを開く
 				using SelectMonitorWindowViewModel selectMonitorWindowViewModel = new();
 				Messenger.Raise(new TransitionMessage(selectMonitorWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_SELECT_MONITOR_WINDOW));
+
+				// コメント表示を一時停止した場合は再開
+				if (isPlayingBak)
+				{
+					_ = PlayAsync();
+				}
 			}
 			catch (Exception ex)
 			{
@@ -238,9 +251,22 @@ namespace YukkoView2.ViewModels
 		{
 			try
 			{
+				// コメント表示中の場合は一時的に停止
+				Boolean isPlayingBak = _isPlaying;
+				if (isPlayingBak)
+				{
+					_ = StopAsync();
+				}
+
 				// ViewModel 経由でウィンドウを開く
 				using Yv2SettingsWindowViewModel yv2SettingsWindowViewModel = new();
 				Messenger.Raise(new TransitionMessage(yv2SettingsWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_YV2_SETTINGS_WINDOW));
+
+				// コメント表示を一時停止した場合は再開
+				if (isPlayingBak)
+				{
+					_ = PlayAsync();
+				}
 			}
 			catch (Exception ex)
 			{
@@ -267,7 +293,7 @@ namespace YukkoView2.ViewModels
 
 		public Boolean CanButtonCommentClicked()
 		{
-			return !String.IsNullOrEmpty(Comment);
+			return _isPlaying && !String.IsNullOrEmpty(Comment);
 		}
 
 		public void ButtonCommentClicked()
@@ -562,6 +588,7 @@ namespace YukkoView2.ViewModels
 			UpdateYv2Status();
 			ButtonPlayClickedCommand.RaiseCanExecuteChanged();
 			ButtonStopClickedCommand.RaiseCanExecuteChanged();
+			ButtonCommentClickedCommand.RaiseCanExecuteChanged();
 		}
 
 		// --------------------------------------------------------------------

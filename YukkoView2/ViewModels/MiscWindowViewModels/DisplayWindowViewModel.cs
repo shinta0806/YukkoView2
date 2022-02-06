@@ -140,6 +140,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				return Task.CompletedTask;
 			}
 
+			MoveWindowIfNeeded();
 			SlideInitialTicks();
 			IsActive = true;
 			IsPlaying = true;
