@@ -38,6 +38,12 @@ namespace YukkoView2.Models.YukkoView2Models
 			// 最初にログの設定をする
 			SetLogWriter();
 
+			// Yv2StatusErrorFactors 要素アロケート
+			for (Int32 i = 0; i < (Int32)Yv2StatusErrorFactor.__End__; i++)
+			{
+				Yv2StatusErrorFactors.Add(false);
+			}
+
 			// 環境設定の Load() はしない（YlModel.Instance 生成途中で EnvironmentModel が生成され、エラー発生時に YukaListerModel.Instance 経由でのログ記録ができないため）
 		}
 

@@ -65,15 +65,11 @@ namespace YukkoView2.ViewModels
 				// 環境
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);
-				_logWriter?.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() a");
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() a");
 				//Yv2Model.Instance.EnvModel.MonitorRects = CommonWindows.GetMonitorRects();
-				for (Int32 i = 0; i < (Int32)Yv2StatusErrorFactor.__End__; i++)
-				{
-					Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors.Add(false);
-				}
 
 				// エンコード
-				_logWriter?.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() b");
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() b");
 				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 				// メインウィンドウ表示
@@ -89,7 +85,7 @@ namespace YukkoView2.ViewModels
 					_mainWindowViewModel.Left = adjustedRect.Left;
 					_mainWindowViewModel.Top = adjustedRect.Top;
 				}
-				_logWriter?.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() c");
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() c");
 				Messenger.Raise(new TransitionMessage(_mainWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_MAIN_WINDOW));
 			}
 			catch (Exception ex)
@@ -97,7 +93,8 @@ namespace YukkoView2.ViewModels
 				// YlModel 未生成の可能性があるためまずはメッセージ表示のみ
 				MessageBox.Show("スプラッシュウィンドウ初期化時エラー：\n" + ex.Message + "\n" + ex.StackTrace, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
 
-				// 可能であればログする。YlModel 生成中に例外が発生する可能性があるが、それについては集約エラーハンドラーに任せる
+				// 可能であればログする。_logWriter は常に null なので Yv2Model を使用する
+				// YlModel 生成中に例外が発生する可能性があるが、それについては集約エラーハンドラーに任せる
 				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "スプラッシュウィンドウ初期化時エラー：\n" + ex.Message);
 				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 
