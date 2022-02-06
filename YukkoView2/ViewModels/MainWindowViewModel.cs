@@ -297,6 +297,35 @@ namespace YukkoView2.ViewModels
 		}
 		#endregion
 
+		#region 改訂履歴メニューアイテムの制御
+		private ViewModelCommand? _menuItemHistoryClickedCommand;
+
+		public ViewModelCommand MenuItemHistoryClickedCommand
+		{
+			get
+			{
+				if (_menuItemHistoryClickedCommand == null)
+				{
+					_menuItemHistoryClickedCommand = new ViewModelCommand(MenuItemHistoryClicked);
+				}
+				return _menuItemHistoryClickedCommand;
+			}
+		}
+
+		public static void MenuItemHistoryClicked()
+		{
+			try
+			{
+				Common.ShellExecute(Yv2Model.Instance.EnvModel.ExeFullFolder + Yv2Constants.FOLDER_NAME_DOCUMENTS + FILE_NAME_HISTORY);
+			}
+			catch (Exception excep)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "改訂履歴メニュークリック時エラー：\n" + excep.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+		#endregion
+
 		#region 投稿ボタンの制御
 		private ViewModelCommand? _buttonCommentClickedCommand;
 
@@ -442,6 +471,9 @@ namespace YukkoView2.ViewModels
 		// テストコメント投稿用の色
 		private readonly Color[] COMMENT_COLORS = { Colors.White, Colors.Gray, Colors.Pink, Colors.Red, Colors.Orange, Colors.Yellow,
 				Colors.Lime, Colors.Cyan, Colors.Blue, Colors.Purple, Color.FromRgb(0x11, 0x11, 0x11) };
+
+		// 改訂履歴ファイル
+		private const String FILE_NAME_HISTORY = "YukkoView2_History_JPN" + Common.FILE_EXT_TXT;
 
 		// ====================================================================
 		// private 変数
