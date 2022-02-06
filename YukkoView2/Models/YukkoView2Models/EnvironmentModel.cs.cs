@@ -55,6 +55,7 @@ namespace YukkoView2.Models.YukkoView2Models
 		// エラーが発生しているかどうか（要因ごと）
 		public ObservableSynchronizedCollection<Boolean> Yv2StatusErrorFactors { get; } = new();
 
+#if false
 		// マルチディスプレイ領域
 		// メインスレッドのみからアクセスするものとする
 		private List<Rect> _monitorRects = new();
@@ -71,6 +72,7 @@ namespace YukkoView2.Models.YukkoView2Models
 				_monitorRects = value;
 			}
 		}
+#endif
 
 		// ログ
 		public LogWriter LogWriter { get; } = new(Yv2Constants.APP_ID);

@@ -15,6 +15,7 @@ using Shinta.ViewModels;
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -87,6 +88,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Debug.WriteLine("AddCommentInfo() 追加: 残: " + CommentInfos.Count);
 
 			// 描画環境調整
+			MoveWindowIfNeeded();
 			TopMostIfNeeded();
 		}
 
@@ -156,7 +158,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// ====================================================================
 
 		// ウィンドウを表示するディスプレイ
-		private Int32 _currentTargetMonitor = -1;
+		private Int32 _currentTargetMonitorIndex = -1;
 
 		// 前回追加されたコメント
 		private CommentInfo? _prevCommentInfo;
@@ -179,15 +181,23 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		private void MoveWindowIfNeeded()
 		{
-			Int32 target = TargetMonitor();
-			if (_currentTargetMonitor == target)
+			List<Rect> monitorRects = CommonWindows.GetMonitorRects();
+			Int32 newTargetMonitorIndex = TargetMonitorIndex(monitorRects);
+			if (_currentTargetMonitorIndex == newTargetMonitorIndex)
 			{
 				return;
 			}
 
-			Debug.WriteLine("MoveWindowIfNeeded() new target: " + target);
-			_currentTargetMonitor = target;
-			Rect rect = Yv2Model.Instance.EnvModel.MonitorRects[_currentTargetMonitor];
+			_currentTargetMonitorIndex = newTargetMonitorIndex;
+			Rect rect = monitorRects[_currentTargetMonitorIndex];
+#if DEBUG
+			Debug.WriteLine("MoveWindowIfNeeded() new target: " + newTargetMonitorIndex);
+			for (Int32 i = 0; i < monitorRects.Count; i++)
+			{
+				Rect dr = monitorRects[i];
+				_logWriter?.LogMessage(TraceEventType.Verbose, "ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
+			}
+#endif
 
 			// タスクバーが表示されるように上下左右 1 ピクセルずつ縮める
 			Left = rect.Left + 1;
@@ -211,9 +221,74 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// 設定と現実を考慮して表示対象のディスプレイ番号を返す
 		// --------------------------------------------------------------------
-		private Int32 TargetMonitor()
+		private Int32 TargetMonitorIndex(List<Rect> monitorRects)
 		{
-			return 0;
+			Int32 index = Yv2Model.Instance.EnvModel.Yv2Settings.SelectMonitorType switch
+			{
+				SelectMonitorType.MpcBe => TargetMonitorIndexByMpcBe(monitorRects),
+				_ => TargetMonitorIndexByManual(),
+			};
+			index = Math.Clamp(index, 0, monitorRects.Count - 1);
+			return index;
+		}
+
+		// --------------------------------------------------------------------
+		// 指定されたディスプレイの番号
+		// --------------------------------------------------------------------
+		private Int32 TargetMonitorIndexByManual()
+		{
+			return Yv2Model.Instance.EnvModel.Yv2Settings.MonitorIndex;
+		}
+
+		// --------------------------------------------------------------------
+		// MPC-BE が表示されているディスプレイの番号
+		// --------------------------------------------------------------------
+		private Int32 TargetMonitorIndexByMpcBe(List<Rect> monitorRects)
+		{
+			// MPC-BE 64 ビット版のプロセス
+			Process[] processes = Process.GetProcessesByName(Yv2Model.Instance.EnvModel.Yv2Settings.MpcBe64ProcessName);
+			if (processes.Length == 0)
+			{
+				// 64 ビット版が見つからない場合は 32 ビット版で探す
+				processes = Process.GetProcessesByName(Yv2Model.Instance.EnvModel.Yv2Settings.MpcBe32ProcessName);
+			}
+			if (processes.Length == 0)
+			{
+				// MPC-BE が見つからない場合は現在のディスプレイ番号を返す
+				return _currentTargetMonitorIndex;
+			}
+
+			// MPC-BE のウィンドウ領域を取得
+			Boolean rectGot = false;
+			WindowsApi.RECT mpcRect = new();
+			foreach (Process process in processes)
+			{
+				if (WindowsApi.GetWindowRect(process.MainWindowHandle, out mpcRect))
+				{
+					rectGot = true;
+					break;
+				}
+			}
+			if (!rectGot)
+			{
+				// MPC-BE のウィンドウ領域を取得できない場合は現在のディスプレイ番号を返す
+				return _currentTargetMonitorIndex;
+			}
+			Double mpcCenterX = (mpcRect.left + mpcRect.right) / 2;
+			Double mpcCenterY = (mpcRect.top + mpcRect.bottom) / 2;
+
+			// MPC-BE の中央を含むディスプレイを探す
+			for (Int32 i = 0; i < monitorRects.Count; i++)
+			{
+				if (monitorRects[i].Contains(mpcCenterX, mpcCenterY))
+				{
+					Debug.WriteLine("TargetMonitorIndexByMpcBe() MPC 発見: " + i);
+					return i;
+				}
+			}
+
+			// MPC-BE の中央を含むディスプレイが無い場合は現在のディスプレイ番号を返す
+			return _currentTargetMonitorIndex;
 		}
 
 		// --------------------------------------------------------------------

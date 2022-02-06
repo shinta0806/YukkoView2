@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 
@@ -131,14 +132,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 					break;
 			}
 
-			Yv2Model.Instance.EnvModel.MonitorRects = CommonWindows.GetMonitorRects();
+			List<Rect> monitorRects = CommonWindows.GetMonitorRects();
 #if DEBUG
-			Yv2Model.Instance.EnvModel.MonitorRects.Add(new System.Windows.Rect(0, 0, 1, 1));
-			Yv2Model.Instance.EnvModel.MonitorRects.Add(new System.Windows.Rect(0, 0, 1, 1));
+			monitorRects.Add(new System.Windows.Rect(0, 0, 1, 1));
+			monitorRects.Add(new System.Windows.Rect(0, 0, 1, 1));
 #endif
 			MonitorIndices.Clear();
 			MonitorIndices.Add("1（プライマリー）");
-			for (Int32 i = 1; i < Yv2Model.Instance.EnvModel.MonitorRects.Count; i++)
+			for (Int32 i = 1; i < monitorRects.Count; i++)
 			{
 				MonitorIndices.Add((i + 1).ToString());
 			}
