@@ -10,6 +10,7 @@
 // コメント停止中は全透明にする
 // ----------------------------------------------------------------------------
 
+using Livet;
 using Shinta;
 using Shinta.ViewModels;
 
@@ -74,23 +75,27 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// コメントを追加
 		// --------------------------------------------------------------------
-		public void AddComment(CommentInfo commentInfo)
+		public Task AddCommentAsync(CommentInfo commentInfo)
 		{
-			// 連続投稿防止
-			if (_prevCommentInfo != null && commentInfo.CompareBasic(_prevCommentInfo) && commentInfo.InitialTick - _prevCommentInfo.InitialTick <= Yv2Constants.CONTINUOUS_PREVENT_TIME)
+			return DispatcherHelper.UIDispatcher.Invoke(() =>
 			{
-				_logWriter?.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "連続投稿のため表示しません：" + commentInfo.Message);
-				return;
-			}
-			_prevCommentInfo = commentInfo;
+				// 連続投稿防止
+				if (_prevCommentInfo != null && commentInfo.CompareBasic(_prevCommentInfo) && commentInfo.InitialTick - _prevCommentInfo.InitialTick <= Yv2Constants.CONTINUOUS_PREVENT_TIME)
+				{
+					_logWriter?.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "連続投稿のため表示しません：" + commentInfo.Message);
+					return Task.CompletedTask;
+				}
+				_prevCommentInfo = commentInfo;
 
-			// 追加
-			CommentInfos[commentInfo] = 0;
-			Debug.WriteLine("AddCommentInfo() 追加: 残: " + CommentInfos.Count);
+				// 追加
+				CommentInfos[commentInfo] = 0;
+				Debug.WriteLine("AddCommentInfo() 追加: 残: " + CommentInfos.Count);
 
-			// 描画環境調整
-			MoveWindowIfNeeded();
-			TopMostIfNeeded();
+				// 描画環境調整
+				Task task = MoveWindowIfNeededAsync();
+				TopMostIfNeeded();
+				return task;
+			});
 		}
 
 		// --------------------------------------------------------------------
@@ -130,12 +135,11 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		public Task StartAsync()
 		{
-#if DEBUGz
-			Left += 20;
-			Top += 20;
-			Width -= 40;
-			Height -= 40;
-#endif
+			if (IsPlaying)
+			{
+				return Task.CompletedTask;
+			}
+
 			SlideInitialTicks();
 			IsActive = true;
 			IsPlaying = true;
@@ -147,6 +151,11 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		public Task StopAsync()
 		{
+			if (!IsPlaying)
+			{
+				return Task.CompletedTask;
+			}
+
 			IsPlaying = false;
 			_stopTick = Environment.TickCount;
 			return _receiver.StopAsync();
@@ -178,7 +187,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// 現在の表示対象ディスプレイが適切でなければ移動
 		// --------------------------------------------------------------------
-		private void MoveWindowIfNeeded()
+		private async Task MoveWindowIfNeededAsync()
 		{
 			MonitorManager monitorManager = new();
 			List<Rect> scaledMonitorRects = monitorManager.GetScaledMonitorRects();
@@ -191,12 +200,19 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			_currentTargetMonitorIndex = newTargetMonitorIndex;
 			Rect rect = scaledMonitorRects[_currentTargetMonitorIndex];
 
+			Boolean isPlayingBak = IsPlaying;
+			if (isPlayingBak)
+			{
+				await StopAsync();
+			}
+
 			// タスクバーが表示されるように上下左右 1 ピクセルずつ縮める
 			Left = rect.Left + 1;
 			Top = rect.Top + 1;
 			Width = rect.Width - 2;
 			Height = rect.Height - 2;
-#if DEBUG
+			_logWriter?.LogMessage(TraceEventType.Verbose, "MoveWindowIfNeeded() " + Left + ", " + Top + ", " + Width + ", " + Height);
+#if DEBUGz
 			Debug.WriteLine("MoveWindowIfNeeded() new target: " + newTargetMonitorIndex);
 			for (Int32 i = 0; i < scaledMonitorRects.Count; i++)
 			{
@@ -210,6 +226,11 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				_logWriter?.LogMessage(TraceEventType.Verbose, "Raw ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
 			}
 #endif
+
+			if (isPlayingBak)
+			{
+				_ = StartAsync();
+			}
 		}
 
 		// --------------------------------------------------------------------
