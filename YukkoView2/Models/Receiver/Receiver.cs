@@ -315,7 +315,7 @@ namespace YukkoView2.Models.Receiver
 							Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントをダウンロードしました：" + commentInfo.Message);
 
 							// コメント発行
-							await _commentContainer.AddCommentAsync(commentInfo);
+							_commentContainer.AddComment(commentInfo);
 						}
 
 					}
@@ -431,7 +431,7 @@ namespace YukkoView2.Models.Receiver
 						if (commentInfo != null)
 						{
 							Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントを受信しました：" + commentInfo.Message);
-							await _commentContainer.AddCommentAsync(commentInfo);
+							_commentContainer.AddComment(commentInfo);
 						}
 
 						// 閉じる

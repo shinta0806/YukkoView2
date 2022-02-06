@@ -270,7 +270,7 @@ namespace YukkoView2.ViewModels
 			return !String.IsNullOrEmpty(Comment);
 		}
 
-		public async void ButtonCommentClicked()
+		public void ButtonCommentClicked()
 		{
 			try
 			{
@@ -289,7 +289,7 @@ namespace YukkoView2.ViewModels
 				}
 
 				// コメント追加
-				await _displayWindowViewModel.AddCommentAsync(commentInfo);
+				_displayWindowViewModel.AddComment(commentInfo);
 			}
 			catch (Exception ex)
 			{
@@ -532,14 +532,14 @@ namespace YukkoView2.ViewModels
 		private Task PlayAsync()
 		{
 			// 開始
-			Task startTask = _displayWindowViewModel.StartAsync();
+			Task task = _displayWindowViewModel.StartAsync();
 			SetIsPlaying(true);
 
 			// 開始コメント投稿
 			CommentInfo commentInfo = new("コメント表示を開始します", Yv2Constants.DEFAULT_YUKARI_FONT_SIZE, Colors.White);
-			Task addTask = _displayWindowViewModel.AddCommentAsync(commentInfo);
+			_displayWindowViewModel.AddComment(commentInfo);
 
-			return Task.WhenAll(startTask, addTask);
+			return task;
 		}
 
 		// --------------------------------------------------------------------

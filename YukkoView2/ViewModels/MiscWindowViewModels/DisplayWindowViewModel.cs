@@ -75,15 +75,16 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// コメントを追加
 		// --------------------------------------------------------------------
-		public Task AddCommentAsync(CommentInfo commentInfo)
+		public void AddComment(CommentInfo commentInfo)
 		{
-			return DispatcherHelper.UIDispatcher.Invoke(() =>
+			// UI スレッドで追加しないと、再生中にウィンドウを移動する際に、ディスプレイ拡大率が等倍で無い場合にウィンドウサイズがおかしくなる（原因は不明）
+			DispatcherHelper.UIDispatcher.Invoke(() =>
 			{
 				// 連続投稿防止
 				if (_prevCommentInfo != null && commentInfo.CompareBasic(_prevCommentInfo) && commentInfo.InitialTick - _prevCommentInfo.InitialTick <= Yv2Constants.CONTINUOUS_PREVENT_TIME)
 				{
 					_logWriter?.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "連続投稿のため表示しません：" + commentInfo.Message);
-					return Task.CompletedTask;
+					return;
 				}
 				_prevCommentInfo = commentInfo;
 
@@ -92,9 +93,8 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				Debug.WriteLine("AddCommentInfo() 追加: 残: " + CommentInfos.Count);
 
 				// 描画環境調整
-				Task task = MoveWindowIfNeededAsync();
+				MoveWindowIfNeeded();
 				TopMostIfNeeded();
-				return task;
 			});
 		}
 
@@ -187,7 +187,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// 現在の表示対象ディスプレイが適切でなければ移動
 		// --------------------------------------------------------------------
-		private async Task MoveWindowIfNeededAsync()
+		private void MoveWindowIfNeeded()
 		{
 			MonitorManager monitorManager = new();
 			List<Rect> scaledMonitorRects = monitorManager.GetScaledMonitorRects();
@@ -199,12 +199,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 			_currentTargetMonitorIndex = newTargetMonitorIndex;
 			Rect rect = scaledMonitorRects[_currentTargetMonitorIndex];
-
-			Boolean isPlayingBak = IsPlaying;
-			if (isPlayingBak)
-			{
-				await StopAsync();
-			}
 
 			// タスクバーが表示されるように上下左右 1 ピクセルずつ縮める
 			Left = rect.Left + 1;
@@ -226,11 +220,6 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				_logWriter?.LogMessage(TraceEventType.Verbose, "Raw ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
 			}
 #endif
-
-			if (isPlayingBak)
-			{
-				_ = StartAsync();
-			}
 		}
 
 		// --------------------------------------------------------------------
