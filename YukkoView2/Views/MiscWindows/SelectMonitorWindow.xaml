@@ -8,7 +8,7 @@
         xmlns:v="clr-namespace:YukkoView2.Views.MiscWindows"
         xmlns:vmmwvm="clr-namespace:YukkoView2.ViewModels.MiscWindowViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="{Binding Title}" ResizeMode="NoResize" SizeToContent="WidthAndHeight" >
+        Title="{Binding Title}" ShowInTaskbar="False" ResizeMode="NoResize" SizeToContent="WidthAndHeight" >
 
     <Window.DataContext>
         <vmmwvm:SelectMonitorWindowViewModel />

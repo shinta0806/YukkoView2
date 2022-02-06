@@ -11,14 +11,14 @@
     xmlns:vmw="clr-namespace:YukkoView2.Views.MiscWindows"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="{Binding Title}" Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}" 
-    ResizeMode="CanMinimize" Cursor="{Binding Cursor}" SizeToContent="WidthAndHeight" >
+    ResizeMode="NoResize" Cursor="{Binding Cursor}" SizeToContent="WidthAndHeight" >
 
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
     <behaviors:Interaction.Behaviors>
-        <sb:WindowBindingSupportBehavior IsActive="{Binding IsActive}" />
+        <sb:WindowBindingSupportBehavior IsActive="{Binding IsActive}" MinimizeBox="False" />
     </behaviors:Interaction.Behaviors>
 
     <behaviors:Interaction.Triggers>
