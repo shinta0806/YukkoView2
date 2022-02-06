@@ -68,6 +68,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			set => RaisePropertyChangedIfSet(ref _isPlaying, value);
 		}
 
+		// メインウィンドウがアクティブかどうか
+		private Boolean _isMainWindowActive;
+		public Boolean IsMainWindowActive
+		{
+			get => _isMainWindowActive;
+			set => RaisePropertyChangedIfSet(ref _isMainWindowActive, value);
+		}
+
 		// ====================================================================
 		// public 関数
 		// ====================================================================
@@ -300,6 +308,10 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		private void TopMostIfNeeded()
 		{
 			if (!IsPlaying)
+			{
+				return;
+			}
+			if (IsMainWindowActive)
 			{
 				return;
 			}

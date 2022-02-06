@@ -59,12 +59,24 @@ namespace YukkoView2.Views.CustomControls
 		// コメントコンテナ（DisplayWindowViewModel）と情報を共有する形になる
 		public static readonly DependencyProperty CommentInfosProperty
 				= DependencyProperty.Register("CommentInfos", typeof(ConcurrentDictionary<CommentInfo, Int32>), typeof(CommentControl),
-				new FrameworkPropertyMetadata(new ConcurrentDictionary<CommentInfo, Int32>(), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceCommentInfosPropertyPropertyChanged));
+				new FrameworkPropertyMetadata(new ConcurrentDictionary<CommentInfo, Int32>(), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceCommentInfosPropertyChanged));
 		public ConcurrentDictionary<CommentInfo, Int32> CommentInfos
 		{
 			get => (ConcurrentDictionary<CommentInfo, Int32>)GetValue(CommentInfosProperty);
 			set => SetValue(CommentInfosProperty, value);
 		}
+
+#if false
+		// メインウィンドウがアクティブかどうか
+		public static readonly DependencyProperty IsMainWindowActiveProperty
+				= DependencyProperty.Register("IsMainWindowActive", typeof(Boolean), typeof(CommentControl),
+				new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceIsMainWindowActivePropertyChanged));
+		public Boolean IsMainWindowActive
+		{
+			get => (Boolean)GetValue(IsMainWindowActiveProperty);
+			set => SetValue(IsMainWindowActiveProperty, value);
+		}
+#endif
 
 		// ====================================================================
 		// public 関数
@@ -459,11 +471,21 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
-		// ViewModel 側で DependencyProperty が変更された（TargetFolderInfoProperty）
+		// ViewModel 側で DependencyProperty が変更された（CommentInfosProperty）
 		// --------------------------------------------------------------------
-		private static void SourceCommentInfosPropertyPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		private static void SourceCommentInfosPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			Debug.WriteLine("SourceCommentInfosPropertyPropertyChanged");
+			Debug.WriteLine("SourceCommentInfosPropertyChanged");
 		}
+
+#if false
+		// --------------------------------------------------------------------
+		// ViewModel 側で DependencyProperty が変更された（IsMainWindowActiveProperty）
+		// --------------------------------------------------------------------
+		private static void SourceIsMainWindowActivePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			Debug.WriteLine("IsMainWindowActiveProperty");
+		}
+#endif
 	}
 }

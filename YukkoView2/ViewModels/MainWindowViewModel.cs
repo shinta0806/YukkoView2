@@ -49,9 +49,23 @@ namespace YukkoView2.ViewModels
 			_displayWindowViewModel = new();
 			CompositeDisposable.Add(_displayWindowViewModel);
 
+			// IsActive 変更監視
+			PropertyChangedEventListener isActiveListener = new(this)
+			{
+				{
+					nameof(MainWindowViewModel.IsActive),
+					(s, e) =>
+					{
+						Debug.WriteLine("MainWindowViewModel.IsActive changed: " + IsActive);
+						_displayWindowViewModel.IsMainWindowActive = IsActive;
+					}
+				}
+			};
+			CompositeDisposable.Add(isActiveListener);
+
 			// Yv2StatusErrorFactors 変更監視
-			_yv2StatusErrorFactorsListener = new(Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors, Yv2StatusErrorFactorsChanged);
-			CompositeDisposable.Add(_yv2StatusErrorFactorsListener);
+			CollectionChangedEventListener yv2StatusErrorFactorsListener = new(Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors, Yv2StatusErrorFactorsChanged);
+			CompositeDisposable.Add(yv2StatusErrorFactorsListener);
 		}
 
 		// --------------------------------------------------------------------
@@ -62,7 +76,7 @@ namespace YukkoView2.ViewModels
 			// 警告抑止用にメンバーを null! で初期化
 			_splashWindowViewModel = null!;
 			_displayWindowViewModel = null!;
-			_yv2StatusErrorFactorsListener = null!;
+			//_yv2StatusErrorFactorsListener = null!;
 		}
 
 		// ====================================================================
@@ -430,7 +444,7 @@ namespace YukkoView2.ViewModels
 		private DisplayWindowViewModel _displayWindowViewModel;
 
 		// Yv2StatusErrorFactors 変更監視
-		private CollectionChangedEventListener _yv2StatusErrorFactorsListener;
+		//private CollectionChangedEventListener _yv2StatusErrorFactorsListener;
 
 		// config.ini 変更監視
 		private readonly FileSystemWatcher _fileSystemWatcherYukariConfig = new();

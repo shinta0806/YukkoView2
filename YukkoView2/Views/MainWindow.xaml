@@ -5,6 +5,7 @@
     xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:msm="clr-namespace:YukkoView2.Models.SharedMisc"
+    xmlns:sb="clr-namespace:Shinta.Behaviors"
     xmlns:v="clr-namespace:YukkoView2.Views"
     xmlns:vm="clr-namespace:YukkoView2.ViewModels"
     xmlns:vmw="clr-namespace:YukkoView2.Views.MiscWindows"
@@ -15,6 +16,10 @@
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
+
+    <behaviors:Interaction.Behaviors>
+        <sb:WindowBindingSupportBehavior IsActive="{Binding IsActive}" />
+    </behaviors:Interaction.Behaviors>
 
     <behaviors:Interaction.Triggers>
         <!--  When ContentRendered event raised, Initialize method of ViewModel would be called.  -->
