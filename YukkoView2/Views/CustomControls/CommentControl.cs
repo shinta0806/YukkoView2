@@ -325,7 +325,7 @@ namespace YukkoView2.Views.CustomControls
 		private RenderTargetBitmap CreateOffScreen()
 		{
 			//Debug.WriteLine("CreateOffScreen() " + ActualWidth + ", " + ActualHeight);
-			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)ActualHeight, 1), Yv2Constants.DPI, Yv2Constants.DPI, PixelFormats.Pbgra32);
+			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)ActualHeight, 1), Common.DEFAULT_DPI, Common.DEFAULT_DPI, PixelFormats.Pbgra32);
 
 			// ピクセルぴったり描画
 			offScreen.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
@@ -413,7 +413,7 @@ namespace YukkoView2.Views.CustomControls
 		private void PrepareDrawData(CommentInfo commentInfo)
 		{
 			FormattedText formattedText = new(commentInfo.Message, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-					commentInfo.YukariSize * _fontUnit, Brushes.Black, Yv2Constants.DPI);
+					commentInfo.YukariSize * _fontUnit, Brushes.Black, Common.DEFAULT_DPI);
 			commentInfo.MessageGeometry = formattedText.BuildGeometry(new Point(0, 0));
 
 			commentInfo.Brush = new SolidColorBrush(commentInfo.Color);

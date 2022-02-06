@@ -207,7 +207,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			}
 
 			MonitorManager monitorManager = new();
-			List<Rect> monitorRects = monitorManager.GetMonitorRects();
+			List<Rect> monitorRects = monitorManager.GetScaledMonitorRects();
 			Int32 newTargetMonitorIndex = TargetMonitorIndex(monitorRects);
 			if (_currentTargetMonitorIndex == newTargetMonitorIndex)
 			{
@@ -221,12 +221,18 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			for (Int32 i = 0; i < monitorRects.Count; i++)
 			{
 				Rect dr = monitorRects[i];
-				_logWriter?.LogMessage(TraceEventType.Verbose, "ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
+				_logWriter?.LogMessage(TraceEventType.Verbose, "Scaled ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
+			}
+			List<Rect> rawRects = monitorManager.GetRawMonitorRects();
+			for (Int32 i = 0; i < rawRects.Count; i++)
+			{
+				Rect dr = rawRects[i];
+				_logWriter?.LogMessage(TraceEventType.Verbose, "Raw ディスプレイ " + i.ToString() + ": " + dr.Left + ", " + dr.Top + ", " + dr.Right + ", " + dr.Bottom);
 			}
 #endif
 
-			WindowsApi.MoveWindow(_windowHandle, (Int32)rect.Left + 1, (Int32)rect.Top + 1, (Int32)rect.Width - 2, (Int32)rect.Height - 2, false);
-#if false
+			//WindowsApi.MoveWindow(_windowHandle, (Int32)rect.Left + 1, (Int32)rect.Top + 1, (Int32)rect.Width - 2, (Int32)rect.Height - 2, false);
+#if true
 			// タスクバーが表示されるように上下左右 1 ピクセルずつ縮める
 			Left = rect.Left + 1;
 			Top = rect.Top + 1;

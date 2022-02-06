@@ -92,7 +92,7 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		public const String APP_ID = "YukkoView2";
 		public const String APP_NAME_J = "ゆっこビュー 2 ";
-		public const String APP_VER = "Ver 0.02 α";
+		public const String APP_VER = "Ver 0.50 α";
 		public const String COPYRIGHT_J = "Copyright (C) 2022 by SHINTA";
 #if DISTRIB_STORE
 		public const String APP_DISTRIB = "ストア版";
@@ -178,9 +178,6 @@ namespace YukkoView2.Models.SharedMisc
 
 		// ツールチップを長く表示する場合の時間 [ms]
 		public const Int32 TOOL_TIP_LONG_DURATION = 20 * 1000;
-
-		// DPI
-		public const Single DPI = 96.0f;
 
 		// 連続投稿防止間隔 [ms]
 		public const Int32 CONTINUOUS_PREVENT_TIME = 5000;
