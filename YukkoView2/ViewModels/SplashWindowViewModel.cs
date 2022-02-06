@@ -65,6 +65,7 @@ namespace YukkoView2.ViewModels
 				// 環境
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);
+				_logWriter?.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() a");
 				//Yv2Model.Instance.EnvModel.MonitorRects = CommonWindows.GetMonitorRects();
 				for (Int32 i = 0; i < (Int32)Yv2StatusErrorFactor.__End__; i++)
 				{
@@ -72,6 +73,7 @@ namespace YukkoView2.ViewModels
 				}
 
 				// エンコード
+				_logWriter?.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() b");
 				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 				// メインウィンドウ表示
@@ -87,6 +89,7 @@ namespace YukkoView2.ViewModels
 					_mainWindowViewModel.Left = adjustedRect.Left;
 					_mainWindowViewModel.Top = adjustedRect.Top;
 				}
+				_logWriter?.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() c");
 				Messenger.Raise(new TransitionMessage(_mainWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_MAIN_WINDOW));
 			}
 			catch (Exception ex)
@@ -95,8 +98,8 @@ namespace YukkoView2.ViewModels
 				MessageBox.Show("スプラッシュウィンドウ初期化時エラー：\n" + ex.Message + "\n" + ex.StackTrace, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
 
 				// 可能であればログする。YlModel 生成中に例外が発生する可能性があるが、それについては集約エラーハンドラーに任せる
-				_logWriter?.LogMessage(TraceEventType.Error, "スプラッシュウィンドウ初期化時エラー：\n" + ex.Message);
-				_logWriter?.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "スプラッシュウィンドウ初期化時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 
 				// 継続できないのでアプリを終了する
 				Environment.Exit(1);
