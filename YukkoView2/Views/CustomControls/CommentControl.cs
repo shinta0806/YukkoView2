@@ -66,18 +66,6 @@ namespace YukkoView2.Views.CustomControls
 			set => SetValue(CommentInfosProperty, value);
 		}
 
-#if false
-		// メインウィンドウがアクティブかどうか
-		public static readonly DependencyProperty IsMainWindowActiveProperty
-				= DependencyProperty.Register("IsMainWindowActive", typeof(Boolean), typeof(CommentControl),
-				new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SourceIsMainWindowActivePropertyChanged));
-		public Boolean IsMainWindowActive
-		{
-			get => (Boolean)GetValue(IsMainWindowActiveProperty);
-			set => SetValue(IsMainWindowActiveProperty, value);
-		}
-#endif
-
 		// ====================================================================
 		// public 関数
 		// ====================================================================
@@ -114,11 +102,18 @@ namespace YukkoView2.Views.CustomControls
 
 		// --------------------------------------------------------------------
 		// 描画
+		// IsEnabled == false の時は全クリア
 		// --------------------------------------------------------------------
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			try
 			{
+				// 描画の必要性を判定
+				if (IsEnabled && !CommentInfos.Any())
+				{
+					return;
+				}
+
 				// オフスクリーン描画
 				// オフスクリーンをクラスメンバーにすると、ガベージコレクトが遅延するのか、一時的に数 GB のメモリを消費してしまう
 				// 仕方ないので、オフスクリーンは都度生成する
@@ -477,15 +472,5 @@ namespace YukkoView2.Views.CustomControls
 		{
 			Debug.WriteLine("SourceCommentInfosPropertyChanged");
 		}
-
-#if false
-		// --------------------------------------------------------------------
-		// ViewModel 側で DependencyProperty が変更された（IsMainWindowActiveProperty）
-		// --------------------------------------------------------------------
-		private static void SourceIsMainWindowActivePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			Debug.WriteLine("IsMainWindowActiveProperty");
-		}
-#endif
 	}
 }
