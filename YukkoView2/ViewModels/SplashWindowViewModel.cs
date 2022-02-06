@@ -65,11 +65,8 @@ namespace YukkoView2.ViewModels
 				// 環境
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() a");
-				//Yv2Model.Instance.EnvModel.MonitorRects = CommonWindows.GetMonitorRects();
 
 				// エンコード
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() b");
 				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 				// メインウィンドウ表示
@@ -85,7 +82,6 @@ namespace YukkoView2.ViewModels
 					_mainWindowViewModel.Left = adjustedRect.Left;
 					_mainWindowViewModel.Top = adjustedRect.Top;
 				}
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "SplashWindowViewModel.Initialize() c");
 				Messenger.Raise(new TransitionMessage(_mainWindowViewModel, Yv2Constants.MESSAGE_KEY_OPEN_MAIN_WINDOW));
 			}
 			catch (Exception ex)

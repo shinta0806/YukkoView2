@@ -181,7 +181,8 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		private void MoveWindowIfNeeded()
 		{
-			List<Rect> monitorRects = CommonWindows.GetMonitorRects();
+			MonitorManager monitorManager = new();
+			List<Rect> monitorRects = monitorManager.GetMonitorRects();
 			Int32 newTargetMonitorIndex = TargetMonitorIndex(monitorRects);
 			if (_currentTargetMonitorIndex == newTargetMonitorIndex)
 			{

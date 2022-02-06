@@ -132,7 +132,8 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 					break;
 			}
 
-			List<Rect> monitorRects = CommonWindows.GetMonitorRects();
+			MonitorManager monitorManager = new();
+			List<Rect> monitorRects = monitorManager.GetMonitorRects();
 #if DEBUG
 			monitorRects.Add(new System.Windows.Rect(0, 0, 1, 1));
 			monitorRects.Add(new System.Windows.Rect(0, 0, 1, 1));
