@@ -9,7 +9,7 @@
   <Identity
     Name="22724SHINTA.YukkoView2"
     Publisher="CN=C3D46685-F0CB-48EC-96C4-8660C676A069"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <Properties>
     <DisplayName>Yukko View 2</DisplayName>
@@ -31,8 +31,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="Yukko View 2"
-        Description="YukkoView2_Package"
+        DisplayName="ゆっこビュー 2"
+        Description="ゆっこビュー 2"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
