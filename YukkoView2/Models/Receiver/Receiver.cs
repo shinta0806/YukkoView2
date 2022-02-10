@@ -53,7 +53,6 @@ namespace YukkoView2.Models.Receiver
 		{
 			return Task.Run(async () =>
 			{
-				// ToDo: 再入禁止
 				_cancellationTokenSource = new();
 				switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType)
 				{
@@ -119,7 +118,7 @@ namespace YukkoView2.Models.Receiver
 		// ====================================================================
 
 		// コメントを保持しているインスタンス
-		private DisplayWindowViewModel _commentContainer;
+		private readonly DisplayWindowViewModel _commentContainer;
 
 		// 終了指示用
 		private CancellationTokenSource _cancellationTokenSource = new();
@@ -131,7 +130,7 @@ namespace YukkoView2.Models.Receiver
 		// --------------------------------------------------------------------
 		// コメント文字列を解析（拡張／旧仕様両対応）
 		// --------------------------------------------------------------------
-		private CommentInfo? AnalyzeCommentData(Byte[] array)
+		private static CommentInfo? AnalyzeCommentData(Byte[] array)
 		{
 			// 先頭の改行を無視する
 			Int32 beginPos = 0;
@@ -161,7 +160,7 @@ namespace YukkoView2.Models.Receiver
 		// --------------------------------------------------------------------
 		// 拡張コメント文字列を解析
 		// --------------------------------------------------------------------
-		private CommentInfo? AnalyzeExtendedCommentData(Byte[] array, Int32 beginPos)
+		private static CommentInfo? AnalyzeExtendedCommentData(Byte[] array, Int32 beginPos)
 		{
 			return AnalyzeExtendedCommentData(Encoding.UTF8.GetString(array, beginPos, array.Length - beginPos));
 		}
@@ -169,7 +168,7 @@ namespace YukkoView2.Models.Receiver
 		// --------------------------------------------------------------------
 		// 拡張コメント文字列を解析
 		// --------------------------------------------------------------------
-		private CommentInfo? AnalyzeExtendedCommentData(String comment)
+		private static CommentInfo? AnalyzeExtendedCommentData(String comment)
 		{
 			// 拡張バージョン識別子の確認
 			if (comment.Substring(1, 1) != "3")
@@ -179,7 +178,7 @@ namespace YukkoView2.Models.Receiver
 
 			// 古いコメントは無視
 			DateTime commentTime = DateTime.ParseExact(comment.Substring(9, 19), "yyyy-MM-dd HH:mm:ss", null);
-			String commentMessage = comment.Substring(28, comment.Length - 29);
+			String commentMessage = comment[28..^1];
 			if (DateTime.Now.Subtract(commentTime) >= new TimeSpan(IGNORE_HOUR, 0, 0))
 			{
 				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, IGNORE_HOUR + "時間以上経過しているコメントを無視します：" + commentMessage);
@@ -194,7 +193,7 @@ namespace YukkoView2.Models.Receiver
 		// --------------------------------------------------------------------
 		// 旧仕様コメント文字列を解析
 		// --------------------------------------------------------------------
-		private CommentInfo? AnalyzeOldFormatCommentData(Byte[] array, Int32 beginPos)
+		private static CommentInfo? AnalyzeOldFormatCommentData(Byte[] array, Int32 beginPos)
 		{
 			String comment = Encoding.GetEncoding(Common.CODE_PAGE_SHIFT_JIS).GetString(array, beginPos, array.Length - beginPos);
 
@@ -203,7 +202,7 @@ namespace YukkoView2.Models.Receiver
 				return null;
 			}
 
-			CommentInfo commentInfo = new(comment.Substring(7, comment.Length - 8), Int32.Parse(comment.Substring(0, 1)),
+			CommentInfo commentInfo = new(comment[7..^1], Int32.Parse(comment[..1]),
 					Color.FromRgb(Convert.ToByte(comment.Substring(1, 2), 16), Convert.ToByte(comment.Substring(3, 2), 16), Convert.ToByte(comment.Substring(5, 2), 16)));
 			return commentInfo;
 		}
@@ -237,7 +236,7 @@ namespace YukkoView2.Models.Receiver
 		// コメントサーバーからコメントをダウンロード
 		// ＜返値＞ result: 成功なら true
 		// --------------------------------------------------------------------
-		private async Task<(Boolean result, Byte[] array)> DownloadCommentAsync(Downloader downloader)
+		private static async Task<(Boolean result, Byte[] array)> DownloadCommentAsync(Downloader downloader)
 		{
 			Boolean result = false;
 			Byte[] array = Array.Empty<Byte>();
@@ -378,7 +377,7 @@ namespace YukkoView2.Models.Receiver
 
 							// クライアントから送られたデータを受信する
 							Boolean disconnected = false;
-							using MemoryStream memoryStream = new MemoryStream();
+							using MemoryStream memoryStream = new();
 							Byte[] received = new Byte[1024];
 							Int32 receivedSize = 0;
 							do
@@ -420,8 +419,7 @@ namespace YukkoView2.Models.Receiver
 						{
 							throw new Exception("コメントデータが空です。");
 						}
-						String comment = receivedString.Substring(commentPos + COMMENT_BEGIN_MARK.Length);
-
+						String comment = receivedString[(commentPos + COMMENT_BEGIN_MARK.Length)..];
 
 						// サーバーとの通信に成功したのでエラー表示解除
 						Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.ServerNotConnected] = false;

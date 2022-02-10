@@ -181,7 +181,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		private CommentInfo? _prevCommentInfo;
 
 		// コメント受信用
-		private Receiver _receiver;
+		private readonly Receiver _receiver;
 
 		// コメント表示を停止した時刻
 		private Int32 _stopTick;
@@ -246,7 +246,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// 指定されたディスプレイの番号
 		// --------------------------------------------------------------------
-		private Int32 TargetMonitorIndexByManual()
+		private static Int32 TargetMonitorIndexByManual()
 		{
 			return Yv2Model.Instance.EnvModel.Yv2Settings.MonitorIndex;
 		}
@@ -315,7 +315,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			{
 				return;
 			}
-			if (CommentInfos.Count == 0)
+			if (CommentInfos.IsEmpty)
 			{
 				return;
 			}

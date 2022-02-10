@@ -528,7 +528,7 @@ namespace YukkoView2.ViewModels
 		private readonly SplashWindowViewModel _splashWindowViewModel;
 
 		// コメント表示ウィンドウ
-		private DisplayWindowViewModel _displayWindowViewModel;
+		private readonly DisplayWindowViewModel _displayWindowViewModel;
 
 		// Yv2StatusErrorFactors 変更監視
 		//private CollectionChangedEventListener _yv2StatusErrorFactorsListener;
