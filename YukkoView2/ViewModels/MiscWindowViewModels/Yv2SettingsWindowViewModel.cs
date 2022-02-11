@@ -8,19 +8,22 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Livet.Commands;
+
 using Shinta;
 using Shinta.ViewModels;
 
 using System;
 using System.Diagnostics;
 
+using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 using YukkoView2.ViewModels.Yv2SettingsTabItemViewModels;
 
 namespace YukkoView2.ViewModels.MiscWindowViewModels
 {
-	internal class Yv2SettingsWindowViewModel : TabControlWindowViewModel
+	internal class Yv2SettingsWindowViewModel : TabControlWindowViewModel<Yv2Settings>
 	{
 		// ====================================================================
 		// コンストラクター
@@ -55,6 +58,39 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			get => (Yv2SettingsTabItemReceiveViewModel)_tabItemViewModels[(Int32)Yv2SettingsTabItem.Receive];
 		}
 
+		// --------------------------------------------------------------------
+		// コマンド
+		// --------------------------------------------------------------------
+
+		#region 初期化ボタンの制御
+		private ViewModelCommand? _buttonDefaultClickedCommand;
+
+		public ViewModelCommand ButtonDefaultClickedCommand
+		{
+			get
+			{
+				if (_buttonDefaultClickedCommand == null)
+				{
+					_buttonDefaultClickedCommand = new ViewModelCommand(ButtonDefaultClicked);
+				}
+				return _buttonDefaultClickedCommand;
+			}
+		}
+
+		public void ButtonDefaultClicked()
+		{
+			try
+			{
+
+			}
+			catch (Exception ex)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "初期化ボタンクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
 		// ====================================================================
 		// public 関数
 		// ====================================================================
@@ -70,6 +106,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			{
 				// タイトルバー
 				Title = "環境設定";
+
+				// 設定
+				SettingsToProperties(Yv2Model.Instance.EnvModel.Yv2Settings);
 			}
 			catch (Exception ex)
 			{
@@ -85,9 +124,9 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		// タブアイテムの ViewModel を生成
 		// --------------------------------------------------------------------
-		protected override TabItemViewModel[] CreateTabItemViewModels()
+		protected override TabItemViewModel<Yv2Settings>[] CreateTabItemViewModels()
 		{
-			return new TabItemViewModel[]
+			return new TabItemViewModel<Yv2Settings>[]
 			{
 				new Yv2SettingsTabItemSettingsViewModel(this),
 				new Yv2SettingsTabItemReceiveViewModel(this),
@@ -95,10 +134,22 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		}
 
 		// --------------------------------------------------------------------
+		// プロパティーを設定に反映
+		// --------------------------------------------------------------------
+		protected override void PropertiesToSettings()
+		{
+			base.PropertiesToSettings();
+
+			PropertiesToSettings(Yv2Model.Instance.EnvModel.Yv2Settings);
+		}
+
+		// --------------------------------------------------------------------
 		// 設定を保存
 		// --------------------------------------------------------------------
 		protected override void SaveSettings()
 		{
+			base.SaveSettings();
+
 			Yv2Model.Instance.EnvModel.Yv2Settings.Save();
 		}
 	}

@@ -15,11 +15,13 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
+using YukkoView2.Models.Settings;
 using YukkoView2.Models.YukkoView2Models;
+using YukkoView2.ViewModels.MiscWindowViewModels;
 
 namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 {
-	internal class Yv2SettingsTabItemSettingsViewModel : TabItemViewModel
+	internal class Yv2SettingsTabItemSettingsViewModel : TabItemViewModel<Yv2Settings>
 	{
 		// ====================================================================
 		// コンストラクター
@@ -28,8 +30,8 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public Yv2SettingsTabItemSettingsViewModel(TabControlWindowViewModel tabControlWindowViewModel)
-				: base(tabControlWindowViewModel, Yv2Model.Instance.EnvModel.LogWriter)
+		public Yv2SettingsTabItemSettingsViewModel(Yv2SettingsWindowViewModel yv2SettingsWindowViewModel)
+				: base(yv2SettingsWindowViewModel, Yv2Model.Instance.EnvModel.LogWriter)
 		{
 		}
 
@@ -105,21 +107,21 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// プロパティーから設定に反映
 		// --------------------------------------------------------------------
-		public override void PropertiesToSettings()
+		public override void PropertiesToSettings(Yv2Settings destSettings)
 		{
-			Yv2Model.Instance.EnvModel.Yv2Settings.PlayOnStart = PlayOnStart;
-			Yv2Model.Instance.EnvModel.Yv2Settings.EnableMargin = EnableMargin;
-			Yv2Model.Instance.EnvModel.Yv2Settings.MarginPercent = MarginPercent;
+			destSettings.PlayOnStart = PlayOnStart;
+			destSettings.EnableMargin = EnableMargin;
+			destSettings.MarginPercent = MarginPercent;
 		}
 
 		// --------------------------------------------------------------------
 		// 設定をプロパティーに反映
 		// --------------------------------------------------------------------
-		public override void SettingsToProperties()
+		public override void SettingsToProperties(Yv2Settings srcSettings)
 		{
-			PlayOnStart = Yv2Model.Instance.EnvModel.Yv2Settings.PlayOnStart;
-			EnableMargin = Yv2Model.Instance.EnvModel.Yv2Settings.EnableMargin;
-			MarginPercent = Yv2Model.Instance.EnvModel.Yv2Settings.MarginPercent;
+			PlayOnStart = srcSettings.PlayOnStart;
+			EnableMargin = srcSettings.EnableMargin;
+			MarginPercent = srcSettings.MarginPercent;
 		}
 	}
 }

@@ -12,12 +12,14 @@ using Shinta.ViewModels;
 
 using System;
 
+using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
+using YukkoView2.ViewModels.MiscWindowViewModels;
 
 namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 {
-	internal class Yv2SettingsTabItemReceiveViewModel : TabItemViewModel
+	internal class Yv2SettingsTabItemReceiveViewModel : TabItemViewModel<Yv2Settings>
 	{
 		// ====================================================================
 		// コンストラクター
@@ -26,8 +28,8 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public Yv2SettingsTabItemReceiveViewModel(TabControlWindowViewModel tabControlWindowViewModel)
-				: base(tabControlWindowViewModel, Yv2Model.Instance.EnvModel.LogWriter)
+		public Yv2SettingsTabItemReceiveViewModel(Yv2SettingsWindowViewModel yv2SettingsWindowViewModel)
+				: base(yv2SettingsWindowViewModel, Yv2Model.Instance.EnvModel.LogWriter)
 		{
 		}
 
@@ -113,25 +115,25 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// --------------------------------------------------------------------
 		// プロパティーから設定に反映
 		// --------------------------------------------------------------------
-		public override void PropertiesToSettings()
+		public override void PropertiesToSettings(Yv2Settings destSettings)
 		{
 			// コメントサーバー指定方法
-			Yv2Model.Instance.EnvModel.Yv2Settings.CommentServerType = CommentServerAuto ? CommentServerType.Auto : CommentServerType.Manual;
-			Yv2Model.Instance.EnvModel.Yv2Settings.YukariConfigPathSeed = YukariConfigPathSeed;
-			Yv2Model.Instance.EnvModel.Yv2Settings.ServerUrlSeed = ServerUrlSeed;
-			Yv2Model.Instance.EnvModel.Yv2Settings.RoomNameSeed = RoomNameSeed;
+			destSettings.CommentServerType = CommentServerAuto ? CommentServerType.Auto : CommentServerType.Manual;
+			destSettings.YukariConfigPathSeed = YukariConfigPathSeed;
+			destSettings.ServerUrlSeed = ServerUrlSeed;
+			destSettings.RoomNameSeed = RoomNameSeed;
 
 			// コメント受信方法
-			Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType = CommentReceivePush ? CommentReceiveType.Push : CommentReceiveType.Download;
+			destSettings.CommentReceiveType = CommentReceivePush ? CommentReceiveType.Push : CommentReceiveType.Download;
 		}
 
 		// --------------------------------------------------------------------
 		// 設定をプロパティーに反映
 		// --------------------------------------------------------------------
-		public override void SettingsToProperties()
+		public override void SettingsToProperties(Yv2Settings srcSettings)
 		{
 			// コメントサーバー指定方法
-			switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentServerType)
+			switch (srcSettings.CommentServerType)
 			{
 				case CommentServerType.Auto:
 					CommentServerAuto = true;
@@ -141,12 +143,12 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 					CommentServerManual = true;
 					break;
 			}
-			YukariConfigPathSeed = Yv2Model.Instance.EnvModel.Yv2Settings.YukariConfigPathSeed;
-			ServerUrlSeed = Yv2Model.Instance.EnvModel.Yv2Settings.ServerUrlSeed;
-			RoomNameSeed = Yv2Model.Instance.EnvModel.Yv2Settings.RoomNameSeed;
+			YukariConfigPathSeed = srcSettings.YukariConfigPathSeed;
+			ServerUrlSeed = srcSettings.ServerUrlSeed;
+			RoomNameSeed = srcSettings.RoomNameSeed;
 
 			// コメント受信方法
-			switch (Yv2Model.Instance.EnvModel.Yv2Settings.CommentReceiveType)
+			switch (srcSettings.CommentReceiveType)
 			{
 				case CommentReceiveType.Push:
 					CommentReceivePush = true;

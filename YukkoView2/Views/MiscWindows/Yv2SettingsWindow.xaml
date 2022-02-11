@@ -93,9 +93,14 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,20,20" >
-            <Button Content="_OK" IsDefault="True" Width="100" Command="{Binding ButtonOkClickedCommand}" Margin="0,0,20,0" sb:IsFocusedAttachedBehavior.IsFocused="{Binding IsButtonOkFocused}" />
-            <Button Content="キャンセル" IsCancel="True" Width="100" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" />
-        </StackPanel>
+        <DockPanel Margin="20,20,20,20" LastChildFill="False" >
+            <StackPanel Orientation="Horizontal" >
+                <Button Content="初期化" Width="100" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" Command="{Binding ButtonDefaultClickedCommand}" Cursor="Hand" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" >
+                <Button Content="_OK" IsDefault="True" Width="100" Command="{Binding ButtonOkClickedCommand}" Margin="0,0,20,0" sb:IsFocusedAttachedBehavior.IsFocused="{Binding IsButtonOkFocused}" />
+                <Button Content="キャンセル" IsCancel="True" Width="100" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" />
+            </StackPanel>
+        </DockPanel>
     </StackPanel>
 </Window>
