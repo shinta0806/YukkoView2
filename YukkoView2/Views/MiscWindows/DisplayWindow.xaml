@@ -12,7 +12,7 @@
         Name="CommentDisplayWindow"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent" ShowInTaskbar="False" 
         Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}" Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" 
-        MinWidth="200" MinHeight="100" Topmost="True" >
+        MinWidth="200" MinHeight="100" Topmost="{Binding TopMost}" >
 
     <Window.DataContext>
         <vmmwvm:DisplayWindowViewModel />

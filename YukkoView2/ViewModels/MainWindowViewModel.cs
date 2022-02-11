@@ -496,7 +496,6 @@ namespace YukkoView2.ViewModels
 				// 終了処理
 				_displayWindowViewModel.Close();
 				SaveExitStatus();
-				//Common.DeleteTempFolder();
 
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "終了しました：" + Yv2Constants.APP_NAME_J + " "
 						+ Yv2Constants.APP_VER + "  " + Yv2Constants.APP_DISTRIB + " --------------------");

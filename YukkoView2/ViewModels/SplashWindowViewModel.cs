@@ -59,9 +59,6 @@ namespace YukkoView2.ViewModels
 				}
 				paletteHelper.SetTheme(theme);
 
-				// テンポラリフォルダー準備
-				//Common.InitializeTempFolder();
-
 				// 環境
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);

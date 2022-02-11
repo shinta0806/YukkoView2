@@ -52,6 +52,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// View 通信用のプロパティー
 		// --------------------------------------------------------------------
 
+		// 常に手前に表示
+		private Boolean _topMost = true;
+		public Boolean TopMost
+		{
+			get => _topMost;
+			set => RaisePropertyChangedIfSet(ref _topMost, value);
+		}
+
 		// 表示中のコメント群（Int32 はダミー）
 		private ConcurrentDictionary<CommentInfo, Int32> _commentInfos = new();
 		public ConcurrentDictionary<CommentInfo, Int32> CommentInfos
@@ -320,7 +328,11 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				return;
 			}
 
-			// MPC-BE のフルスクリーンは通常の最大化とは異なり、このフォームの TopMost が効かない
+			// いったん TopMost をオフにしてから再度オンにする（チケット #15 対策）
+			TopMost = false;
+			TopMost = true;
+
+			// MPC-BE のフルスクリーンは通常の最大化とは異なり、このウィンドウの TopMost が効かない
 			// MPC-BE が最前面に来ている時は、このフォームを最前面に持って行く必要がある
 			// GetForegroundWindow() はマルチディスプレイに関係なく最前面を報告するので、
 			// ディスプレイ 2 の最前面が MPC-BE でも、ディスプレイ 1 に他のアプリがあってそれが最前面ならそれを報告する
