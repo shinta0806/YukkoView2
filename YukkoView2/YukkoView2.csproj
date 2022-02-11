@@ -61,7 +61,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Settings\" />
     <Folder Include="Models\YukkoView2Models\" />
     <Folder Include="_Common\Behaviors\" />
     <Folder Include="_Common\ViewModels\" />

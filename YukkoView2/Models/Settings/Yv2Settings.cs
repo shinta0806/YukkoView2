@@ -15,7 +15,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Web;
-using System.Windows;
 
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
@@ -102,22 +101,6 @@ namespace YukkoView2.Models.Settings
 		// ディスプレイ選択方法：手動
 		// ディスプレイ番号（0 オリジン）
 		public Int32 MonitorIndex { get; set; }
-
-		// --------------------------------------------------------------------
-		// 終了時の状態（一般）
-		// --------------------------------------------------------------------
-
-		// 前回起動時のバージョン
-		public String PrevLaunchVer { get; set; } = String.Empty;
-
-		// 前回起動時のパス
-		public String PrevLaunchPath { get; set; } = String.Empty;
-
-		// ウィンドウ位置
-		public Rect DesktopBounds { get; set; }
-
-		// RSS 確認日
-		public DateTime RssCheckDate { get; set; }
 
 		// ====================================================================
 		// public 関数

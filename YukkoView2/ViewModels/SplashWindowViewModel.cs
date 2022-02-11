@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
+using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 
@@ -43,6 +44,9 @@ namespace YukkoView2.ViewModels
 
 			try
 			{
+				// インスタンス生成
+				_ = Yv2Model.Instance;
+
 				// マテリアルデザインの外観を変更
 				IEnumerable<Swatch> swatches = new SwatchesProvider().Swatches;
 				PaletteHelper paletteHelper = new();
@@ -62,13 +66,15 @@ namespace YukkoView2.ViewModels
 				// 環境
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				Yv2Model.Instance.EnvModel.Yv2Settings.SetLogWriter(Yv2Model.Instance.EnvModel.LogWriter);
+				ExitSettings exitSettings = new();
+				exitSettings.Load();
 
 				// エンコード
 				Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 				// メインウィンドウ表示
 				_mainWindowViewModel = new MainWindowViewModel(this);
-				if (Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds.Width == 0.0 || Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds.Height == 0.0)
+				if (exitSettings.DesktopBounds.Width == 0.0 || exitSettings.DesktopBounds.Height == 0.0)
 				{
 					// デフォルトウィンドウサイズ（コメント表示ウィンドウの枠とかぶらないようにする）
 					MonitorManager monitorManager = new();
@@ -83,7 +89,7 @@ namespace YukkoView2.ViewModels
 				else
 				{
 					// 前回のウィンドウサイズ
-					Rect adjustedRect = CommonWindows.AdjustWindowRect(Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds);
+					Rect adjustedRect = CommonWindows.AdjustWindowRect(exitSettings.DesktopBounds);
 					_mainWindowViewModel.Left = adjustedRect.Left;
 					_mainWindowViewModel.Top = adjustedRect.Top;
 				}

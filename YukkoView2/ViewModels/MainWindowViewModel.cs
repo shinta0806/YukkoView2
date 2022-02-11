@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
+using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 using YukkoView2.ViewModels.MiscWindowViewModels;
@@ -529,7 +530,7 @@ namespace YukkoView2.ViewModels
 
 				// 終了処理
 				_displayWindowViewModel.Close();
-				SaveExitStatus();
+				SaveExitSettings();
 
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "終了しました：" + Yv2Constants.APP_NAME_J + " "
 						+ Yv2Constants.APP_VER + "  " + Yv2Constants.APP_DISTRIB + " --------------------");
@@ -588,9 +589,12 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		private void DoVerChangedIfNeeded()
 		{
-			// 更新起動時とパス変更時の記録
+			ExitSettings exitSettings = new();
+			exitSettings.Load();
+
+			// 更新起動時とパス変更時のログ
 			// 新規起動時は、両フラグが立つのでダブらないように注意
-			String prevLaunchVer = Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer;
+			String prevLaunchVer = exitSettings.PrevLaunchVer;
 			Boolean verChanged = prevLaunchVer != Yv2Constants.APP_VER;
 			if (verChanged)
 			{
@@ -604,7 +608,7 @@ namespace YukkoView2.ViewModels
 					_logWriter?.LogMessage(TraceEventType.Information, "更新起動：" + prevLaunchVer + "→" + Yv2Constants.APP_VER);
 				}
 			}
-			String prevLaunchPath = Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchPath;
+			String prevLaunchPath = exitSettings.PrevLaunchPath;
 			Boolean pathChanged = (String.Compare(prevLaunchPath, Yv2Model.Instance.EnvModel.ExeFullPath, true) != 0);
 			if (pathChanged && !String.IsNullOrEmpty(prevLaunchPath))
 			{
@@ -618,7 +622,7 @@ namespace YukkoView2.ViewModels
 			}
 			if (verChanged)
 			{
-				NewVersionLaunched();
+				NewVersionLaunched(exitSettings);
 			}
 		}
 
@@ -635,14 +639,14 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		// 新バージョンで初回起動された時の処理を行う
 		// --------------------------------------------------------------------
-		private void NewVersionLaunched()
+		private void NewVersionLaunched(ExitSettings exitSettings)
 		{
 			String newVerMsg;
 			TraceEventType type = TraceEventType.Information;
 
 			// α・β警告、ならびに、更新時のメッセージ（2022/01/23）
 			// 新規・更新のご挨拶
-			if (String.IsNullOrEmpty(Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer))
+			if (String.IsNullOrEmpty(exitSettings.PrevLaunchVer))
 			{
 				// 新規
 				newVerMsg = "【初回起動】\n\n";
@@ -672,7 +676,7 @@ namespace YukkoView2.ViewModels
 
 			// 表示
 			_logWriter?.ShowLogMessage(type, newVerMsg);
-			SaveExitStatus();
+			SaveExitSettings();
 
 #if !DISTRIB_STORE
 			// Zone ID 削除
@@ -706,12 +710,16 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		// 終了時の状態を保存
 		// --------------------------------------------------------------------
-		private void SaveExitStatus()
+		private void SaveExitSettings()
 		{
-			Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchPath = Yv2Model.Instance.EnvModel.ExeFullPath;
-			Yv2Model.Instance.EnvModel.Yv2Settings.PrevLaunchVer = Yv2Constants.APP_VER;
-			Yv2Model.Instance.EnvModel.Yv2Settings.DesktopBounds = new Rect(Left, Top, Int32.MaxValue, Int32.MaxValue);
-			Yv2Model.Instance.EnvModel.Yv2Settings.Save();
+			ExitSettings exitSettings = new();
+			exitSettings.Load();
+
+			exitSettings.PrevLaunchPath = Yv2Model.Instance.EnvModel.ExeFullPath;
+			exitSettings.PrevLaunchVer = Yv2Constants.APP_VER;
+			exitSettings.DesktopBounds = new Rect(Left, Top, Int32.MaxValue, Int32.MaxValue);
+
+			exitSettings.Save();
 		}
 
 		// --------------------------------------------------------------------
