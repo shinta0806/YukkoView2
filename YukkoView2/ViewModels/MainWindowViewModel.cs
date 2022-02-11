@@ -134,6 +134,39 @@ namespace YukkoView2.ViewModels
 		// コマンド
 		// --------------------------------------------------------------------
 
+		#region ゆっこビュー 2 動作状況ラベルの制御
+		private ViewModelCommand? _labelYv2StatusClickedCommand;
+
+		public ViewModelCommand LabelYv2StatusClickedCommand
+		{
+			get
+			{
+				if (_labelYv2StatusClickedCommand == null)
+				{
+					_labelYv2StatusClickedCommand = new ViewModelCommand(LabelYukaListerStatusClicked);
+				}
+				return _labelYv2StatusClickedCommand;
+			}
+		}
+
+		public void LabelYukaListerStatusClicked()
+		{
+			try
+			{
+				if (String.IsNullOrEmpty(_labelYv2StatusUrl))
+				{
+					return;
+				}
+				Common.ShellExecute(_labelYv2StatusUrl);
+			}
+			catch (Exception excep)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "ゆっこビュー 2 動作状況ラベルクリック時エラー：\n" + excep.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+
+		#endregion
 		#region 開始ボタンの制御
 		private ViewModelCommand? _buttonPlayClickedCommand;
 
@@ -441,6 +474,7 @@ namespace YukkoView2.ViewModels
 
 				// プログラムエラーチェック
 				Debug.Assert(Yv2Constants.ERROR_FACTOR_MESSAGE.Length == (Int32)Yv2StatusErrorFactor.__End__, "MainWindow.Initialize() bad ERROR_FACTOR_MESSAGE length");
+				Debug.Assert(Yv2Constants.ERROR_FACTOR_URL.Length == (Int32)Yv2StatusErrorFactor.__End__, "MainWindow.Initialize() bad ERROR_FACTOR_URL length");
 
 				// 環境の変化に対応
 				DoVerChangedIfNeeded();
@@ -530,11 +564,11 @@ namespace YukkoView2.ViewModels
 		// コメント表示ウィンドウ
 		private readonly DisplayWindowViewModel _displayWindowViewModel;
 
-		// Yv2StatusErrorFactors 変更監視
-		//private CollectionChangedEventListener _yv2StatusErrorFactorsListener;
-
 		// config.ini 変更監視
 		private readonly FileSystemWatcher _fileSystemWatcherYukariConfig = new();
+
+		// ゆっこビュー 2 動作状況ラベルクリック時に表示する URL
+		private String? _labelYv2StatusUrl;
 
 		// コメント表示中
 		private Boolean _isPlaying;
@@ -733,6 +767,7 @@ namespace YukkoView2.ViewModels
 			{
 				// エラーがある場合はエラー表示
 				Yv2StatusMessage = Yv2Constants.ERROR_FACTOR_MESSAGE[errorIndex] + "　※アプリでのコメント投稿は可能です。";
+				_labelYv2StatusUrl = Yv2Constants.ERROR_FACTOR_URL[errorIndex];
 				Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_ERROR;
 			}
 			else
@@ -747,6 +782,17 @@ namespace YukkoView2.ViewModels
 					Yv2StatusMessage = "コメント表示停止中";
 					Yv2StatusBackground = Yv2Constants.BRUSH_STATUS_DONE;
 				}
+				_labelYv2StatusUrl = null;
+			}
+
+			// カーソル
+			if (String.IsNullOrEmpty(_labelYv2StatusUrl))
+			{
+				Yv2StatusCursor = null;
+			}
+			else
+			{
+				Yv2StatusCursor = Cursors.Hand;
 			}
 		}
 

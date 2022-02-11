@@ -203,6 +203,14 @@ namespace YukkoView2.Models.SharedMisc
 			"コメントサーバーと通信できません。",
 		};
 
+		// エラー要因に対するヒントの URL
+		public static readonly String?[] ERROR_FACTOR_URL =
+		{
+			"https://github.com/shinta0806/YukkoView2/issues/7",
+			null,
+			null,
+		};
+
 		// --------------------------------------------------------------------
 		// その他
 		// --------------------------------------------------------------------
