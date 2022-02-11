@@ -44,8 +44,8 @@
             <ComboBox ItemsSource="{Binding MonitorIndices}" SelectedIndex="{Binding SelectedMonitorIndex}" IsEnabled="{Binding SelectMonitorManual}" MinWidth="50" materialDesign:ComboBoxAssist.ClassicMode="True" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,20,20,20" >
-            <Button Content="_OK" IsDefault="True" Width="100" Command="{Binding ButtonOkClickedCommand}" Margin="0,0,20,0" sb:IsFocusedAttachedBehavior.IsFocused="{Binding IsButtonOkFocused}" />
-            <Button Content="キャンセル" IsCancel="True" Width="100" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" />
+            <Button Content="_OK" IsDefault="True" Width="100" Height="Auto" Command="{Binding ButtonOkClickedCommand}" Margin="0,0,20,0" sb:IsFocusedAttachedBehavior.IsFocused="{Binding IsButtonOkFocused}" />
+            <Button Content="キャンセル" IsCancel="True" Width="100" Height="Auto" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" />
         </StackPanel>
     </StackPanel>
 </Window>

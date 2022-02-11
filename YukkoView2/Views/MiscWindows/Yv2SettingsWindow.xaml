@@ -95,11 +95,11 @@
         </TabControl>
         <DockPanel Margin="20,20,20,20" LastChildFill="False" >
             <StackPanel Orientation="Horizontal" >
-                <Button Content="初期化" Width="100" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" Command="{Binding ButtonDefaultClickedCommand}" Cursor="Hand" />
+                <Button Content="初期化" Width="100" Height="Auto" ToolTip="環境設定を初期設定に戻す" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" Command="{Binding ButtonDefaultClickedCommand}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" >
-                <Button Content="_OK" IsDefault="True" Width="100" Command="{Binding ButtonOkClickedCommand}" Margin="0,0,20,0" sb:IsFocusedAttachedBehavior.IsFocused="{Binding IsButtonOkFocused}" />
-                <Button Content="キャンセル" IsCancel="True" Width="100" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                <Button Content="_OK" IsDefault="True" Width="100" Height="Auto" Command="{Binding ButtonOkClickedCommand}" Margin="0,0,20,0" sb:IsFocusedAttachedBehavior.IsFocused="{Binding IsButtonOkFocused}" />
+                <Button Content="キャンセル" IsCancel="True" Width="100" Height="Auto" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" />
             </StackPanel>
         </DockPanel>
     </StackPanel>

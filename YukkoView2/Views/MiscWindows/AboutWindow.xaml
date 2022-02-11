@@ -97,6 +97,6 @@
                 </StackPanel>
             </StackPanel>
         </GroupBox>
-        <Button Content="_OK" HorizontalAlignment="Center" Margin="0,20" Width="100" Height="Auto" IsDefault="True" IsCancel="True" />
+        <Button Content="_OK" HorizontalAlignment="Center" Margin="0,20" Width="100" Height="Auto" IsDefault="True" IsCancel="True" Cursor="Hand" />
     </StackPanel>
 </Window>

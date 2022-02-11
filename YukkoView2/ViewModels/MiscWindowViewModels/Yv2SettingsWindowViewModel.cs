@@ -15,6 +15,7 @@ using Shinta.ViewModels;
 
 using System;
 using System.Diagnostics;
+using System.Windows;
 
 using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
@@ -81,7 +82,12 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		{
 			try
 			{
+				if (MessageBox.Show("環境設定をすべて初期設定に戻します。\nよろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+				{
+					return;
+				}
 
+				SettingsToProperties(new Yv2Settings());
 			}
 			catch (Exception ex)
 			{
