@@ -208,7 +208,7 @@ namespace YukkoView2.Models.SharedMisc
 		{
 			"https://github.com/shinta0806/YukkoView2/issues/7",
 			"https://github.com/shinta0806/YukkoView2/issues/17",
-			null,
+			"https://github.com/shinta0806/YukkoView2/issues/18",
 		};
 
 		// --------------------------------------------------------------------
