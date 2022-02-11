@@ -11,14 +11,14 @@
     xmlns:vmw="clr-namespace:YukkoView2.Views.MiscWindows"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="{Binding Title}" Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}" 
-    ResizeMode="NoResize" Cursor="{Binding Cursor}" SizeToContent="WidthAndHeight" >
+    ResizeMode="CanMinimize" Cursor="{Binding Cursor}" SizeToContent="WidthAndHeight" >
 
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
     <behaviors:Interaction.Behaviors>
-        <sb:WindowBindingSupportBehavior IsActive="{Binding IsActive}" MinimizeBox="False" />
+        <sb:WindowBindingSupportBehavior IsActive="{Binding IsActive}" MinimizeBox="True" />
     </behaviors:Interaction.Behaviors>
 
     <behaviors:Interaction.Triggers>
@@ -48,7 +48,7 @@
 
         <!-- モードレスウィンドウ -->
         <l:InteractionMessageTrigger MessageKey="{x:Static msm:Yv2Constants.MESSAGE_KEY_OPEN_DISPLAY_WINDOW}" Messenger="{Binding Messenger}">
-            <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:DisplayWindow}" Mode="Normal" IsOwned="True" InvokeActionOnlyWhenWindowIsActive="False" />
+            <l:TransitionInteractionMessageAction WindowType="{x:Type vmw:DisplayWindow}" Mode="Normal" IsOwned="False" InvokeActionOnlyWhenWindowIsActive="False" />
         </l:InteractionMessageTrigger>
 
     </behaviors:Interaction.Triggers>

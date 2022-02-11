@@ -477,6 +477,7 @@ namespace YukkoView2.ViewModels
 
 		// --------------------------------------------------------------------
 		// リソース解放
+		// await するとその間に強制終了されてしまうようなので、await しない
 		// --------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
@@ -493,7 +494,7 @@ namespace YukkoView2.ViewModels
 				Yv2Model.Instance.EnvModel.AppCancellationTokenSource.Cancel();
 
 				// 終了処理
-				// await するとその間に強制終了されてしまうようなので、await しない
+				_displayWindowViewModel.Close();
 				SaveExitStatus();
 				//Common.DeleteTempFolder();
 
