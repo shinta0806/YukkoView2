@@ -226,13 +226,22 @@ namespace YukkoView2.Models.Settings
 				Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.YukariConfigNotFound] = !IsYukariConfigPathValid();
 				if (!IsYukariConfigPathValid())
 				{
-					throw new Exception("ゆかり設定ファイルが正しく指定されていません。");
+					throw new Exception(Yv2Constants.ERROR_FACTOR_MESSAGE[(Int32)Yv2StatusErrorFactor.YukariConfigNotFound]);
 				}
 
 				String[] config = File.ReadAllLines(YukariConfigPath(), Encoding.UTF8);
 
+				// 設定取得
+				String? serverBase = HttpUtility.UrlDecode(YukariConfigValue(config, YUKARI_CONFIG_KEY_NAME_SERVER_URL));
+				String? roomBase = YukariConfigValue(config, YUKARI_CONFIG_KEY_NAME_ROOM_NAME);
+				if (serverBase == null || roomBase == null)
+				{
+					Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.YukariConfigBadContents] = true;
+					throw new Exception(Yv2Constants.ERROR_FACTOR_MESSAGE[(Int32)Yv2StatusErrorFactor.YukariConfigBadContents]);
+				}
+				Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.YukariConfigBadContents] = false;
+
 				// コメントサーバー URL
-				String serverBase = HttpUtility.UrlDecode(YukariConfigValue(config, YUKARI_CONFIG_KEY_NAME_SERVER_URL));
 				if (!String.IsNullOrEmpty(serverBase))
 				{
 					Int32 slash = serverBase.LastIndexOf("/");
@@ -243,7 +252,7 @@ namespace YukkoView2.Models.Settings
 				}
 
 				// ルーム名
-				roomName = YukariConfigValue(config, YUKARI_CONFIG_KEY_NAME_ROOM_NAME);
+				roomName = roomBase;
 			}
 			catch (Exception ex)
 			{
@@ -255,7 +264,7 @@ namespace YukkoView2.Models.Settings
 		// --------------------------------------------------------------------
 		// ゆかり設定を config.ini の内容から取得
 		// --------------------------------------------------------------------
-		private static String YukariConfigValue(String[] config, String keyName)
+		private static String? YukariConfigValue(String[] config, String keyName)
 		{
 			// キーを検索
 			Int32 line = -1;
@@ -270,7 +279,7 @@ namespace YukkoView2.Models.Settings
 			if (line < 0)
 			{
 				// キーがない
-				return String.Empty;
+				return null;
 			}
 
 			// 値を検索

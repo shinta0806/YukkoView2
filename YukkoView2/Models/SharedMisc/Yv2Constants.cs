@@ -199,7 +199,7 @@ namespace YukkoView2.Models.SharedMisc
 		public static readonly String[] ERROR_FACTOR_MESSAGE =
 		{
 			"ゆかり設定ファイルが見つかりませんでした。",
-			"ゆかり設定を読み込めませんでした。",
+			"ゆかり設定ファイルにコメント設定がありません。",
 			"コメントサーバーと通信できません。",
 		};
 
@@ -207,7 +207,7 @@ namespace YukkoView2.Models.SharedMisc
 		public static readonly String?[] ERROR_FACTOR_URL =
 		{
 			"https://github.com/shinta0806/YukkoView2/issues/7",
-			null,
+			"https://github.com/shinta0806/YukkoView2/issues/17",
 			null,
 		};
 
