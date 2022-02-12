@@ -115,7 +115,7 @@ namespace YukkoView2.Views.CustomControls
 			try
 			{
 				// 描画の必要性を判定
-				if (IsEnabled && !CommentInfos.Any() && !_clearScreen)
+				if (IsEnabled && !CommentInfos.Any() && !_drawFrame && !_drawRequestList && !_clearScreen)
 				{
 					return;
 				}
@@ -175,8 +175,8 @@ namespace YukkoView2.Views.CustomControls
 		// 枠の描画時間 [ms]
 		private const Int32 DRAW_FRAME_DURATION = 5 * 1000;
 
-		// 予約一覧の描画時間 [ms]
-		private const Int32 DRAW_REQUEST_LIST_DURATION = 10 * 1000;
+		// 予約一覧の最大描画時間 [ms]
+		private const Int32 DRAW_REQUEST_LIST_DURATION = 15 * 1000;
 
 		// 予約一覧のフォントサイズ
 		private const Int32 REQUEST_LIST_FONT_SIZE = 4;
@@ -313,6 +313,24 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
+		// 枠を描画しないようにする
+		// --------------------------------------------------------------------
+		private void ClearDrawFrame()
+		{
+			_drawFrame = false;
+			_clearScreen = true;
+		}
+
+		// --------------------------------------------------------------------
+		// 予約一覧を描画しないようにする
+		// --------------------------------------------------------------------
+		private void ClearDrawRequestList()
+		{
+			_drawRequestList = false;
+			_clearScreen = true;
+		}
+
+		// --------------------------------------------------------------------
 		// 画面消去
 		// --------------------------------------------------------------------
 		private void ClearScreen()
@@ -438,7 +456,7 @@ namespace YukkoView2.Views.CustomControls
 			if (Environment.TickCount >= _clearFrameTick)
 			{
 				// 枠を消去する時刻になった
-				_drawFrame = false;
+				ClearDrawFrame();
 				return;
 			}
 
@@ -465,7 +483,7 @@ namespace YukkoView2.Views.CustomControls
 			if (Environment.TickCount >= _clearRequestListTick)
 			{
 				// 予約一覧を消去する時刻になった
-				_drawRequestList = false;
+				ClearDrawRequestList();
 				return;
 			}
 
@@ -494,6 +512,45 @@ namespace YukkoView2.Views.CustomControls
 		// 予約一覧描画データ（オフスクリーン）を作成する
 		// --------------------------------------------------------------------
 		private void ExecuteCommandRequestList(CommentInfo commentInfo)
+		{
+			Int32.TryParse(commentInfo.Message, out Int32 flag);
+			if (flag != 0)
+			{
+				Debug.WriteLine("ExecuteCommandRequestList() ON " + Environment.TickCount.ToString("#,0"));
+				PrepareRequestList(commentInfo);
+			}
+			else
+			{
+				Debug.WriteLine("ExecuteCommandRequestList() OFF " + Environment.TickCount.ToString("#,0"));
+				ClearDrawRequestList();
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// 予約一覧を取得
+		// ゆかり manage-mpc.php 1315 行目「未再生の項目を検索」と同様の条件で検索
+		// --------------------------------------------------------------------
+		private List<TYukariRequest> GetRequestList()
+		{
+			using YukariRequestContext yukariRequestContext = new();
+			return yukariRequestContext.YukariRequests.Where(x => x.NowPlaying == Yv2Constants.YUKARI_REQUEST_NOW_PLAYING_QUEUED).OrderBy(x => x.Order).ToList();
+		}
+
+		// --------------------------------------------------------------------
+		// 描画データが再度準備されるようにする
+		// --------------------------------------------------------------------
+		private void InvalidateDrawData()
+		{
+			foreach (CommentInfo commentInfo in CommentInfos.Keys)
+			{
+				commentInfo.IsDrawDataPrepared = false;
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// 予約一覧の準備（オフスクリーン作成等）
+		// --------------------------------------------------------------------
+		private void PrepareRequestList(CommentInfo commentInfo)
 		{
 			// 数値計算
 			Double fontSize = REQUEST_LIST_FONT_SIZE * _fontUnit;
@@ -602,27 +659,6 @@ namespace YukkoView2.Views.CustomControls
 			_requestListOffScreen.Render(offScreenVisual);
 			_requestListOffScreen.Freeze();
 			SetDrawRequestList();
-		}
-
-		// --------------------------------------------------------------------
-		// 予約一覧を取得
-		// ゆかり manage-mpc.php 1315 行目「未再生の項目を検索」と同様の条件で検索
-		// --------------------------------------------------------------------
-		private List<TYukariRequest> GetRequestList()
-		{
-			using YukariRequestContext yukariRequestContext = new();
-			return yukariRequestContext.YukariRequests.Where(x => x.NowPlaying == Yv2Constants.YUKARI_REQUEST_NOW_PLAYING_QUEUED).OrderBy(x => x.Order).ToList();
-		}
-
-		// --------------------------------------------------------------------
-		// 描画データが再度準備されるようにする
-		// --------------------------------------------------------------------
-		private void InvalidateDrawData()
-		{
-			foreach (CommentInfo commentInfo in CommentInfos.Keys)
-			{
-				commentInfo.IsDrawDataPrepared = false;
-			}
 		}
 
 		// --------------------------------------------------------------------
