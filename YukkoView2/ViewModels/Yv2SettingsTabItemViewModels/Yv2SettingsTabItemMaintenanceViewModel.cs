@@ -54,7 +54,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		// View 通信用のプロパティー
 		// --------------------------------------------------------------------
 
-		// ゆかりすたーの最新情報・更新版を自動的に確認する
+		// ゆっこビュー 2 の最新情報を自動的に確認する
 		private Boolean _checkRss;
 		public Boolean CheckRss
 		{

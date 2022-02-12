@@ -93,7 +93,7 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		public const String APP_ID = "YukkoView2";
 		public const String APP_NAME_J = "ゆっこビュー 2 ";
-		public const String APP_VER = "Ver 1.00";
+		public const String APP_VER = "Ver 1.31";
 		public const String COPYRIGHT_J = "Copyright (C) 2022 by SHINTA";
 #if DISTRIB_STORE
 		public const String APP_DISTRIB = "ストア版";
@@ -285,5 +285,8 @@ namespace YukkoView2.Models.SharedMisc
 
 		// 年齢制限のデフォルト値
 		public const Int32 AGE_LIMIT_DEFAULT = -1;
+
+		// ラベル（XAML 側で ContentStringFormat で結合するとアクセラレータキーが効かないためここで結合）
+		public const String LABEL_CONTENT_CHECK_RSS = APP_NAME_J + "の最新情報を自動的に確認する (_L)";
 	}
 }
