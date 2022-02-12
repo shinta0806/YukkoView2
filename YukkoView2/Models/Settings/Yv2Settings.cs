@@ -124,7 +124,7 @@ namespace YukkoView2.Models.Settings
 			switch (CommentServerType)
 			{
 				case CommentServerType.Auto:
-					(serverUrl, roomName) = AnalyzeYukariConfig();
+					(serverUrl, roomName) = AnalyzeYukariConfigComment();
 					break;
 				case CommentServerType.Manual:
 					serverUrl = ServerUrlSeed;
@@ -155,6 +155,26 @@ namespace YukkoView2.Models.Settings
 		}
 
 		// --------------------------------------------------------------------
+		// ゆかり request.db のフルパス
+		// --------------------------------------------------------------------
+		public String YukariRequestDatabasePath()
+		{
+			String dbName = AnalyzeYukariConfigRequest();
+			if (String.IsNullOrEmpty(dbName))
+			{
+				return Path.GetFullPath(FILE_NAME_YUKARI_REQUEST_DB_DEFAULT, Path.GetDirectoryName(YukariConfigPath()) ?? String.Empty);
+			}
+			else if (Path.IsPathRooted(dbName))
+			{
+				return dbName;
+			}
+			else
+			{
+				return Path.GetFullPath(dbName, Path.GetDirectoryName(YukariConfigPath()) ?? String.Empty);
+			}
+		}
+
+		// --------------------------------------------------------------------
 		// 保存パス
 		// --------------------------------------------------------------------
 		public static String Yv2SettingsPath()
@@ -179,7 +199,7 @@ namespace YukkoView2.Models.Settings
 			// コメントサーバー指定方法が自動の場合は、手動のデフォルト値を設定（未設定の場合のみ）
 			if (CommentServerType == CommentServerType.Auto)
 			{
-				(String serverUrlSeed, String roomNameSeed) = AnalyzeYukariConfig();
+				(String serverUrlSeed, String roomNameSeed) = AnalyzeYukariConfigComment();
 				if (String.IsNullOrEmpty(ServerUrlSeed))
 				{
 					if (String.IsNullOrEmpty(serverUrlSeed))
@@ -203,20 +223,24 @@ namespace YukkoView2.Models.Settings
 		// ====================================================================
 
 		// ゆかりの config.ini の項目
+		private const String YUKARI_CONFIG_KEY_NAME_DB_NAME = "dbname";
 		private const String YUKARI_CONFIG_KEY_NAME_ROOM_NAME = "commentroom";
 		private const String YUKARI_CONFIG_KEY_NAME_SERVER_URL = "commenturl_base";
 
 		// デフォルトのコメントサーバーファイル名
 		private const String FILE_NAME_COMMENT_SERVER_DEFAULT = "c.php";
 
+		// デフォルト DB ファイル名
+		private const String FILE_NAME_YUKARI_REQUEST_DB_DEFAULT = "request.db";
+
 		// ====================================================================
 		// private 関数
 		// ====================================================================
 
 		// --------------------------------------------------------------------
-		// ゆかり設定ファイルを解析してゆかりの設定を取得
+		// ゆかり設定ファイルを解析してゆかりの設定を取得（コメント設定）
 		// --------------------------------------------------------------------
-		private (String serverUrl, String roomName) AnalyzeYukariConfig()
+		private (String serverUrl, String roomName) AnalyzeYukariConfigComment()
 		{
 			String serverUrl = String.Empty;
 			String roomName = String.Empty;
@@ -259,6 +283,39 @@ namespace YukkoView2.Models.Settings
 				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, ex.Message);
 			}
 			return (serverUrl, roomName);
+		}
+
+		// --------------------------------------------------------------------
+		// ゆかり設定ファイルを解析してゆかりの設定を取得（request.db）
+		// --------------------------------------------------------------------
+		private String AnalyzeYukariConfigRequest()
+		{
+			String dbName = String.Empty;
+			try
+			{
+				Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.YukariConfigNotFound] = !IsYukariConfigPathValid();
+				if (!IsYukariConfigPathValid())
+				{
+					throw new Exception(Yv2Constants.ERROR_FACTOR_MESSAGE[(Int32)Yv2StatusErrorFactor.YukariConfigNotFound]);
+				}
+
+				String[] config = File.ReadAllLines(YukariConfigPath(), Encoding.UTF8);
+
+				// 設定取得
+				String? dbBase = YukariConfigValue(config, YUKARI_CONFIG_KEY_NAME_DB_NAME);
+				if (dbBase == null)
+				{
+					Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.YukariConfigBadContents] = true;
+					throw new Exception(Yv2Constants.ERROR_FACTOR_MESSAGE[(Int32)Yv2StatusErrorFactor.YukariConfigBadContents]);
+				}
+				Yv2Model.Instance.EnvModel.Yv2StatusErrorFactors[(Int32)Yv2StatusErrorFactor.YukariConfigBadContents] = false;
+				dbName = dbBase;
+			}
+			catch (Exception ex)
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, ex.Message);
+			}
+			return dbName;
 		}
 
 		// --------------------------------------------------------------------

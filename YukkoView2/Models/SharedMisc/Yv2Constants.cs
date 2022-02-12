@@ -165,6 +165,9 @@ namespace YukkoView2.Models.SharedMisc
 		// デフォルトコメントフォントサイズ（ゆかりから送られてくるサイズの中）
 		public const Int32 DEFAULT_YUKARI_FONT_SIZE = 3;
 
+		// 未再生
+		public const String YUKARI_REQUEST_NOW_PLAYING_QUEUED = "未再生";
+
 		// --------------------------------------------------------------------
 		// 状態色
 		// --------------------------------------------------------------------
@@ -210,6 +213,13 @@ namespace YukkoView2.Models.SharedMisc
 			"https://github.com/shinta0806/YukkoView2/issues/17",
 			"https://github.com/shinta0806/YukkoView2/issues/18",
 		};
+
+		// --------------------------------------------------------------------
+		// コメントコマンド（必ず 5 文字）
+		// --------------------------------------------------------------------
+
+		// 予約一覧表示
+		public const String COMMENT_COMMAND_REQUEST_LIST = "rqlst";
 
 		// --------------------------------------------------------------------
 		// その他

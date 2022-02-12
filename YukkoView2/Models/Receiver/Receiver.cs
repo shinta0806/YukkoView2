@@ -102,7 +102,10 @@ namespace YukkoView2.Models.Receiver
 		// ====================================================================
 
 		// 古すぎて無視するコメントの閾値 [時間]
-		private const Int32 IGNORE_HOUR = 12;
+		private const Int32 COMMENT_IGNORE_HOUR = 12;
+
+		// 古すぎて無視するコマンドの閾値 [分]
+		private const Int32 COMMAND_IGNORE_MINUTE = 5;
 
 		// ローカルホスト
 		private const String HOST_NAME_LOCAL_HOST = "localhost";
@@ -167,26 +170,63 @@ namespace YukkoView2.Models.Receiver
 
 		// --------------------------------------------------------------------
 		// 拡張コメント文字列を解析
+		// ＜例外＞ Exception
 		// --------------------------------------------------------------------
 		private static CommentInfo? AnalyzeExtendedCommentData(String comment)
 		{
-			// 拡張バージョン識別子の確認
-			if (comment.Substring(1, 1) != "3")
+			CommentInfo? commentInfo;
+			switch (comment.Substring(1, 1))
 			{
-				throw new Exception("未対応の拡張コメントフォーマットです。");
+				case "3":
+					commentInfo = AnalyzeExtendedCommentDataV3(comment);
+					break;
+				case "4":
+					commentInfo = AnalyzeExtendedCommentDataV4(comment);
+					break;
+				default:
+					throw new Exception("未対応の拡張コメントフォーマットです。");
 			}
 
+			return commentInfo;
+		}
+
+		// --------------------------------------------------------------------
+		// 拡張コメント文字列を解析（V3：コメント）
+		// --------------------------------------------------------------------
+		private static CommentInfo? AnalyzeExtendedCommentDataV3(String comment)
+		{
 			// 古いコメントは無視
 			DateTime commentTime = DateTime.ParseExact(comment.Substring(9, 19), "yyyy-MM-dd HH:mm:ss", null);
 			String commentMessage = comment[28..^1];
-			if (DateTime.Now.Subtract(commentTime) >= new TimeSpan(IGNORE_HOUR, 0, 0))
+			if (DateTime.Now.Subtract(commentTime) >= new TimeSpan(COMMENT_IGNORE_HOUR, 0, 0))
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, IGNORE_HOUR + "時間以上経過しているコメントを無視します：" + commentMessage);
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, COMMENT_IGNORE_HOUR + "時間以上経過しているコメントを無視します：" + commentMessage);
 				return null;
 			}
 
 			CommentInfo commentInfo = new(commentMessage, Int32.Parse(comment.Substring(2, 1)),
 					Color.FromRgb(Convert.ToByte(comment.Substring(3, 2), 16), Convert.ToByte(comment.Substring(5, 2), 16), Convert.ToByte(comment.Substring(7, 2), 16)));
+			return commentInfo;
+		}
+
+		// --------------------------------------------------------------------
+		// 拡張コメント文字列を解析（V4：コマンド）
+		// ＜例外＞ Exception
+		// --------------------------------------------------------------------
+		private static CommentInfo? AnalyzeExtendedCommentDataV4(String comment)
+		{
+			// 古いコメントは無視
+			DateTime commentTime = DateTime.ParseExact(comment.Substring(7, 19), "yyyy-MM-dd HH:mm:ss", null);
+			String commentCommand = comment.Substring(2, 5);
+			String commentMessage = comment[26..^1];
+			if (DateTime.Now.Subtract(commentTime) >= new TimeSpan(0, COMMAND_IGNORE_MINUTE, 0))
+			{
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, COMMAND_IGNORE_MINUTE + "分以上経過しているコマンドを無視します："
+						+ commentCommand + " = " + commentMessage);
+				return null;
+			}
+
+			CommentInfo commentInfo = new(commentCommand, commentMessage);
 			return commentInfo;
 		}
 
@@ -410,6 +450,7 @@ namespace YukkoView2.Models.Receiver
 						}
 
 						// コメントを取り出す
+						Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Verbose, "ReceivePushLoopAsync() receivedString: " + receivedString);
 						Int32 commentPos = receivedString.IndexOf(COMMENT_BEGIN_MARK);
 						if (commentPos < 0)
 						{
@@ -430,6 +471,10 @@ namespace YukkoView2.Models.Receiver
 						{
 							Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "コメントを受信しました：" + commentInfo.Message);
 							_commentContainer.AddComment(commentInfo);
+#if DEBUGz
+							CommentInfo db = new(Yv2Constants.COMMENT_COMMAND_REQUEST_LIST, "1");
+							_commentContainer.AddComment(db);
+#endif
 						}
 
 						// 閉じる

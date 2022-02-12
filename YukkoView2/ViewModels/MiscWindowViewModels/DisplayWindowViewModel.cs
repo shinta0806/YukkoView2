@@ -97,12 +97,16 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			DispatcherHelper.UIDispatcher.Invoke(() =>
 			{
 				// 連続投稿防止
-				if (_prevCommentInfo != null && commentInfo.CompareBasic(_prevCommentInfo) && commentInfo.InitialTick - _prevCommentInfo.InitialTick <= Yv2Constants.CONTINUOUS_PREVENT_TIME)
+				if (!commentInfo.IsCommand()
+						&& _prevCommentInfo != null && commentInfo.CompareBasic(_prevCommentInfo) && commentInfo.InitialTick - _prevCommentInfo.InitialTick <= Yv2Constants.CONTINUOUS_PREVENT_TIME)
 				{
 					_logWriter?.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "連続投稿のため表示しません：" + commentInfo.Message);
 					return;
 				}
-				_prevCommentInfo = commentInfo;
+				if (!commentInfo.IsCommand())
+				{
+					_prevCommentInfo = commentInfo;
+				}
 
 				// 追加
 				CommentInfos[commentInfo] = 0;

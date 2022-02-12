@@ -20,15 +20,34 @@ namespace YukkoView2.Models.SharedMisc
 		// ====================================================================
 
 		// --------------------------------------------------------------------
-		// メインコンストラクター
+		// コメント用コンストラクター
 		// --------------------------------------------------------------------
 		public CommentInfo(String message, Int32 yukariSize, Color color)
 		{
+			Command = String.Empty;
 			Message = message.Trim();
 			YukariSize = yukariSize;
 			Color = color;
 
 			InitialTick = Environment.TickCount;
+		}
+
+		// --------------------------------------------------------------------
+		// コマンド用コンストラクター
+		// ＜例外＞ Exception
+		// --------------------------------------------------------------------
+		public CommentInfo(String command, String message)
+		{
+			Command = command;
+			Message = message;
+
+			InitialTick = Environment.TickCount;
+
+			// 有効なコマンドか確認
+			if (Command != Yv2Constants.COMMENT_COMMAND_REQUEST_LIST)
+			{
+				throw new Exception("未対応のコメントコマンドです：" + Command);
+			}
 		}
 
 		// ====================================================================
@@ -39,8 +58,11 @@ namespace YukkoView2.Models.SharedMisc
 		// 基本情報
 		// --------------------------------------------------------------------
 
-		// コメント内容
-		public String Message { get; set; }
+		// コマンド
+		public String Command { get; }
+
+		// コメント内容 or コマンドパラメーター
+		public String Message { get; }
 
 		// サイズ（ゆかり指定サイズ）
 		// ゆかりでは「小=0、中=3、大=6、特大=9」
@@ -49,16 +71,17 @@ namespace YukkoView2.Models.SharedMisc
 		public Int32 YukariSize
 		{
 			get => _yukariSize;
-			set
+			private set
 			{
 				_yukariSize = Math.Clamp(value, 1, 9);
 			}
 		}
 
 		// 色
-		public Color Color { get; set; }
+		public Color Color { get; }
 
 		// コメントを取得した時刻
+		// 停止→開始で変更される
 		public Int32 InitialTick { get; set; }
 
 		// --------------------------------------------------------------------
@@ -126,6 +149,14 @@ namespace YukkoView2.Models.SharedMisc
 			return Message == comp.Message
 					&& YukariSize == comp.YukariSize
 					&& Color == comp.Color;
+		}
+
+		// --------------------------------------------------------------------
+		// コマンドかどうか
+		// --------------------------------------------------------------------
+		public Boolean IsCommand()
+		{
+			return Command != String.Empty;
 		}
 	}
 }
