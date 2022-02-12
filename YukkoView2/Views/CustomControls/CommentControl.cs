@@ -49,10 +49,12 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		public CommentControl()
 		{
+			SetRenderOptions(this);
+
 			IsEnabledChanged += CommentControl_IsEnabledChanged;
 			SizeChanged += CommentControl_SizeChanged;
 			_typeFace = new(String.Empty);
-			_requestListOffScreen = CreateOffScreen();
+			_requestListOffScreen = CreateOffScreen(0);
 		}
 
 		// ====================================================================
@@ -122,11 +124,12 @@ namespace YukkoView2.Views.CustomControls
 				// オフスクリーン描画
 				// オフスクリーンをクラスメンバーにすると、ガベージコレクトが遅延するのか、一時的に数 GB のメモリを消費してしまう
 				// 仕方ないので、オフスクリーンは都度生成する
-				RenderTargetBitmap offScreen = CreateOffScreen();
+				RenderTargetBitmap offScreen = CreateOffScreen(ActualHeight);
 				Rect drawingRect = new(0, 0, offScreen.Width, offScreen.Height);
 				if (IsEnabled)
 				{
 					DrawingVisual offScreenVisual = new();
+					SetRenderOptions(offScreenVisual);
 					using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
 
 					// 枠
@@ -136,10 +139,15 @@ namespace YukkoView2.Views.CustomControls
 					PrepareDrawDataIfNeeded();
 
 					// 予約一覧描画
+					// ToDo: 予約一覧の内容がピクセルぴったり描画になっていない
 					DrawRequestListIfNeeded(offScreenContext);
 
 					// コメント描画
 					DrawCommentInfosIfNeeded(offScreenContext);
+
+#if DEBUGz
+					offScreenContext.DrawRectangle(Brushes.SkyBlue, null, new Rect(500, 300, 100, 100));
+#endif
 
 					// オフスクリーンへ描画
 					offScreenContext.Close();
@@ -148,6 +156,10 @@ namespace YukkoView2.Views.CustomControls
 
 				// オンスクリーンへ転写
 				drawingContext.DrawImage(offScreen, drawingRect);
+
+#if DEBUGz
+				drawingContext.DrawRectangle(Brushes.SkyBlue, null, new Rect(300, 300, 100, 100));
+#endif
 			}
 			catch (Exception ex)
 			{
@@ -168,6 +180,12 @@ namespace YukkoView2.Views.CustomControls
 
 		// 予約一覧のフォントサイズ
 		private const Int32 REQUEST_LIST_FONT_SIZE = 4;
+
+		// 予約一覧の表示曲数
+		private const Int32 REQUEST_LIST_NUM_SONGS = 3;
+
+		// 予約一覧の行数（合計行を含む）
+		private const Int32 REQUEST_LIST_NUM_LINES = REQUEST_LIST_NUM_SONGS + 1;
 
 		// 画面の高さに対するフォントサイズの比率（フォントサイズ 1 の時）
 		private const Double FONT_UNIT_SCALE = 0.023;
@@ -367,13 +385,10 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// オフスクリーン作成
 		// --------------------------------------------------------------------
-		private RenderTargetBitmap CreateOffScreen()
+		private RenderTargetBitmap CreateOffScreen(Double height)
 		{
-			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)ActualHeight, 1), Common.DEFAULT_DPI, Common.DEFAULT_DPI, PixelFormats.Pbgra32);
-
-			// ピクセルぴったり描画
-			offScreen.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-
+			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)height, 1), Common.DEFAULT_DPI, Common.DEFAULT_DPI, PixelFormats.Pbgra32);
+			SetRenderOptions(offScreen);
 			return offScreen;
 		}
 
@@ -455,7 +470,7 @@ namespace YukkoView2.Views.CustomControls
 			}
 
 			// 描画
-			drawingContext.DrawImage(_requestListOffScreen, new Rect(0, 0, _requestListOffScreen.Width, _requestListOffScreen.Height));
+			drawingContext.DrawImage(_requestListOffScreen, new Rect(0, (ActualHeight - _requestListOffScreen.Height) / 2, _requestListOffScreen.Width, _requestListOffScreen.Height));
 		}
 
 		// --------------------------------------------------------------------
@@ -480,15 +495,13 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private void ExecuteCommandRequestList(CommentInfo commentInfo)
 		{
-			// オフスクリーンを生成しサイズを確定
-			_requestListOffScreen = CreateOffScreen();
-
 			// 数値計算
 			Double fontSize = REQUEST_LIST_FONT_SIZE * _fontUnit;
 			Double indexFontSize = fontSize * 0.8;
 			Double keyCaptionFontSize = fontSize * 0.3;
-			Double keyFontSize = fontSize * 0.7;
+			Double keyFontSize = fontSize * 0.8;
 			Double padding = _fontUnit;
+			Double verticalMargin = _fontUnit;
 			Debug.WriteLine("ExecuteCommandRequestList() fontSize: " + fontSize);
 
 			// ペン
@@ -496,56 +509,94 @@ namespace YukkoView2.Views.CustomControls
 			Pen keyPen = new(Brushes.SkyBlue, _fontUnit * 0.2);
 
 			DrawingVisual offScreenVisual = new();
+			SetRenderOptions(offScreenVisual);
 			using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
 
-			// 枠描画
+			// オフスクリーンを生成しサイズを確定
 			Double lineHeight = fontSize + padding * 2;
-			for (Int32 i = 0; i < 4; i++)
+			_requestListOffScreen = CreateOffScreen(RequestListTop(REQUEST_LIST_NUM_LINES, lineHeight, verticalMargin));
+
+			// 背景描画
+			offScreenContext.DrawRectangle(Brushes.MidnightBlue, null, new Rect(0, 0, _requestListOffScreen.Width, _requestListOffScreen.Height));
+
+			// 枠描画
+			for (Int32 i = 0; i < REQUEST_LIST_NUM_LINES; i++)
 			{
-				offScreenContext.DrawRectangle(Brushes.DarkBlue, null, new Rect(0, RequestListTop(i, fontSize, padding), _requestListOffScreen.Width, lineHeight));
+				offScreenContext.DrawRectangle(Brushes.DarkBlue, null, new Rect(0, RequestListTop(i, lineHeight, verticalMargin), _requestListOffScreen.Width, lineHeight));
 			}
 
 			// 予約描画
 			List<TYukariRequest> requestList = GetRequestList();
 			FormattedText keyCaptionText = new("キー", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
 					keyCaptionFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
-			for (Int32 i = 0; i < 3; i++)
+			for (Int32 i = 0; i < REQUEST_LIST_NUM_SONGS; i++)
 			{
-				Double lineTop = RequestListTop(i, fontSize, padding);
+				Double lineTop = RequestListTop(i, lineHeight, verticalMargin);
 
 				// インデックス
-				FormattedText indexText = new((i + 1).ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-						indexFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
+				FormattedText indexText;
+				if (i == 0)
+				{
+					offScreenContext.DrawRectangle(Brushes.SkyBlue, null, new Rect(0, lineTop, lineHeight, lineHeight));
+					indexText = new("次", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+							indexFontSize, Brushes.White, Common.DEFAULT_DPI);
+					offScreenContext.DrawText(indexText, new Point((lineHeight - indexText.Width) / 2, lineTop + (lineHeight - indexText.Height) / 2));
+				}
+				else
+				{
+					indexText = new((i + 1).ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+							indexFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
+				}
 				offScreenContext.DrawText(indexText, new Point((lineHeight - indexText.Width) / 2, lineTop + (lineHeight - indexText.Height) / 2));
 
 				// 区切り線
 				offScreenContext.DrawLine(separatorPen, new Point(lineHeight, lineTop), new Point(lineHeight, lineTop + lineHeight));
-				if (i >= requestList.Count)
+				if (i > 0 && i >= requestList.Count)
 				{
 					continue;
 				}
 
 				// 曲名
 				offScreenContext.PushClip(new RectangleGeometry(new Rect(0, lineTop, _requestListOffScreen.Width - lineHeight - padding, lineHeight)));
-				FormattedText titleText = new(Path.GetFileNameWithoutExtension(requestList[i].Path), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-						fontSize, Brushes.White, Common.DEFAULT_DPI);
+				String title;
+				if (i < requestList.Count)
+				{
+					title = Path.GetFileNameWithoutExtension(requestList[i].Path);
+				}
+				else
+				{
+					title = "（予約がありません）";
+				}
+				FormattedText titleText = new(title, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+						fontSize, i == 0 ? Brushes.White : Brushes.Silver, Common.DEFAULT_DPI);
 				offScreenContext.DrawText(titleText, new Point(lineHeight + padding, lineTop + (lineHeight - titleText.Height) / 2));
 				offScreenContext.Pop();
+				if (i >= requestList.Count)
+				{
+					continue;
+				}
 
 				// キー
-				offScreenContext.DrawRectangle(null, keyPen, new Rect(_requestListOffScreen.Width - lineHeight, lineTop, lineHeight, lineHeight));
+				offScreenContext.DrawRectangle(null, keyPen,
+						new Rect(_requestListOffScreen.Width - lineHeight + keyPen.Thickness / 2, lineTop + keyPen.Thickness / 2, lineHeight - keyPen.Thickness, lineHeight - keyPen.Thickness));
 				offScreenContext.DrawText(keyCaptionText, new Point(_requestListOffScreen.Width - lineHeight + keyPen.Thickness, lineTop + keyPen.Thickness));
-				FormattedText keyText = new(requestList[i].KeyChange.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+				String key = requestList[i].KeyChange.ToString();
+				if (requestList[i].KeyChange > 0)
+				{
+					key = "+" + key;
+				}
+				FormattedText keyText = new(key, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
 						keyFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
-				Double keyCaptionHeight = keyPen.Thickness + keyCaptionText.Height;
+				Double keyCaptionHeight = keyCaptionText.Height;
 				offScreenContext.DrawText(keyText, new Point(_requestListOffScreen.Width - lineHeight + (lineHeight - keyText.Width) / 2,
-						lineTop + keyCaptionHeight + (lineHeight - keyCaptionHeight - keyText.Height) / 2));
+						lineTop + (lineHeight - keyText.Height) / 2));
 			}
 
 			// 合計描画
 			FormattedText totalText = new("合計 " + requestList.Count.ToString() + " 曲", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-					fontSize, Brushes.White, Common.DEFAULT_DPI);
-			offScreenContext.DrawText(totalText, new Point(_requestListOffScreen.Width - totalText.Width, RequestListTop(3, fontSize, padding) + (lineHeight - totalText.Height) / 2));
+					fontSize, Brushes.Silver, Common.DEFAULT_DPI);
+			offScreenContext.DrawText(totalText, new Point(_requestListOffScreen.Width - totalText.Width,
+					RequestListTop(REQUEST_LIST_NUM_SONGS, lineHeight, verticalMargin) + (lineHeight - totalText.Height) / 2));
 
 			offScreenContext.Close();
 			_requestListOffScreen.Render(offScreenVisual);
@@ -572,6 +623,15 @@ namespace YukkoView2.Views.CustomControls
 			{
 				commentInfo.IsDrawDataPrepared = false;
 			}
+		}
+
+		// --------------------------------------------------------------------
+		// ピクセルぴったり描画
+		// --------------------------------------------------------------------
+		private void SetRenderOptions(DependencyObject dependencyObject)
+		{
+			dependencyObject.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+			dependencyObject.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.NearestNeighbor);
 		}
 
 		// --------------------------------------------------------------------
@@ -654,10 +714,10 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// 予約一覧の描画位置
 		// --------------------------------------------------------------------
-		private Double RequestListTop(Int32 index, Double fontSize, Double padding)
+		private Double RequestListTop(Int32 index, Double lineHeight, Double verticalMargin)
 		{
-			// 文字サイズ、パディング x2、行間
-			return index * (fontSize + padding * 2 + _fontUnit);
+			// 行高と行間を考慮
+			return index * (lineHeight + _fontUnit) + verticalMargin;
 		}
 
 		// --------------------------------------------------------------------
