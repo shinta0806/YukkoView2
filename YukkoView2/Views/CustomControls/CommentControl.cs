@@ -122,8 +122,8 @@ namespace YukkoView2.Views.CustomControls
 				_clearScreen = false;
 
 				// オフスクリーン描画
-				// オフスクリーンをクラスメンバーにすると、ガベージコレクトが遅延するのか、一時的に数 GB のメモリを消費してしまう
-				// 仕方ないので、オフスクリーンは都度生成する
+				// オフスクリーンをクラスメンバーにすると、ガベージコレクトが遅延するのか、一時的に数 GB のメモリを消費してしまう（Freeze() してなかったからかも）
+				// 将来的な効率化（オフスクリーンサイズ最適化）も考慮し、オフスクリーンは都度生成する
 				RenderTargetBitmap offScreen = CreateOffScreen(ActualHeight);
 				Rect drawingRect = new(0, 0, offScreen.Width, offScreen.Height);
 				if (IsEnabled)
@@ -163,8 +163,9 @@ namespace YukkoView2.Views.CustomControls
 			}
 			catch (Exception ex)
 			{
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(TraceEventType.Error, "コメント表示コントロール描画時エラー：\n" + ex.Message);
-				Yv2Model.Instance.EnvModel.LogWriter.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+				// 定期的にエラーが発生する場合はメッセージボックスを表示すると大変なことになるので、ログのみとする
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(TraceEventType.Error, "コメント表示コントロール描画時エラー：\n" + ex.Message);
+				Yv2Model.Instance.EnvModel.LogWriter.LogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 
@@ -537,6 +538,32 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
+		// 曲名を取得
+		// --------------------------------------------------------------------
+		private String GetTitle(ListContextInDisk listContext, String path)
+		{
+			String? title = null;
+			TFound? found = null;
+			try
+			{
+				found = listContext.Founds.FirstOrDefault(x => x.Path == path);
+			}
+			catch (Exception)
+			{
+				// リストデータベースが存在しない場合は例外が発生する
+			}
+			if (found != null)
+			{
+				title = found.SongName;
+			}
+			if (String.IsNullOrEmpty(title))
+			{
+				title = Path.GetFileNameWithoutExtension(path) ?? String.Empty;
+			}
+			return title;
+		}
+
+		// --------------------------------------------------------------------
 		// 描画データが再度準備されるようにする
 		// --------------------------------------------------------------------
 		private void InvalidateDrawData()
@@ -544,144 +571,6 @@ namespace YukkoView2.Views.CustomControls
 			foreach (CommentInfo commentInfo in CommentInfos.Keys)
 			{
 				commentInfo.IsDrawDataPrepared = false;
-			}
-		}
-
-		// --------------------------------------------------------------------
-		// 予約一覧の準備（オフスクリーン作成等）
-		// --------------------------------------------------------------------
-		private void PrepareRequestList(CommentInfo commentInfo)
-		{
-			// 数値計算
-			Double fontSize = REQUEST_LIST_FONT_SIZE * _fontUnit;
-			Double indexFontSize = fontSize * 0.8;
-			Double keyCaptionFontSize = fontSize * 0.3;
-			Double keyFontSize = fontSize * 0.8;
-			Double padding = _fontUnit;
-			Double verticalMargin = _fontUnit;
-			Debug.WriteLine("ExecuteCommandRequestList() fontSize: " + fontSize);
-
-			// ペン
-			Pen separatorPen = new(Brushes.MidnightBlue, _fontUnit * 0.3);
-			Pen keyPen = new(Brushes.SkyBlue, _fontUnit * 0.2);
-
-			DrawingVisual offScreenVisual = new();
-			SetRenderOptions(offScreenVisual);
-			using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
-
-			// オフスクリーンを生成しサイズを確定
-			Double lineHeight = fontSize + padding * 2;
-			_requestListOffScreen = CreateOffScreen(RequestListTop(REQUEST_LIST_NUM_LINES, lineHeight, verticalMargin));
-
-			// 背景描画
-			offScreenContext.DrawRectangle(Brushes.MidnightBlue, null, new Rect(0, 0, _requestListOffScreen.Width, _requestListOffScreen.Height));
-
-			// 枠描画
-			for (Int32 i = 0; i < REQUEST_LIST_NUM_LINES; i++)
-			{
-				offScreenContext.DrawRectangle(Brushes.DarkBlue, null, new Rect(0, RequestListTop(i, lineHeight, verticalMargin), _requestListOffScreen.Width, lineHeight));
-			}
-
-			// 予約描画
-			List<TYukariRequest> requestList = GetRequestList();
-			FormattedText keyCaptionText = new("キー", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-					keyCaptionFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
-			for (Int32 i = 0; i < REQUEST_LIST_NUM_SONGS; i++)
-			{
-				Double lineTop = RequestListTop(i, lineHeight, verticalMargin);
-
-				// インデックス
-				FormattedText indexText;
-				if (i == 0)
-				{
-					offScreenContext.DrawRectangle(Brushes.SkyBlue, null, new Rect(0, lineTop, lineHeight, lineHeight));
-					indexText = new("次", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-							indexFontSize, Brushes.White, Common.DEFAULT_DPI);
-					offScreenContext.DrawText(indexText, new Point((lineHeight - indexText.Width) / 2, lineTop + (lineHeight - indexText.Height) / 2));
-				}
-				else
-				{
-					indexText = new((i + 1).ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-							indexFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
-				}
-				offScreenContext.DrawText(indexText, new Point((lineHeight - indexText.Width) / 2, lineTop + (lineHeight - indexText.Height) / 2));
-
-				// 区切り線
-				offScreenContext.DrawLine(separatorPen, new Point(lineHeight, lineTop), new Point(lineHeight, lineTop + lineHeight));
-				if (i > 0 && i >= requestList.Count)
-				{
-					continue;
-				}
-
-				// 曲名
-				offScreenContext.PushClip(new RectangleGeometry(new Rect(0, lineTop, _requestListOffScreen.Width - lineHeight - padding, lineHeight)));
-				String title;
-				if (i < requestList.Count)
-				{
-					title = Path.GetFileNameWithoutExtension(requestList[i].Path);
-				}
-				else
-				{
-					title = "（予約がありません）";
-				}
-				FormattedText titleText = new(title, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-						fontSize, i == 0 ? Brushes.White : Brushes.Silver, Common.DEFAULT_DPI);
-				offScreenContext.DrawText(titleText, new Point(lineHeight + padding, lineTop + (lineHeight - titleText.Height) / 2));
-				offScreenContext.Pop();
-				if (i >= requestList.Count)
-				{
-					continue;
-				}
-
-				// キー
-				offScreenContext.DrawRectangle(null, keyPen,
-						new Rect(_requestListOffScreen.Width - lineHeight + keyPen.Thickness / 2, lineTop + keyPen.Thickness / 2, lineHeight - keyPen.Thickness, lineHeight - keyPen.Thickness));
-				offScreenContext.DrawText(keyCaptionText, new Point(_requestListOffScreen.Width - lineHeight + keyPen.Thickness, lineTop + keyPen.Thickness));
-				String key = requestList[i].KeyChange.ToString();
-				if (requestList[i].KeyChange > 0)
-				{
-					key = "+" + key;
-				}
-				FormattedText keyText = new(key, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-						keyFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
-				Double keyCaptionHeight = keyCaptionText.Height;
-				offScreenContext.DrawText(keyText, new Point(_requestListOffScreen.Width - lineHeight + (lineHeight - keyText.Width) / 2,
-						lineTop + (lineHeight - keyText.Height) / 2));
-			}
-
-			// 合計描画
-			FormattedText totalText = new("合計 " + requestList.Count.ToString() + " 曲", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
-					fontSize, Brushes.Silver, Common.DEFAULT_DPI);
-			offScreenContext.DrawText(totalText, new Point(_requestListOffScreen.Width - totalText.Width,
-					RequestListTop(REQUEST_LIST_NUM_SONGS, lineHeight, verticalMargin) + (lineHeight - totalText.Height) / 2));
-
-			offScreenContext.Close();
-			_requestListOffScreen.Render(offScreenVisual);
-			_requestListOffScreen.Freeze();
-			SetDrawRequestList();
-		}
-
-		// --------------------------------------------------------------------
-		// ピクセルぴったり描画
-		// --------------------------------------------------------------------
-		private void SetRenderOptions(DependencyObject dependencyObject)
-		{
-			dependencyObject.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-			dependencyObject.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.NearestNeighbor);
-		}
-
-		// --------------------------------------------------------------------
-		// 上下マージン
-		// --------------------------------------------------------------------
-		private Int32 TopBottomMargin()
-		{
-			if (Yv2Model.Instance.EnvModel.Yv2Settings.EnableMargin)
-			{
-				return (Int32)ActualHeight * Yv2Model.Instance.EnvModel.Yv2Settings.MarginPercent / 100;
-			}
-			else
-			{
-				return 0;
 			}
 		}
 
@@ -748,6 +637,121 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
+		// 予約一覧の準備（オフスクリーン作成等）
+		// --------------------------------------------------------------------
+		private void PrepareRequestList(CommentInfo commentInfo)
+		{
+			// 数値計算
+			Double fontSize = REQUEST_LIST_FONT_SIZE * _fontUnit;
+			Double indexFontSize = fontSize * 0.8;
+			Double keyCaptionFontSize = fontSize * 0.3;
+			Double keyFontSize = fontSize * 0.8;
+			Double padding = _fontUnit;
+			Double verticalMargin = _fontUnit;
+			Debug.WriteLine("ExecuteCommandRequestList() fontSize: " + fontSize);
+
+			// ペン
+			Pen separatorPen = new(Brushes.MidnightBlue, _fontUnit * 0.3);
+			Pen keyPen = new(Brushes.SkyBlue, _fontUnit * 0.2);
+
+			DrawingVisual offScreenVisual = new();
+			SetRenderOptions(offScreenVisual);
+			using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
+
+			// オフスクリーンを生成しサイズを確定
+			Double lineHeight = fontSize + padding * 2;
+			_requestListOffScreen = CreateOffScreen(RequestListTop(REQUEST_LIST_NUM_LINES, lineHeight, verticalMargin));
+
+			// 背景描画
+			offScreenContext.DrawRectangle(Brushes.MidnightBlue, null, new Rect(0, 0, _requestListOffScreen.Width, _requestListOffScreen.Height));
+
+			// 枠描画
+			for (Int32 i = 0; i < REQUEST_LIST_NUM_LINES; i++)
+			{
+				offScreenContext.DrawRectangle(Brushes.DarkBlue, null, new Rect(0, RequestListTop(i, lineHeight, verticalMargin), _requestListOffScreen.Width, lineHeight));
+			}
+
+			// 予約描画
+			using ListContextInDisk listContext = new();
+			List<TYukariRequest> requestList = GetRequestList();
+			FormattedText keyCaptionText = new("キー", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+					keyCaptionFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
+			for (Int32 i = 0; i < REQUEST_LIST_NUM_SONGS; i++)
+			{
+				Double lineTop = RequestListTop(i, lineHeight, verticalMargin);
+
+				// インデックス
+				FormattedText indexText;
+				if (i == 0)
+				{
+					offScreenContext.DrawRectangle(Brushes.SkyBlue, null, new Rect(0, lineTop, lineHeight, lineHeight));
+					indexText = new("次", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+							indexFontSize, Brushes.White, Common.DEFAULT_DPI);
+					offScreenContext.DrawText(indexText, new Point((lineHeight - indexText.Width) / 2, lineTop + (lineHeight - indexText.Height) / 2));
+				}
+				else
+				{
+					indexText = new((i + 1).ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+							indexFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
+				}
+				offScreenContext.DrawText(indexText, new Point((lineHeight - indexText.Width) / 2, lineTop + (lineHeight - indexText.Height) / 2));
+
+				// 区切り線
+				offScreenContext.DrawLine(separatorPen, new Point(lineHeight, lineTop), new Point(lineHeight, lineTop + lineHeight));
+				if (i > 0 && i >= requestList.Count)
+				{
+					continue;
+				}
+
+				// 曲名
+				offScreenContext.PushClip(new RectangleGeometry(new Rect(0, lineTop, _requestListOffScreen.Width - lineHeight - padding, lineHeight)));
+				String title;
+				if (i < requestList.Count)
+				{
+					title = GetTitle(listContext, requestList[i].Path);
+				}
+				else
+				{
+					title = "（予約がありません）";
+				}
+				FormattedText titleText = new(title, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+						fontSize, i == 0 ? Brushes.White : Brushes.Silver, Common.DEFAULT_DPI);
+				offScreenContext.DrawText(titleText, new Point(lineHeight + padding, lineTop + (lineHeight - titleText.Height) / 2));
+				offScreenContext.Pop();
+				if (i >= requestList.Count)
+				{
+					continue;
+				}
+
+				// キー
+				offScreenContext.DrawRectangle(null, keyPen,
+						new Rect(_requestListOffScreen.Width - lineHeight + keyPen.Thickness / 2, lineTop + keyPen.Thickness / 2, lineHeight - keyPen.Thickness, lineHeight - keyPen.Thickness));
+				offScreenContext.DrawText(keyCaptionText, new Point(_requestListOffScreen.Width - lineHeight + keyPen.Thickness, lineTop + keyPen.Thickness));
+				String key = requestList[i].KeyChange.ToString();
+				if (requestList[i].KeyChange > 0)
+				{
+					key = "+" + key;
+				}
+				FormattedText keyText = new(key, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+						keyFontSize, Brushes.SkyBlue, Common.DEFAULT_DPI);
+				Double keyCaptionHeight = keyCaptionText.Height;
+				offScreenContext.DrawText(keyText, new Point(_requestListOffScreen.Width - lineHeight + (lineHeight - keyText.Width) / 2,
+						lineTop + (lineHeight - keyText.Height) / 2));
+			}
+
+			// 合計描画
+			FormattedText totalText = new("合計 " + requestList.Count.ToString() + " 曲", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, _typeFace,
+					fontSize, Brushes.Silver, Common.DEFAULT_DPI);
+			offScreenContext.DrawText(totalText, new Point(_requestListOffScreen.Width - totalText.Width,
+					RequestListTop(REQUEST_LIST_NUM_SONGS, lineHeight, verticalMargin) + (lineHeight - totalText.Height) / 2));
+
+			offScreenContext.Close();
+			_requestListOffScreen.Render(offScreenVisual);
+			_requestListOffScreen.Freeze();
+			SetDrawRequestList();
+		}
+
+		// --------------------------------------------------------------------
 		// 予約一覧の描画位置
 		// --------------------------------------------------------------------
 		private Double RequestListTop(Int32 index, Double lineHeight, Double verticalMargin)
@@ -775,11 +779,35 @@ namespace YukkoView2.Views.CustomControls
 		}
 
 		// --------------------------------------------------------------------
+		// ピクセルぴったり描画
+		// --------------------------------------------------------------------
+		private void SetRenderOptions(DependencyObject dependencyObject)
+		{
+			dependencyObject.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+			dependencyObject.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.NearestNeighbor);
+		}
+
+		// --------------------------------------------------------------------
 		// ViewModel 側で DependencyProperty が変更された（CommentInfosProperty）
 		// --------------------------------------------------------------------
 		private static void SourceCommentInfosPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
 			Debug.WriteLine("SourceCommentInfosPropertyChanged");
+		}
+
+		// --------------------------------------------------------------------
+		// 上下マージン
+		// --------------------------------------------------------------------
+		private Int32 TopBottomMargin()
+		{
+			if (Yv2Model.Instance.EnvModel.Yv2Settings.EnableMargin)
+			{
+				return (Int32)ActualHeight * Yv2Model.Instance.EnvModel.Yv2Settings.MarginPercent / 100;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 	}
 }
