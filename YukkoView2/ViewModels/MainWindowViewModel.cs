@@ -461,7 +461,7 @@ namespace YukkoView2.ViewModels
 		// --------------------------------------------------------------------
 		// 初期化
 		// --------------------------------------------------------------------
-		public override void Initialize()
+		public override async void Initialize()
 		{
 			base.Initialize();
 
@@ -498,6 +498,9 @@ namespace YukkoView2.ViewModels
 				{
 					_ = PlayAsync();
 				}
+
+				// 最新情報確認
+				await CheckRssIfNeededAsync();
 			}
 			catch (Exception ex)
 			{
@@ -583,6 +586,18 @@ namespace YukkoView2.ViewModels
 		// ====================================================================
 		// private 関数
 		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// 最新情報確認
+		// --------------------------------------------------------------------
+		private static async Task CheckRssIfNeededAsync()
+		{
+			if (!Yv2Model.Instance.EnvModel.Yv2Settings.IsCheckRssNeeded())
+			{
+				return;
+			}
+			await Yv2Common.CheckLatestInfoAsync(false);
+		}
 
 		// --------------------------------------------------------------------
 		// バージョン更新時の処理

@@ -59,6 +59,12 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			get => (Yv2SettingsTabItemReceiveViewModel)_tabItemViewModels[(Int32)Yv2SettingsTabItem.Receive];
 		}
 
+		// タブアイテム：メンテナンス
+		public Yv2SettingsTabItemMaintenanceViewModel Yv2SettingsTabItemMaintenanceViewModel
+		{
+			get => (Yv2SettingsTabItemMaintenanceViewModel)_tabItemViewModels[(Int32)Yv2SettingsTabItem.Maintenance];
+		}
+
 		// --------------------------------------------------------------------
 		// コマンド
 		// --------------------------------------------------------------------
@@ -136,6 +142,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			{
 				new Yv2SettingsTabItemSettingsViewModel(this),
 				new Yv2SettingsTabItemReceiveViewModel(this),
+				new Yv2SettingsTabItemMaintenanceViewModel(this),
 			};
 		}
 

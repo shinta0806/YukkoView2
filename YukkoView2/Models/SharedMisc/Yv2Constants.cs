@@ -56,6 +56,7 @@ namespace YukkoView2.Models.SharedMisc
 	{
 		Settings,
 		Receive,
+		Maintenance,
 		__End__,
 	}
 
