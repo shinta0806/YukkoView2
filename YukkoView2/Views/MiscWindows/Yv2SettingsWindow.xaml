@@ -87,7 +87,14 @@
                         <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" Height="3" VerticalAlignment="Center" Margin="0"/>
                     </DockPanel>
                     <StackPanel Margin="20,10,0,0" >
-                        <RadioButton Content="プッシュ通知" IsChecked="{Binding CommentReceivePush}" />
+                        <StackPanel Orientation="Horizontal" >
+                            <RadioButton Content="プッシュ通知（推奨）" IsChecked="{Binding CommentReceivePush}" />
+                            <Label Grid.Column="1" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                <Hyperlink Command="{Binding HelpClickedCommand}" CommandParameter="Pushtsuuchi" >
+                                    <TextBlock Text="詳細情報" />
+                                </Hyperlink>
+                            </Label>
+                        </StackPanel>
                         <RadioButton Content="ダウンロード" IsChecked="{Binding CommentReceiveDownload}" Margin="0,10,0,0" />
                     </StackPanel>
                 </StackPanel>

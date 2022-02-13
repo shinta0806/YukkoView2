@@ -8,6 +8,8 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Livet.Commands;
+
 using Shinta.ViewModels;
 
 using System;
@@ -107,6 +109,17 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 			get => _commentReceiveDownload;
 			set => RaisePropertyChangedIfSet(ref _commentReceiveDownload, value);
 		}
+
+		// --------------------------------------------------------------------
+		// コマンド
+		// --------------------------------------------------------------------
+
+		#region ヘルプリンクの制御
+		public static ListenerCommand<String>? HelpClickedCommand
+		{
+			get => Yv2Model.Instance.EnvModel.HelpClickedCommand;
+		}
+		#endregion
 
 		// ====================================================================
 		// public 関数
