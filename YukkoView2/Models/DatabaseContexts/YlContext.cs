@@ -28,24 +28,10 @@ namespace YukkoView2.Models.DatabaseContexts
 		// --------------------------------------------------------------------
 		// メインコンストラクター
 		// --------------------------------------------------------------------
-		public YlContext(String databaseName, Boolean useWal = false)
+		public YlContext(String databaseName, Boolean _ = false)
 		{
-			Debug.Assert(Properties != null, "Properties table not init");
-
 			_databaseName = databaseName;
-			_useWal = useWal;
 		}
-
-		// ====================================================================
-		// public プロパティー
-		// ====================================================================
-
-		// --------------------------------------------------------------------
-		// データベースプロパティーテーブル
-		// --------------------------------------------------------------------
-
-		// データベースプロパティーテーブル
-		public DbSet<TProperty> Properties { get; set; }
 
 		// ====================================================================
 		// public 関数
@@ -75,12 +61,5 @@ namespace YukkoView2.Models.DatabaseContexts
 			SqliteConnection sqliteConnection = DbCommon.Connect(DatabasePath());
 			optionsBuilder.UseSqlite(sqliteConnection);
 		}
-
-		// ====================================================================
-		// private 変数
-		// ====================================================================
-
-		// WAL を使用するかどうか
-		private readonly Boolean _useWal;
 	}
 }

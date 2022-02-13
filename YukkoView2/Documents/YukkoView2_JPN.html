@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>ゆっこビュー 2&nbsp; Ver 1.0 ヘルプ</title>
+<title>ゆっこビュー 2&nbsp; Ver 1.3 ヘルプ</title>
 <link rel="stylesheet" href="HelpParts/SHIHelpG2.css" type="text/css">
 <script src="HelpParts/jquery.min.js"></script>
 <script src="HelpParts/Scroll.js"></script>
@@ -58,6 +58,7 @@
 
 <a name="Simpleui"></a>
 <h3>シンプルでモダンな UI</h3>
+
 <p>
 <a href="HelpParts/YukkoView2_MainWindow_Running.png" target="_blank"><img src="HelpParts/YukkoView2_MainWindow_Running.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
 メインウィンドウは必要最小限の機能をコンパクトに整理しました。ゆっこビュー（初代）と比べるとメインウィンドウのサイズは半分以下になっています。<br>
@@ -67,8 +68,17 @@
 
 <a name="AutoMpcBe"></a>
 <h3>MPC-BE 自動追随</h3>
+
 <p>
-マルチディスプレイ環境において、MPC-BE が表示されているディスプレイに自動追随してコメントを流すことができます。
+マルチディスプレイ環境において、MPC-BE が表示されているディスプレイに自動追随してコメントを流すことができます。<br>
+</p>
+
+<a name="ShinkaYoyakuichiranhyouji"></a>
+<h3>予約一覧表示</h3>
+
+<p>
+<a href="HelpParts/YukkoView2_RequestList.png" target="_blank"><img src="HelpParts/YukkoView2_RequestList.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+ゆかり連携時、曲間に予約一覧表示を行うことができます。<br clear="right">
 </p>
 
 <a name="Dousakankyou"></a>
@@ -85,9 +95,7 @@
 <h3>ゆっこビュー 2&nbsp;のインストール</h3>
 
 <p>
-<!--
-<a href="HelpParts/YukaListerNebula_Store.png" target="_blank"><img src="HelpParts/YukaListerNebula_Store.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
--->
+<a href="HelpParts/YukkoView2_MicrosoftStore.png" target="_blank"><img src="HelpParts/YukkoView2_MicrosoftStore.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
 ゆっこビュー 2&nbsp;を <a href="https://www.microsoft.com/store/apps/9NLZX1SFJV98" target="_blank">Microsoft Store</a> から入手することでインストールが完了します。<br>
 <br>
 更新（バージョンアップ）は自動的に行われます。更新版が公開された場合、何度かゆっこビュー 2&nbsp;を使用しているうちに自動的に更新されますので、通常は何ら更新作業は必要ありません。自動更新を待つのではなくすぐに更新したい場合は、Microsoft Store で更新してください。<br clear="right">
@@ -120,7 +128,7 @@
 また、デスクトップ全体が緑色の枠に囲まれ、「コメント表示を開始します」というコメントがデスクトップ上部を右から左へ流れていきます。<br clear="right">
 <br>
 <a href="HelpParts/YukkoView2_Desktop_NoFrame.png" target="_blank"><img src="HelpParts/YukkoView2_Desktop_NoFrame.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
-緑色の枠はコメントが流れる可能性のある範囲を示すもので、約 10 秒ほど経つと自動的に消えます。<br clear="right">
+緑色の枠はコメントが流れる可能性のある範囲を示すもので、約 5 秒ほど経つと自動的に消えます。<br clear="right">
 <br>
 <a href="HelpParts/YukkoView2_Firewall.png" target="_blank"><img src="HelpParts/YukkoView2_Firewall.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
 「このアプリの機能のいくつかが Windows Defender ファイアウォールでブロックされています」という表示が出る場合があります。その場合は、チェックボックスを 2 つともオンにしてから、「アクセスを許可する」をクリックしてください。管理者権限が必要な場合があります。<br clear="right">
@@ -144,6 +152,35 @@
 <br>
 より詳しい使い方は次章以降をご覧ください。<br clear="right">
 </p>
+
+<a name="Mainwindow"></a>
+<h1>メインウィンドウ</h1>
+
+<a name="Irotsukistatuslabel"></a>
+<h3>色つきステータスラベル</h3>
+
+<p>
+<a href="HelpParts/YukkoView2_MainWindow_Running.png" target="_blank"><img src="HelpParts/YukkoView2_MainWindow_Running.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+メインウィンドウ上部は、色でゆっこビュー 2&nbsp;の状態が分かるステータスラベルになっています。<br>
+<br>
+緑色の時は、コメントが表示可能な状態です。<br>
+<br>
+紫色（青色）の時は、コメントの表示を停止しています。<br>
+<br>
+赤色の時は、何らかのエラーが発生しています。主にゆかり連携機能関連のエラーなので、ゆかり連携機能を使用しない場合は赤色でも問題ありません。ステータスラベルをクリックすると対応策が表示されます。<br clear="right">
+</p>
+
+<a name="Kakusyubutton"></a>
+<h3>各種ボタン</h3>
+
+<ul>
+  <li>開始ボタン（<img src="HelpParts/YukkoView2_ButtonPlay.png" alt="" height="24" class="InlineImg">）……コメント表示を開始します。</li>
+  <li>停止ボタン（<img src="HelpParts/YukkoView2_ButtonStop.png" alt="" height="24" class="InlineImg">）……コメント表示を停止します。</li>
+  <li>ディスプレイ選択ボタン（<img src="HelpParts/YukkoView2_ButtonSelectMonitor.png" alt="" height="24" class="InlineImg">）……<a href="#Displaysentaku">ディスプレイ選択ウィンドウ</a>を表示します。</li>
+  <li>環境設定ボタン（<img src="HelpParts/YukkoView2_ButtonSettings.png" alt="" height="24" class="InlineImg">）……<a href="#Settings">環境設定ウィンドウ</a>を表示します。</li>
+  <li>ヘルプボタン（<img src="HelpParts/YukkoView2_ButtonHelp.png" alt="" height="24" class="InlineImg">）……本ヘルプ等、さまざまな情報を表示するためのメニューが表示されます。</li>
+  <li>コメント投稿ボタン（<img src="HelpParts/YukkoView2_ButtonComment.png" alt="" height="24" class="InlineImg">）……入力したコメントを投稿します。コメント停止中は投稿できません。</li>
+</ul>
 
 <a name="Displaysentaku"></a>
 <h1>ディスプレイ選択</h1>
@@ -264,31 +301,35 @@ C:\xampp\htdocs\config.ini
 どうしてもプッシュ通知でうまくコメントが受信できない場合のみ、こちらを選択して下さい。<br>
 </p>
 
-<!-- 
-<a name="Maintenance"></a>
-<h2>メンテナンス</h2>
+<a name="MaintenanceTab"></a>
+<h2>メンテナンスタブ</h2>
 
 <a name="Jidokoshin"></a>
-<h3>ゆっこビュー 2&nbsp;の最新情報・更新版を自動的に確認する</h3>
+<h3>ゆっこビュー 2&nbsp;の最新情報を自動的に確認する</h3>
 
 <p>
-「ゆっこビュー 2&nbsp;の最新情報・更新版を自動的に確認する」を有効にすると、ゆっこビュー 2&nbsp;のホームページからゆっこビュー 2&nbsp;関連の最新情報を取得し、ブラウザで表示します。またゆっこビュー 2&nbsp;の更新版（新バージョン）がリリースされた場合は、更新版をインストールします。Ver 1.0 現在、最新情報の確認は 3 日ごとに行います。<br>
+「ゆっこビュー 2&nbsp;の最新情報を自動的に確認する」を有効にすると、ゆっこビュー 2&nbsp;のホームページからゆっこビュー 2&nbsp;関連の最新情報を取得し、ブラウザで表示します。Ver 1.3 現在、最新情報の確認は 3 日ごとに行います。<br>
 <br>
-最新情報表示・更新版のインストール前には、表示・インストールをするかどうかの確認が行われます。表示・インストールをしないを選択した場合、次回以降は表示されませんのでご注意下さい。<br>
+最新情報表示前には、表示するかどうかの確認が行われます。表示しないを選択した場合、次回以降は表示されませんのでご注意下さい。<br>
 <br>
-「今すぐ最新情報を確認する」ボタンをクリックすると、直ちに確認が行われます。<br>
-<br>
-なお、ゆっこビュー 2&nbsp;に限らず、世の中のアプリケーション全般に言えることですが、最新情報の取得や更新版のインストールを行う設定を有効にしている場合、悪意ある第三者に配信サーバーが乗っ取られた場合など、誤情報や悪意あるアプリケーションなどが紛れ込むリスクがありますのでご承知おき下さい。一方で、正常に機能していれば、バグ修正が速やかに適用されるなど、安全性が高まるメリットもあります。<br>
+「今すぐ最新情報を確認」ボタンをクリックすると、直ちに確認が行われます。<br>
 </p>
 
+<!-- 
 <a name="Loghozon"></a>
 <h3>ログ保存</h3>
 
 <p>
 ゆっこビュー 2&nbsp;の動作の記録であるログなどを保存することができます。ゆっこビュー 2&nbsp;に不具合があった場合の原因究明などに役立つ場合があります。<br>
 </p>
-
 -->
+
+<a name="Syokika"></a>
+<h2>初期化</h2>
+
+<p>
+初期化ボタンをクリックすると、環境設定をすべて初期設定に戻します。<br>
+</p>
 
 <a name="Yukarirenkei"></a>
 <h1>ゆかり連携</h1>
@@ -348,6 +389,9 @@ C:\xampp\htdocs\config.ini
 「設定反映」ボタンをクリックすると、ゆかりの設定が更新されます。<br clear="right">
 </p>
 
+<a name="YukarirenkeiRiyouhouhou"></a>
+<h2>利用方法</h2>
+
 <a name="Appnohyouji"></a>
 <h3>ゆっこビュー 2&nbsp;の表示</h3>
 
@@ -369,15 +413,122 @@ C:\xampp\htdocs\config.ini
 名前とコメントを入力してからコメント送信ボタンをクリックすると、ゆかりからコメントを投稿できます。文字色や文字サイズも選べます。<br clear="right">
 </p>
 
+<a name="Yoyakuichiranhyouji"></a>
+<h3>予約一覧表示</h3>
+
+<p>
+<a href="HelpParts/YukkoView2_RequestList.png" target="_blank"><img src="HelpParts/YukkoView2_RequestList.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+ゆかりが自動再生モードになっている場合、曲終了～次曲開始までの間、予約されている曲が自動的に一覧表示されます。<br>
+<br>
+デフォルトではファイル名を表示しますが、<a href="https://shinta.coresv.com/software/yukalister-nebula-jpn/" target="_blank">ゆかりすたー 4 NEBULA</a> が導入されている環境では曲名が表示されるので分かりやすくなります。<br clear="right">
+<br>
+<a href="HelpParts/YukkoView2_NoRequestList.png" target="_blank"><img src="HelpParts/YukkoView2_NoRequestList.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
+予約が入っていない場合はその旨を表示します。<br clear="right">
+</p>
+
 <a name="Zenpantekinachuuijikou"></a>
 <h1>全般的な注意事項</h1>
 
 <p>
-アプリケーションの設定で Direct 3D を使用しないよう設定して下さい。Direct 3D を使ってしまうと、コメントを表示できなくなってしまいます。<br>
+他のアプリケーションの設定で Direct 3D を使用しないよう設定して下さい。Direct 3D を使ってしまうと、ゆっこビュー 2&nbsp;がコメントを表示できなくなってしまいます。<br>
 <br>
 <a href="HelpParts/YukkoView2_MpcBe_Settings_Video.png" target="_blank"><img src="HelpParts/YukkoView2_MpcBe_Settings_Video.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
 例えば MPC-BE であれば、設定画面を開き、「映像」のところにある「排他フルスクリーン」のチェックを外します。<br clear="right">
 </p>
+
+<a name="Shiyou"></a>
+<h1>仕様</h1>
+
+<p>
+ゆっこビュー 2&nbsp;がゆかりからコメントを受信する際の、コメント仕様をここにまとめておきます。<br>
+</p>
+
+<a name="Kakuchoushiyoucommentv3"></a>
+<h3>拡張仕様コメント V3</h3>
+
+<p>
+UTF-8 文字列で表示するコメントを受信します。<br>
+<br>
+POST における Comment キーの値として受信します。デコード後の値部分のみを表にまとめます。<br>
+</p>
+
+<table>
+  <tr><th>バイト数</th><th>内容</th></tr>
+  <tr><th>2</th><td>ヘッダー「X3」</td></tr>
+  <tr><th>1</th><td>文字サイズ<br>0：小<br>3：中<br>6：大<br>9：特大</td></tr>
+  <tr><th>6</th><td>文字色（RGB 16 進数）</td></tr>
+  <tr><th>19</th><td>投稿時刻（ローカルタイム）<br>yyyy-MM-dd HH:mm:ss</td></tr>
+  <tr><th>n</th><td>コメント文字列<br>最大 256 文字　※256 バイトではない</td></tr>
+  <tr><th>1</th><td>終端タブ文字</td></tr>
+</table>
+
+<p>
+例）中サイズ白文字で「こんにちは」<br>
+</p>
+
+<pre>
+Comment=X33FFFFFF2022-02-01 01:02:30こんにちは\t
+</pre>
+
+<a name="Kakuchoushiyoucommentv4"></a>
+<h3>拡張仕様コメント V4</h3>
+
+<p>
+UTF-8 文字列でコマンドを受信します。<br>
+<br>
+POST における Comment キーの値として受信します。デコード後の値部分のみを表にまとめます。<br>
+</p>
+
+<table>
+  <tr><th>バイト数</th><th>内容</th></tr>
+  <tr><th>2</th><td>ヘッダー「X4」</td></tr>
+  <tr><th>5</th><td>コマンド文字列</td></tr>
+  <tr><th>19</th><td>投稿時刻（ローカルタイム）<br>yyyy-MM-dd HH:mm:ss</td></tr>
+  <tr><th>n</th><td>コマンド引数<br>任意の文字列</td></tr>
+  <tr><th>1</th><td>終端タブ文字</td></tr>
+</table>
+
+<p>
+現時点で定義されているコマンドは「rqlst」のみで、予約一覧を表示するコマンドです。<br>
+<br>
+コマンド引数が「1」なら表示、「0」なら消去します。<br>
+</p>
+
+<p>
+例）予約一覧を表示<br>
+</p>
+
+<pre>
+Comment=X4rqlst2022-01-31 23:59:591\t
+</pre>
+
+<a name="Nothingcomment"></a>
+<h3>nothing コメント</h3>
+
+<p>
+未読のコメントが存在しない場合に受信するデータです。<br>
+</p>
+
+<table>
+  <tr><th>バイト数</th><th>内容</th></tr>
+  <tr><th>7</th><td>ASCII 文字列「nothing」</td></tr>
+</table>
+
+<a name="Kyuushiyoucomment"></a>
+<h3>旧仕様コメント</h3>
+
+<p>
+Shift-JIS 文字列でコメント情報を受信します。<br>
+<br>
+現在は使われていません。<br>
+</p>
+
+<table>
+  <tr><th>バイト数</th><th>内容</th></tr>
+  <tr><th>1</th><td>文字サイズ<br>0：小<br>3：中<br>6：大<br>9：特大</td></tr>
+  <tr><th>6</th><td>文字色（RGB 16 進数）</td></tr>
+  <tr><th>n</th><td>コメント文字列</td></tr>
+</table>
 
 <a name="Komattatokiwa"></a>
 <h1>困ったときは</h1>
@@ -388,6 +539,23 @@ C:\xampp\htdocs\config.ini
 <ul>
 <li><a href="http://shinta.coresv.com/software/yukkoview2-jpn/#Support" target="_blank">ゆっこビュー 2&nbsp;　サポートページ</a></li>
 </ul>
+
+<a name="Onegai"></a>
+<h1>お願い</h1>
+
+<a name="Fantia"></a>
+<h2>クリエイター支援サイト</h2>
+
+<p>
+  <a href="https://fantia.jp/fanclubs/65509" target="_blank"><img src="HelpParts/YukkoView2_Fantia.png" alt=""
+      width="256" align="right" border="0" hspace="10" vspace="10"></a>
+  クリエイター支援サイト「Fantia」内に、ゆっこビュー 2&nbsp;を含む <a href="https://fantia.jp/fanclubs/65509" target="_blank">SHINTA
+    のファンサイトを開設しました</a>。<br>
+  <br>
+  無料プランもありますので、是非ご入会いただけると励みになります。<br>
+  <br>
+  懐に余裕がある方は、有料プランにご入会頂けると、開発費等が助かりますので、よろしくお願いします。<br clear="right">
+</p>
 
 <a name="Sonota"></a>
 <h1>その他</h1>
@@ -456,17 +624,23 @@ C:\xampp\htdocs\config.ini
 <div class="SideMenuItemH1"><a href="#Tutorial">チュートリアル</a></div>
 <div class="SideMenuItemH2"><a href="#Kido">起動</a></div>
 <div class="SideMenuItemH2"><a href="#Commentkakikomi">コメント書き込み</a></div>
+<div class="SideMenuItemH1"><a href="#Mainwindow">メインウィンドウ</a></div>
 <div class="SideMenuItemH1"><a href="#Displaysentaku">ディスプレイ選択</a></div>
 <div class="SideMenuItemH1"><a href="#Settings">環境設定</a></div>
 <div class="SideMenuItemH2"><a href="#SettingsTab">設定タブ</a></div>
 <div class="SideMenuItemH2"><a href="#CommentjushinTabCommentserver">コメント受信タブ：コメントサーバー指定方法</a></div>
 <div class="SideMenuItemH2"><a href="#CommentjushinTabCommentjushin">コメント受信タブ：コメント受信方法</a></div>
-<div class="SideMenuItemH2"><a href="#Maintenance">メンテナンス</a></div>
+<div class="SideMenuItemH2"><a href="#MaintenanceTab">メンテナンスタブ</a></div>
+<div class="SideMenuItemH2"><a href="#Syokika">初期化</a></div>
 <div class="SideMenuItemH1"><a href="#Yukarirenkei">ゆかり連携</a></div>
 <div class="SideMenuItemH2"><a href="#Yukarirenkeikinoutowa">ゆかり連携機能とは</a></div>
 <div class="SideMenuItemH2"><a href="#YukarinoSettei">ゆかりの設定</a></div>
+<div class="SideMenuItemH2"><a href="#YukarirenkeiRiyouhouhou">利用方法</a></div>
 <div class="SideMenuItemH1"><a href="#Zenpantekinachuuijikou">全般的な注意事項</a></div>
+<div class="SideMenuItemH1"><a href="#Shiyou">仕様</a></div>
 <div class="SideMenuItemH1"><a href="#Komattatokiwa">困ったときは</a></div>
+<div class="SideMenuItemH1"><a href="#Onegai">お願い</a></div>
+<div class="SideMenuItemH2"><a href="#Fantia">クリエイター支援サイト</a></div>
 <div class="SideMenuItemH1"><a href="#Sonota">その他</a></div>
 <div class="SideMenuItemH2"><a href="#Database">データベース</a></div>
 <div class="SideMenuItemH2"><a href="#License">ライセンス</a></div>
