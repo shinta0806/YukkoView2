@@ -361,6 +361,35 @@ namespace YukkoView2.ViewModels
 		}
 		#endregion
 
+		#region ファンサイトメニューアイテムの制御
+		private ViewModelCommand? _menuItemFantiaClickedCommand;
+
+		public ViewModelCommand MenuItemFantiaClickedCommand
+		{
+			get
+			{
+				if (_menuItemFantiaClickedCommand == null)
+				{
+					_menuItemFantiaClickedCommand = new ViewModelCommand(MenuItemFantiaClicked);
+				}
+				return _menuItemFantiaClickedCommand;
+			}
+		}
+
+		public void MenuItemFantiaClicked()
+		{
+			try
+			{
+				Common.ShellExecute(Yv2Constants.URL_FANTIA);
+			}
+			catch (Exception ex)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "ファンサイトメニューアイテムクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
 		#region 改訂履歴メニューアイテムの制御
 		private ViewModelCommand? _menuItemHistoryClickedCommand;
 
