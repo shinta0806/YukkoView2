@@ -166,8 +166,8 @@ namespace YukkoView2.ViewModels
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
 			}
 		}
-
 		#endregion
+
 		#region 開始ボタンの制御
 		private ViewModelCommand? _buttonPlayClickedCommand;
 
@@ -332,6 +332,35 @@ namespace YukkoView2.ViewModels
 		}
 		#endregion
 
+		#region よくある質問メニューアイテムの制御
+		private ViewModelCommand? _menuItemFaqClickedCommand;
+
+		public ViewModelCommand MenuItemFaqClickedCommand
+		{
+			get
+			{
+				if (_menuItemFaqClickedCommand == null)
+				{
+					_menuItemFaqClickedCommand = new ViewModelCommand(MenuItemFaqClicked);
+				}
+				return _menuItemFaqClickedCommand;
+			}
+		}
+
+		public void MenuItemFaqClicked()
+		{
+			try
+			{
+				Common.ShellExecute(Yv2Constants.URL_FAQ);
+			}
+			catch (Exception ex)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "よくある質問メニュークリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
 		#region 改訂履歴メニューアイテムの制御
 		private ViewModelCommand? _menuItemHistoryClickedCommand;
 
@@ -353,10 +382,10 @@ namespace YukkoView2.ViewModels
 			{
 				Common.ShellExecute(Yv2Model.Instance.EnvModel.ExeFullFolder + Yv2Constants.FOLDER_NAME_DOCUMENTS + FILE_NAME_HISTORY);
 			}
-			catch (Exception excep)
+			catch (Exception ex)
 			{
-				_logWriter?.ShowLogMessage(TraceEventType.Error, "改訂履歴メニュークリック時エラー：\n" + excep.Message);
-				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "改訂履歴メニュークリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 		#endregion
@@ -397,10 +426,10 @@ namespace YukkoView2.ViewModels
 					_ = PlayAsync();
 				}
 			}
-			catch (Exception excep)
+			catch (Exception ex)
 			{
-				_logWriter?.ShowLogMessage(TraceEventType.Error, "バージョン情報メニュークリック時エラー：\n" + excep.Message);
-				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "バージョン情報メニュークリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 		#endregion
