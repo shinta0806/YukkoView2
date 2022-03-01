@@ -32,7 +32,7 @@ namespace YukkoView2.Models.Settings
 		// EnvironmentModel 構築時に呼びだされるため、LogWriter は指定できない
 		// --------------------------------------------------------------------
 		public Yv2Settings()
-				: base(null, Yv2SettingsPath())
+				: base(null)
 		{
 		}
 
@@ -165,6 +165,14 @@ namespace YukkoView2.Models.Settings
 		}
 
 		// --------------------------------------------------------------------
+		// 保存パス
+		// --------------------------------------------------------------------
+		public override String SettingsPath()
+		{
+			return Common.UserAppDataFolderPath() + nameof(Yv2Settings) + Common.FILE_EXT_CONFIG;
+		}
+
+		// --------------------------------------------------------------------
 		// ゆかり設定ファイルのフルパス
 		// --------------------------------------------------------------------
 		public String YukariConfigPath()
@@ -197,14 +205,6 @@ namespace YukkoView2.Models.Settings
 			{
 				return Path.GetFullPath(dbName, Path.GetDirectoryName(YukariConfigPath()) ?? String.Empty);
 			}
-		}
-
-		// --------------------------------------------------------------------
-		// 保存パス
-		// --------------------------------------------------------------------
-		public static String Yv2SettingsPath()
-		{
-			return Common.UserAppDataFolderPath() + nameof(Yv2Settings) + Common.FILE_EXT_CONFIG;
 		}
 
 		// ====================================================================

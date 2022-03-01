@@ -44,7 +44,7 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		public static LatestInfoManager CreateLatestInfoManager(Boolean forceShow)
 		{
-			return new LatestInfoManager("http://shinta.coresv.com/soft/YukkoView2_JPN.xml", forceShow, 3,
+			return new LatestInfoManager("http://shinta.coresv.com/soft/YukkoView2_JPN.xml", forceShow, 3, Yv2Constants.APP_VER,
 					Yv2Model.Instance.EnvModel.AppCancellationTokenSource.Token, Yv2Model.Instance.EnvModel.LogWriter);
 		}
 

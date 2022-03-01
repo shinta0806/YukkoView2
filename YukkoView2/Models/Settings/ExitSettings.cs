@@ -28,7 +28,7 @@ namespace YukkoView2.Models.Settings
 		// メインコンストラクター
 		// --------------------------------------------------------------------
 		public ExitSettings()
-				: base(Yv2Model.Instance.EnvModel.LogWriter, ExitSettingsPath())
+				: base(Yv2Model.Instance.EnvModel.LogWriter)
 		{
 		}
 
@@ -52,10 +52,14 @@ namespace YukkoView2.Models.Settings
 		// RSS 確認日
 		public DateTime RssCheckDate { get; set; }
 
+		// ====================================================================
+		// public 関数
+		// ====================================================================
+
 		// --------------------------------------------------------------------
 		// 保存パス
 		// --------------------------------------------------------------------
-		public static String ExitSettingsPath()
+		public override String SettingsPath()
 		{
 			return Common.UserAppDataFolderPath() + nameof(ExitSettings) + Common.FILE_EXT_CONFIG;
 		}
