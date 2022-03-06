@@ -34,7 +34,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// メインコンストラクター
 		// --------------------------------------------------------------------
 		public Yv2SettingsWindowViewModel()
-				: base(Yv2Model.Instance.EnvModel.LogWriter)
+				: base(Yv2Model.Instance.EnvModel.Yv2Settings, Yv2Model.Instance.EnvModel.LogWriter)
 		{
 			Debug.Assert(_tabItemViewModels.Length == (Int32)Yv2SettingsTabItem.__End__, "Yv2SettingsWindowViewModel() bad tab vm nums");
 		}
@@ -93,7 +93,8 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 					return;
 				}
 
-				SettingsToProperties(new Yv2Settings());
+				_settings = new Yv2Settings();
+				SettingsToProperties();
 			}
 			catch (Exception ex)
 			{
@@ -120,7 +121,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				Title = "環境設定";
 
 				// 設定
-				SettingsToProperties(Yv2Model.Instance.EnvModel.Yv2Settings);
+				SettingsToProperties();
 			}
 			catch (Exception ex)
 			{
@@ -128,6 +129,10 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
+
+		// ====================================================================
+		// protected 関数
+		// ====================================================================
 
 		// ====================================================================
 		// protected 関数
@@ -151,9 +156,10 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		protected override void PropertiesToSettings()
 		{
-			base.PropertiesToSettings();
+			// 反映対象が初期化で入れ替わっている場合があるので元に戻す
+			_settings = Yv2Model.Instance.EnvModel.Yv2Settings;
 
-			PropertiesToSettings(Yv2Model.Instance.EnvModel.Yv2Settings);
+			base.PropertiesToSettings();
 		}
 
 		// --------------------------------------------------------------------
