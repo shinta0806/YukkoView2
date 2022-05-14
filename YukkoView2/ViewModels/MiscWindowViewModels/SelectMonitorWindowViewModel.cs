@@ -125,7 +125,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 					break;
 			}
 
-			MonitorManager monitorManager = new();
+			MonitorManager monitorManager = new(Yv2Model.Instance.EnvModel.LogWriter);
 			List<Rect> monitorRects = monitorManager.GetScaledMonitorRects();
 #if DEBUG
 			monitorRects.Add(new System.Windows.Rect(0, 0, 1, 1));

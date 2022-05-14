@@ -210,7 +210,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// --------------------------------------------------------------------
 		private void MoveWindowIfNeeded()
 		{
-			MonitorManager monitorManager = new();
+			MonitorManager monitorManager = new(Yv2Model.Instance.EnvModel.LogWriter);
 			List<Rect> scaledMonitorRects = monitorManager.GetScaledMonitorRects();
 			Int32 newTargetMonitorIndex = TargetMonitorIndex(scaledMonitorRects);
 			if (_currentTargetMonitorIndex == newTargetMonitorIndex)
@@ -226,7 +226,7 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			Top = rect.Top + 1;
 			Width = rect.Width - 2;
 			Height = rect.Height - 2;
-			_logWriter?.LogMessage(TraceEventType.Verbose, "MoveWindowIfNeeded() " + Left + ", " + Top + ", " + Width + ", " + Height);
+			_logWriter?.LogMessage(TraceEventType.Information, "コメント表示ウィンドウ移動: #" + _currentTargetMonitorIndex + ", (" + Left + ", " + Top + ", " + Width + ", " + Height + ")");
 		}
 
 		// --------------------------------------------------------------------

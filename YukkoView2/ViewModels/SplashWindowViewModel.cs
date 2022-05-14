@@ -77,7 +77,7 @@ namespace YukkoView2.ViewModels
 				if (exitSettings.DesktopBounds.Width == 0.0 || exitSettings.DesktopBounds.Height == 0.0)
 				{
 					// デフォルトウィンドウサイズ（コメント表示ウィンドウの枠とかぶらないようにする）
-					MonitorManager monitorManager = new();
+					MonitorManager monitorManager = new(Yv2Model.Instance.EnvModel.LogWriter);
 					List<Rect> rects = monitorManager.GetScaledMonitorRects();
 					if (rects.Any())
 					{
