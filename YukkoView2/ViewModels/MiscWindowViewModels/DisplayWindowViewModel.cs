@@ -114,7 +114,14 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 
 				// 描画環境調整
 				MoveWindowIfNeeded();
-				TopMostIfNeeded();
+				if (commentInfo.IsCommand() && commentInfo.Command == Yv2Constants.COMMENT_COMMAND_REQUEST_LIST && !commentInfo.MessageAsFlag())
+				{
+					// 予約一覧を消去するので手前に表示しない（チケット #24 対策）
+				}
+				else
+				{
+					TopMostIfNeeded();
+				}
 			});
 		}
 

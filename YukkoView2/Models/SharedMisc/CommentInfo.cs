@@ -158,5 +158,14 @@ namespace YukkoView2.Models.SharedMisc
 		{
 			return Command != String.Empty;
 		}
+
+		// --------------------------------------------------------------------
+		// コマンドのオプションとしてのメッセージをフラグとして扱った場合の値を返す
+		// --------------------------------------------------------------------
+		public Boolean MessageAsFlag()
+		{
+			Int32.TryParse(Message, out Int32 flag);
+			return flag != 0;
+		}
 	}
 }

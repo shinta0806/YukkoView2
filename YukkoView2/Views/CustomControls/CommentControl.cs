@@ -514,8 +514,7 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private void ExecuteCommandRequestList(CommentInfo commentInfo)
 		{
-			Int32.TryParse(commentInfo.Message, out Int32 flag);
-			if (flag != 0)
+			if (commentInfo.MessageAsFlag())
 			{
 				Debug.WriteLine("ExecuteCommandRequestList() ON " + Environment.TickCount.ToString("#,0"));
 				PrepareRequestList(commentInfo);
