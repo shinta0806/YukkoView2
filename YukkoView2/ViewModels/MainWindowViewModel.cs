@@ -390,6 +390,35 @@ namespace YukkoView2.ViewModels
 		}
 		#endregion
 
+		#region 更新プログラムの確認メニューアイテムの制御
+		private ViewModelCommand? _menuItemUpdateClickedCommand;
+
+		public ViewModelCommand MenuItemUpdateClickedCommand
+		{
+			get
+			{
+				if (_menuItemUpdateClickedCommand == null)
+				{
+					_menuItemUpdateClickedCommand = new ViewModelCommand(MenuItemUpdateClicked);
+				}
+				return _menuItemUpdateClickedCommand;
+			}
+		}
+
+		public void MenuItemUpdateClicked()
+		{
+			try
+			{
+				Common.OpenMicrosoftStore(Yv2Constants.STORE_PRODUCT_ID);
+			}
+			catch (Exception ex)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "更新プログラムの確認メニューアイテムクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
+			}
+		}
+		#endregion
+
 		#region 改訂履歴メニューアイテムの制御
 		private ViewModelCommand? _menuItemHistoryClickedCommand;
 

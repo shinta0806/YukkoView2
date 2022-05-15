@@ -267,6 +267,9 @@ namespace YukkoView2.Models.SharedMisc
 		// その他
 		// --------------------------------------------------------------------
 
+		// Microsoft Store での製品 ID
+		public const String STORE_PRODUCT_ID = "9NLZX1SFJV98";
+
 		// 同時に表示するコメントの最大数
 		// サーバーからの取得時の指標であり、UI からの投稿時は無制限
 		public const Int32 NUM_DISPLAY_COMMENTS_MAX = 7;

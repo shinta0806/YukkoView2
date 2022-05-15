@@ -86,7 +86,8 @@
                         <Separator />
                         <MenuItem Header="ファンサイト (_F)" Command="{Binding MenuItemFantiaClickedCommand}" />
                         <Separator />
-                        <MenuItem Header="改訂履歴 (_U)" Command="{Binding MenuItemHistoryClickedCommand}" />
+                        <MenuItem Header="更新プログラムの確認 (_U)" Command="{Binding MenuItemUpdateClickedCommand}" />
+                        <MenuItem Header="改訂履歴 (_I)" Command="{Binding MenuItemHistoryClickedCommand}" />
                         <MenuItem Header="バージョン情報 (_A)" Command="{Binding MenuItemAboutClickedCommand}" />
                     </ContextMenu>
                 </Button.ContextMenu>
