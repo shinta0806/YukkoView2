@@ -539,13 +539,19 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// 曲名を取得
 		// --------------------------------------------------------------------
-		private String GetTitle(ListContextInDisk listContext, String path)
+		private String GetTitle(ListContextInDisk listContext, TYukariRequest yukariRequest)
 		{
+			if (yukariRequest.Secret != 0)
+			{
+				// シークレット予約
+				return "（シークレット予約）";
+			}
+
 			String? title = null;
 			TFound? found = null;
 			try
 			{
-				found = listContext.Founds.FirstOrDefault(x => x.Path == path);
+				found = listContext.Founds.FirstOrDefault(x => x.Path == yukariRequest.Path);
 			}
 			catch (Exception)
 			{
@@ -557,7 +563,7 @@ namespace YukkoView2.Views.CustomControls
 			}
 			if (String.IsNullOrEmpty(title))
 			{
-				title = Path.GetFileNameWithoutExtension(path) ?? String.Empty;
+				title = Path.GetFileNameWithoutExtension(yukariRequest.Path) ?? String.Empty;
 			}
 			return title;
 		}
@@ -707,7 +713,7 @@ namespace YukkoView2.Views.CustomControls
 				String title;
 				if (i < requestList.Count)
 				{
-					title = GetTitle(listContext, requestList[i].Path);
+					title = GetTitle(listContext, requestList[i]);
 				}
 				else
 				{

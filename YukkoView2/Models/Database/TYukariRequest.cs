@@ -45,8 +45,12 @@ namespace YukkoView2.Models.Database
 		public Int32 Order { get; set; }
 
 		// 再生状況
-		[Column(FIELD_NAME_YUKARI_NOW_PLAYING)]
+		[Column(FIELD_NAME_YUKARI_REQUEST_NOW_PLAYING)]
 		public String? NowPlaying { get; set; }
+
+		// シークレット予約
+		[Column(FIELD_NAME_YUKARI_REQUEST_SECRET)]
+		public Int32 Secret { get; set; }
 
 		// キー
 		[Column(FIELD_NAME_YUKARI_REQUEST_KEY_CHANGE)]
@@ -62,7 +66,8 @@ namespace YukkoView2.Models.Database
 		public const String FIELD_NAME_YUKARI_REQUEST_SINGER = "singer";
 		public const String FIELD_NAME_YUKARI_REQUEST_COMMENT = "comment";
 		public const String FIELD_NAME_YUKARI_REQUEST_ORDER = "reqorder";
-		public const String FIELD_NAME_YUKARI_NOW_PLAYING = "nowplaying";
+		public const String FIELD_NAME_YUKARI_REQUEST_NOW_PLAYING = "nowplaying";
+		public const String FIELD_NAME_YUKARI_REQUEST_SECRET = "secret";
 		public const String FIELD_NAME_YUKARI_REQUEST_KEY_CHANGE = "keychange";
 	}
 }
