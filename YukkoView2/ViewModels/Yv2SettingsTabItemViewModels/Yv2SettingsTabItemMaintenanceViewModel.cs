@@ -15,6 +15,7 @@ using Shinta.ViewModels;
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Compression;
 using System.Windows;
 
@@ -164,6 +165,59 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 			catch (Exception excep)
 			{
 				_logWriter?.ShowLogMessage(TraceEventType.Error, "設定のバックアップボタンクリック時エラー：\n" + excep.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+		#endregion
+
+		#region 設定の復元ボタンの制御
+
+		private ViewModelCommand? _buttonRestoreClickedCommand;
+
+		public ViewModelCommand ButtonRestoreClickedCommand
+		{
+			get
+			{
+				if (_buttonRestoreClickedCommand == null)
+				{
+					_buttonRestoreClickedCommand = new ViewModelCommand(ButtonRestoreClicked);
+				}
+				return _buttonRestoreClickedCommand;
+			}
+		}
+
+		public void ButtonRestoreClicked()
+		{
+			try
+			{
+				String? path = _tabControlWindowViewModel.PathByOpeningDialog("設定の復元", Yv2Constants.DIALOG_FILTER_SETTINGS_ARCHIVE, null);
+				if (path == null)
+				{
+					return;
+				}
+
+				if (MessageBox.Show("現在の設定は破棄され、" + Path.GetFileName(path) + "\nの設定に変更されます。\nよろしいですか？", "確認", MessageBoxButton.YesNo,
+						MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+				{
+					return;
+				}
+
+				// 解凍
+				String unzipFolder = Common.TempPath() + "\\";
+				Directory.CreateDirectory(unzipFolder);
+				ZipFile.ExtractToDirectory(path, unzipFolder);
+
+				// 設定更新
+				String settingsFilePath = unzipFolder + Path.GetFileName(Path.GetDirectoryName(Common.UserAppDataFolderPath())) + "\\"
+						+ Path.GetFileName(Yv2Model.Instance.EnvModel.Yv2Settings.SettingsPath());
+				File.Copy(settingsFilePath, Yv2Model.Instance.EnvModel.Yv2Settings.SettingsPath(), true);
+				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
+				_tabControlWindowViewModel.Initialize();
+				_logWriter?.ShowLogMessage(TraceEventType.Information, "設定を復元しました。");
+			}
+			catch (Exception excep)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "設定の復元ボタンクリック時エラー：\n" + excep.Message);
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
 			}
 		}

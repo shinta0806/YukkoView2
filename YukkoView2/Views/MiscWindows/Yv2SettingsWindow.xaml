@@ -36,6 +36,10 @@
             <l:WindowInteractionMessageAction InvokeActionOnlyWhenWindowIsActive="False" />
         </l:InteractionMessageTrigger>
 
+        <l:InteractionMessageTrigger MessageKey="{x:Static s:Common.MESSAGE_KEY_OPEN_OPEN_FILE_DIALOG}" Messenger="{Binding Messenger}">
+            <l:OpenFileDialogInteractionMessageAction InvokeActionOnlyWhenWindowIsActive="False" />
+        </l:InteractionMessageTrigger>
+
         <l:InteractionMessageTrigger MessageKey="{x:Static s:Common.MESSAGE_KEY_OPEN_SAVE_FILE_DIALOG}" Messenger="{Binding Messenger}">
             <l:SaveFileDialogInteractionMessageAction InvokeActionOnlyWhenWindowIsActive="False" />
         </l:InteractionMessageTrigger>
