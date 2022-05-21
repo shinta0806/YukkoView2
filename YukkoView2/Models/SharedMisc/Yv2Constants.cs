@@ -138,6 +138,13 @@ namespace YukkoView2.Models.SharedMisc
 		public const String FILE_NAME_YUKARI_CONFIG = "config" + Common.FILE_EXT_INI;
 
 		// --------------------------------------------------------------------
+		// ダイアログのフィルター
+		// --------------------------------------------------------------------
+
+		// 設定ファイル
+		public const String DIALOG_FILTER_SETTINGS_ARCHIVE = "設定ファイル|*" + Common.FILE_EXT_SETTINGS_ARCHIVE;
+
+		// --------------------------------------------------------------------
 		// URL
 		// --------------------------------------------------------------------
 

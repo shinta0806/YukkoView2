@@ -15,6 +15,7 @@ using Shinta.ViewModels;
 
 using System;
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Windows;
 
 using YukkoView2.Models.Settings;
@@ -127,6 +128,43 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 			finally
 			{
 				ProgressBarCheckRssVisibility = Visibility.Hidden;
+			}
+		}
+		#endregion
+
+		#region 設定のバックアップボタンの制御
+		private ViewModelCommand? _buttonBackupClickedCommand;
+
+		public ViewModelCommand ButtonBackupClickedCommand
+		{
+			get
+			{
+				if (_buttonBackupClickedCommand == null)
+				{
+					_buttonBackupClickedCommand = new ViewModelCommand(ButtonBackupClicked);
+				}
+				return _buttonBackupClickedCommand;
+			}
+		}
+
+		public void ButtonBackupClicked()
+		{
+			try
+			{
+				String? path = _tabControlWindowViewModel.PathBySavingDialog("設定のバックアップ", Yv2Constants.DIALOG_FILTER_SETTINGS_ARCHIVE, Yv2Constants.APP_ID + "Settings_" + DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss"));
+				if (path == null)
+				{
+					return;
+				}
+
+				Yv2Common.LogEnvironmentInfo();
+				ZipFile.CreateFromDirectory(Common.UserAppDataFolderPath(), path, CompressionLevel.Optimal, true);
+				_logWriter?.ShowLogMessage(TraceEventType.Information, "設定のバックアップが完了しました。");
+			}
+			catch (Exception excep)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "設定のバックアップボタンクリック時エラー：\n" + excep.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
 			}
 		}
 		#endregion
