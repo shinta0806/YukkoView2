@@ -179,6 +179,9 @@ namespace YukkoView2.Views.CustomControls
 		// 予約一覧の最大描画時間 [ms]
 		private const Int32 DRAW_REQUEST_LIST_DURATION = 15 * 1000;
 
+		// 予約が無い場合の予約一覧の最大描画時間の追加分 [ms]
+		private const Int32 DRAW_REQUEST_LIST_EXTEND_DURATION = 15 * 1000;
+
 		// 予約一覧のフォントサイズ
 		private const Int32 REQUEST_LIST_FONT_SIZE = 4;
 
@@ -758,7 +761,7 @@ namespace YukkoView2.Views.CustomControls
 			offScreenContext.Close();
 			_requestListOffScreen.Render(offScreenVisual);
 			_requestListOffScreen.Freeze();
-			SetDrawRequestList();
+			SetDrawRequestList(requestList.Any());
 		}
 
 		// --------------------------------------------------------------------
@@ -782,10 +785,10 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// 予約一覧を描画するようにする
 		// --------------------------------------------------------------------
-		private void SetDrawRequestList()
+		private void SetDrawRequestList(Boolean requestExists)
 		{
 			_drawRequestList = true;
-			_clearRequestListTick = Environment.TickCount + DRAW_REQUEST_LIST_DURATION;
+			_clearRequestListTick = Environment.TickCount + DRAW_REQUEST_LIST_DURATION + (requestExists ? 0 : DRAW_REQUEST_LIST_EXTEND_DURATION);
 		}
 
 		// --------------------------------------------------------------------

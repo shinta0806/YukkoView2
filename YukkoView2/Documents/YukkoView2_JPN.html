@@ -247,6 +247,13 @@ MPC-BE が表示されているディスプレイを自動検出し、そのデ�
 どのくらい隙間を空けるか、パーセントで指定できます。例えば、フル HD（縦 1080 ピクセル）のディスプレイを使っていて、「10」パーセントを指定すると、上下それぞれ 108 ピクセル程度にはコメントが表示されなくなります。<br>
 </p>
 
+<a name="YoyakuichiranwoHyoujisuru"></a>
+<h3>予約一覧を表示する</h3>
+
+<p>
+この設定を有効にすると、<a href="#Yukarirenkei">ゆかり連携</a>していてかつ、ゆかりが自動再生モードになっている場合、曲終了～次曲開始までの間、予約されている曲が一覧表示されます。<br>
+</p>
+
 <a name="CommentjushinTabCommentserver"></a>
 <h2>コメント受信タブ：コメントサーバー指定方法</h2>
 
@@ -364,7 +371,7 @@ C:\xampp\htdocs\config.ini
 
 <p>
 <a href="HelpParts/YukkoView2_Yukari_Settings_Version.png" target="_blank"><img src="HelpParts/YukkoView2_Yukari_Settings_Version.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
-ゆかりは <a href="https://github.com/bee7813993/KaraokeRequestorWeb/commit/0389687881d09a444255c83571e8c415450d9931" target="_blank">v0.09.9-alpha-86</a> 以降のバージョンを使用してください。それよりも前のバージョンのゆかりではゆっこビュー 2&nbsp;との協調動作ができません。<br>
+ゆかりは <a href="https://github.com/bee7813993/KaraokeRequestorWeb/commit/f27f8766263eadc9d019218c1577b6486d1fc45f" target="_blank">v0.09.9-alpha-110</a> 以降のバージョンを使用してください。それよりも前のバージョンのゆかりではゆっこビュー 2&nbsp;との協調動作ができません。<br>
 <br>
 ウェブブラウザでゆかりにアクセスし（ゆっこビュー 2&nbsp;と同じパソコンからアクセスする場合は <a href="http://localhost/" target="_blank">http://localhost/</a>）、メニューから［Help 等→設定］をクリック、ユーザー名（admin）を入力してゆかり設定ページを開きます。<br>
 <br>
@@ -372,7 +379,7 @@ C:\xampp\htdocs\config.ini
 <br>
 ゆかりの現在のバージョンが表示されますので、上記のバージョン以降かどうか確認してください。<br>
 <br>
-バージョンが古い場合は、最新版の「更新」ボタンをクリックして最新バージョンにアップデートしてください。<br clear="right">
+バージョンが古い場合は、最新版の「更新」ボタンをクリックして最新バージョンにアップデートしてください。自動再生モードにしている場合は、アップデート後、いったん自動再生を停止してから再度自動再生モードにしてください（PC を再起動すると確実です）。<br clear="right">
 </p>
 
 <a name="Commentserversettei"></a>
@@ -425,6 +432,11 @@ C:\xampp\htdocs\config.ini
 <a href="HelpParts/YukkoView2_NoRequestList.png" target="_blank"><img src="HelpParts/YukkoView2_NoRequestList.png" alt="" width="256" align="right" border="0" hspace="10" vspace="10"></a>
 予約が入っていない場合はその旨を表示します。<br clear="right">
 </p>
+
+<blockquote>
+（補足）<br>
+予約一覧表示を行うかどうかは、環境設定の<a href="#YoyakuichiranwoHyoujisuru">「予約一覧を表示する」</a>で切り替えることができます。<br>
+</blockquote>
 
 <a name="Zenpantekinachuuijikou"></a>
 <h1>全般的な注意事項</h1>
