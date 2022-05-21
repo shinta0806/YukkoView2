@@ -210,6 +210,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 				// 設定更新
 				String settingsFilePath = unzipFolder + Path.GetFileName(Path.GetDirectoryName(Common.UserAppDataFolderPath())) + "\\"
 						+ Path.GetFileName(Yv2Model.Instance.EnvModel.Yv2Settings.SettingsPath());
+				CheckRestore(settingsFilePath);
 				File.Copy(settingsFilePath, Yv2Model.Instance.EnvModel.Yv2Settings.SettingsPath(), true);
 				Yv2Model.Instance.EnvModel.Yv2Settings.Load();
 				_tabControlWindowViewModel.Initialize();
@@ -260,6 +261,23 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		public override void SettingsToProperties(Yv2Settings srcSettings)
 		{
 			CheckRss = srcSettings.CheckRss;
+		}
+
+		// ====================================================================
+		// public 関数
+		// ====================================================================
+
+		// --------------------------------------------------------------------
+		// 設定ファイルが正常に読み込めるか確認
+		// ＜例外＞ Exception
+		// --------------------------------------------------------------------
+		private void CheckRestore(String settingsFilePath)
+		{
+			Yv2Settings tempSettings = new();
+			if (!tempSettings.Load(settingsFilePath))
+			{
+				throw new Exception("設定ファイルを読み込めません。");
+			}
 		}
 	}
 }
