@@ -53,6 +53,9 @@ namespace YukkoView2.Models.Settings
 		// パーセント
 		public Int32 MarginPercent { get; set; } = 10;
 
+		// 予約一覧表示
+		public Boolean RequestList { get; set; } = true;
+
 		// --------------------------------------------------------------------
 		// コメント受信
 		// --------------------------------------------------------------------

@@ -78,6 +78,14 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 			set => RaisePropertyChangedIfSet(ref _marginPercent, value);
 		}
 
+		// 予約一覧表示
+		private Boolean _requestList;
+		public Boolean RequestList
+		{
+			get => _requestList;
+			set => RaisePropertyChangedIfSet(ref _requestList, value);
+		}
+
 		// ====================================================================
 		// public 関数
 		// ====================================================================
@@ -112,6 +120,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 			destSettings.PlayOnStart = PlayOnStart;
 			destSettings.EnableMargin = EnableMargin;
 			destSettings.MarginPercent = MarginPercent;
+			destSettings.RequestList = RequestList;
 		}
 
 		// --------------------------------------------------------------------
@@ -122,6 +131,7 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 			PlayOnStart = srcSettings.PlayOnStart;
 			EnableMargin = srcSettings.EnableMargin;
 			MarginPercent = srcSettings.MarginPercent;
+			RequestList = srcSettings.RequestList;
 		}
 	}
 }

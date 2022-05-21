@@ -51,6 +51,7 @@
                         <ComboBox ItemsSource="{Binding MarginPercents}" SelectedValue="{Binding MarginPercent}" Width="50" IsEnabled="{Binding EnableMargin}" materialDesign:ComboBoxAssist.ClassicMode="True" Margin="10,0,0,0" />
                         <Label Content="% にはコメントを表示しない" Margin="10,0,0,0" />
                     </StackPanel>
+                    <CheckBox Content="予約一覧を表示する" IsChecked="{Binding RequestList}" Margin="20,15,0,0" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="コメント受信" >

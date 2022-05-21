@@ -514,6 +514,11 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private void ExecuteCommandRequestList(CommentInfo commentInfo)
 		{
+			if (!Yv2Model.Instance.EnvModel.Yv2Settings.RequestList)
+			{
+				return;
+			}
+
 			if (commentInfo.MessageAsFlag())
 			{
 				Debug.WriteLine("ExecuteCommandRequestList() ON " + Environment.TickCount.ToString("#,0"));
