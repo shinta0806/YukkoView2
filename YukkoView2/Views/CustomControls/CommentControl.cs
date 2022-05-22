@@ -124,8 +124,7 @@ namespace YukkoView2.Views.CustomControls
 				// オフスクリーン描画
 				// オフスクリーンをクラスメンバーにすると、ガベージコレクトが遅延するのか、一時的に数 GB のメモリを消費してしまう（Freeze() してなかったからかも）
 				// 将来的な効率化（オフスクリーンサイズ最適化）も考慮し、オフスクリーンは都度生成する
-				RenderTargetBitmap offScreen = CreateOffScreen(ActualHeight);
-				Rect drawingRect = new(0, 0, offScreen.Width, offScreen.Height);
+				RenderTargetBitmap offScreen;
 				if (IsEnabled)
 				{
 					DrawingVisual offScreenVisual = new();
@@ -133,28 +132,37 @@ namespace YukkoView2.Views.CustomControls
 					using DrawingContext offScreenContext = offScreenVisual.RenderOpen();
 
 					// 枠
-					DrawFrameIfNeeded(offScreenContext);
+					Double drawHeight = DrawFrameIfNeeded(offScreenContext);
 
 					// 描画データ準備
 					PrepareDrawDataIfNeeded();
 
 					// 予約一覧描画
 					// ToDo: 予約一覧の内容がピクセルぴったり描画になっていない
-					DrawRequestListIfNeeded(offScreenContext);
+					drawHeight = Math.Max(DrawRequestListIfNeeded(offScreenContext), drawHeight);
 
 					// コメント描画
-					DrawCommentInfosIfNeeded(offScreenContext);
+					drawHeight = Math.Max(DrawCommentInfosIfNeeded(offScreenContext), drawHeight);
 
 #if DEBUGz
 					offScreenContext.DrawRectangle(Brushes.SkyBlue, null, new Rect(500, 300, 100, 100));
 #endif
 
 					// オフスクリーンへ描画
+					Debug.WriteLine("OnRender() drawHeight: " + drawHeight);
 					offScreenContext.Close();
+					offScreen = CreateOffScreen(drawHeight);
 					offScreen.Render(offScreenVisual);
+				}
+				else
+				{
+					// クリア用
+					Debug.WriteLine("OnRender() clear");
+					offScreen = CreateOffScreen(ActualHeight);
 				}
 
 				// オンスクリーンへ転写
+				Rect drawingRect = new(0, 0, offScreen.Width, offScreen.Height);
 				drawingContext.DrawImage(offScreen, drawingRect);
 
 #if DEBUGz
@@ -409,6 +417,7 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		private RenderTargetBitmap CreateOffScreen(Double height)
 		{
+			height = Math.Min(height, ActualHeight);
 			RenderTargetBitmap offScreen = new(Math.Max((Int32)ActualWidth, 1), Math.Max((Int32)height, 1), Common.DEFAULT_DPI, Common.DEFAULT_DPI, PixelFormats.Pbgra32);
 			SetRenderOptions(offScreen);
 			return offScreen;
@@ -425,8 +434,10 @@ namespace YukkoView2.Views.CustomControls
 		// --------------------------------------------------------------------
 		// コメントを移動して描画
 		// --------------------------------------------------------------------
-		private void DrawCommentInfosIfNeeded(DrawingContext drawingContext)
+		private Double DrawCommentInfosIfNeeded(DrawingContext drawingContext)
 		{
+			Double height = 0.0;
+
 			foreach (CommentInfo commentInfo in CommentInfos.Keys)
 			{
 				if (commentInfo.IsDrawDataPrepared)
@@ -434,6 +445,10 @@ namespace YukkoView2.Views.CustomControls
 					CalcCommentLeft(commentInfo);
 					MoveComment(commentInfo);
 					DrawCommentInfo(drawingContext, commentInfo);
+					if (commentInfo.MessageGeometry != null)
+					{
+						height = Math.Max(height, commentInfo.MessageGeometry.Bounds.Bottom + commentInfo.EdgeWidth);
+					}
 					if (commentInfo.Right <= 0)
 					{
 						// 移動が完了したので削除
@@ -446,22 +461,24 @@ namespace YukkoView2.Views.CustomControls
 					}
 				}
 			}
+
+			return height;
 		}
 
 		// --------------------------------------------------------------------
 		// 描画領域を示す枠（描画対象ディスプレイ一杯）を描画
 		// --------------------------------------------------------------------
-		private void DrawFrameIfNeeded(DrawingContext drawingContext)
+		private Double DrawFrameIfNeeded(DrawingContext drawingContext)
 		{
 			if (!_drawFrame)
 			{
-				return;
+				return 0.0;
 			}
 			if (Environment.TickCount >= _clearFrameTick)
 			{
 				// 枠を消去する時刻になった
 				ClearDrawFrame();
-				return;
+				return 0.0;
 			}
 
 			// 上下マージン
@@ -473,26 +490,30 @@ namespace YukkoView2.Views.CustomControls
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, ActualHeight - frameThick - margin, ActualWidth, frameThick));
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(0, margin, frameThick, ActualHeight - margin * 2));
 			drawingContext.DrawRectangle(Brushes.GreenYellow, null, new Rect(ActualWidth - frameThick, margin, frameThick, ActualHeight - margin * 2));
+
+			return ActualHeight - margin;
 		}
 
 		// --------------------------------------------------------------------
 		// 予約一覧を描画
 		// --------------------------------------------------------------------
-		private void DrawRequestListIfNeeded(DrawingContext drawingContext)
+		private Double DrawRequestListIfNeeded(DrawingContext drawingContext)
 		{
 			if (!_drawRequestList)
 			{
-				return;
+				return 0.0;
 			}
 			if (Environment.TickCount >= _clearRequestListTick)
 			{
 				// 予約一覧を消去する時刻になった
 				ClearDrawRequestList();
-				return;
+				return 0.0;
 			}
 
 			// 描画
 			drawingContext.DrawImage(_requestListOffScreen, new Rect(0, (ActualHeight - _requestListOffScreen.Height) / 2, _requestListOffScreen.Width, _requestListOffScreen.Height));
+
+			return (ActualHeight - _requestListOffScreen.Height) / 2 + _requestListOffScreen.Height;
 		}
 
 		// --------------------------------------------------------------------

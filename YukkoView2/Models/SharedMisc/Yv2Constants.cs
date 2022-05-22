@@ -93,7 +93,7 @@ namespace YukkoView2.Models.SharedMisc
 		// --------------------------------------------------------------------
 		public const String APP_ID = "YukkoView2";
 		public const String APP_NAME_J = "ゆっこビュー 2 ";
-		public const String APP_VER = "Ver 1.31";
+		public const String APP_VER = "Ver 2.10";
 		public const String COPYRIGHT_J = "Copyright (C) 2022 by SHINTA";
 #if DISTRIB_STORE
 		public const String APP_DISTRIB = "ストア版";
