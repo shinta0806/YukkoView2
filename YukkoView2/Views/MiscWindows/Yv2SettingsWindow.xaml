@@ -15,6 +15,10 @@
         <vmmwvm:Yv2SettingsWindowViewModel />
     </Window.DataContext>
 
+    <Window.InputBindings>
+        <KeyBinding Gesture="F1" Command="{Binding HelpClickedCommand}" CommandParameter="Settings" />
+    </Window.InputBindings>
+
     <behaviors:Interaction.Behaviors>
         <sb:WindowBindingSupportBehavior IsCascade="True" HelpBox="True" HelpBoxClickedCommand="{Binding HelpClickedCommand}" HelpBoxClickedCommandParameter="Settings" />
     </behaviors:Interaction.Behaviors>
@@ -53,13 +57,13 @@
                     <Binding Path="Yv2SettingsTabItemSettingsViewModel" />
                 </TabItem.DataContext>
                 <StackPanel >
-                    <CheckBox Content="起動と同時にコメント表示を開始する" IsChecked="{Binding PlayOnStart}" Margin="20,20,0,0" />
+                    <CheckBox Content="起動と同時にコメント表示を開始する (_C)" IsChecked="{Binding PlayOnStart}" Margin="20,20,0,0" />
                     <StackPanel Orientation="Horizontal" Margin="20,15,0,0" >
-                        <CheckBox Content="ディスプレイの上下" IsChecked="{Binding EnableMargin}" />
+                        <CheckBox Name="CheckBoxEnableMargin" Content="ディスプレイの上下" IsChecked="{Binding EnableMargin}" />
                         <ComboBox ItemsSource="{Binding MarginPercents}" SelectedValue="{Binding MarginPercent}" Width="50" IsEnabled="{Binding EnableMargin}" materialDesign:ComboBoxAssist.ClassicMode="True" Margin="10,0,0,0" />
-                        <Label Content="% にはコメントを表示しない" Margin="10,0,0,0" />
+                        <Label Content="% にはコメントを表示しない (_M)" Margin="10,0,0,0" Target="{Binding ElementName=CheckBoxEnableMargin}" />
                     </StackPanel>
-                    <CheckBox Content="予約一覧を表示する" IsChecked="{Binding RequestList}" Margin="20,15,0,0" />
+                    <CheckBox Content="予約一覧を表示する (_R)" IsChecked="{Binding RequestList}" Margin="20,15,0,0" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="コメント受信" >
@@ -73,20 +77,20 @@
                         <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" BorderThickness="1" Height="3" VerticalAlignment="Center" Margin="0"/>
                     </DockPanel>
                     <StackPanel Margin="20,10,0,0" >
-                        <RadioButton Content="ゆかりの設定を自動取得" IsChecked="{Binding CommentServerAuto}" />
+                        <RadioButton Content="ゆかりの設定を自動取得 (_A)" IsChecked="{Binding CommentServerAuto}" />
                         <DockPanel Margin="30,5,20,0" IsEnabled="{Binding CommentServerAuto}" >
-                            <Label Content="ゆかり設定ファイル (_Y)：" Width="130" HorizontalContentAlignment="Right" />
-                            <TextBox Text="{Binding YukariConfigPathSeed}" />
+                            <Label Content="ゆかり設定ファイル (_Y)：" Width="130" HorizontalContentAlignment="Right" Target="{Binding ElementName=TextBoxYukariConfigPathSeed}" />
+                            <TextBox Name="TextBoxYukariConfigPathSeed" Text="{Binding YukariConfigPathSeed}" />
                         </DockPanel>
-                        <RadioButton Content="手動で指定" IsChecked="{Binding CommentServerManual}" Margin="0,10,0,0" />
+                        <RadioButton Content="手動で指定 (_M)" IsChecked="{Binding CommentServerManual}" Margin="0,10,0,0" />
                         <StackPanel Margin="30,5,20,0" IsEnabled="{Binding CommentServerManual}" >
                             <DockPanel >
-                                <Label Content="コメントサーバー (_C)：" Width="130" HorizontalContentAlignment="Right" />
-                                <TextBox Text="{Binding ServerUrlSeed}" />
+                                <Label Content="コメントサーバー (_C)：" Width="130" HorizontalContentAlignment="Right" Target="{Binding ElementName=TextBoxServerUrlSeed}" />
+                                <TextBox Name="TextBoxServerUrlSeed" Text="{Binding ServerUrlSeed}" />
                             </DockPanel>
                             <DockPanel >
-                                <Label Content="ルーム名 (_R)：" Width="130" HorizontalContentAlignment="Right" />
-                                <TextBox Text="{Binding RoomNameSeed}" />
+                                <Label Content="ルーム名 (_R)：" Width="130" HorizontalContentAlignment="Right" Target="{Binding ElementName=TextBoxRoomNameSeed}" />
+                                <TextBox Name="TextBoxRoomNameSeed" Text="{Binding RoomNameSeed}" />
                             </DockPanel>
                         </StackPanel>
                     </StackPanel>
@@ -97,14 +101,14 @@
                     </DockPanel>
                     <StackPanel Margin="20,10,0,0" >
                         <StackPanel Orientation="Horizontal" >
-                            <RadioButton Content="プッシュ通知（推奨）" IsChecked="{Binding CommentReceivePush}" />
+                            <RadioButton Content="プッシュ通知 (_P)（推奨）" GroupName="CommentReceive" IsChecked="{Binding CommentReceivePush}" />
                             <Label Grid.Column="1" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Left">
                                 <Hyperlink Command="{Binding HelpClickedCommand}" CommandParameter="Pushtsuuchi" >
                                     <TextBlock Text="詳細情報" />
                                 </Hyperlink>
                             </Label>
                         </StackPanel>
-                        <RadioButton Content="ダウンロード" IsChecked="{Binding CommentReceiveDownload}" Margin="0,10,0,0" />
+                        <RadioButton Content="ダウンロード (_D)" GroupName="CommentReceive" IsChecked="{Binding CommentReceiveDownload}" Margin="0,10,0,0" />
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -132,7 +136,7 @@
         </TabControl>
         <DockPanel Margin="20,20,20,20" LastChildFill="False" >
             <StackPanel Orientation="Horizontal" >
-                <Button Content="初期化" Width="100" Height="Auto" ToolTip="環境設定を初期設定に戻す" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" Command="{Binding ButtonDefaultClickedCommand}" />
+                <Button Content="初期化 (_I)" Width="100" Height="Auto" ToolTip="環境設定を初期設定に戻す" Margin="0" Padding="4" Style="{StaticResource MaterialDesignRaisedLightButton}" Command="{Binding ButtonDefaultClickedCommand}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" >
                 <Button Content="_OK" IsDefault="True" Width="100" Height="Auto" Command="{Binding ButtonOkClickedCommand}" Margin="0,0,20,0" sb:IsFocusedAttachedBehavior.IsFocused="{Binding IsButtonOkFocused}" />
