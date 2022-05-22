@@ -127,6 +127,22 @@ namespace YukkoView2.ViewModels
 			}
 		}
 
+		// コメント選択
+		private Int32 _commentSelectionStart;
+		public Int32 CommentSelectionStart
+		{
+			get => _commentSelectionStart;
+			set => RaisePropertyChangedIfSet(ref _commentSelectionStart, value);
+		}
+
+		// コメント選択
+		private Int32 _commentSelectionLength;
+		public Int32 CommentSelectionLength
+		{
+			get => _commentSelectionLength;
+			set => RaisePropertyChangedIfSet(ref _commentSelectionLength, value);
+		}
+
 		// --------------------------------------------------------------------
 		// 一般プロパティー
 		// --------------------------------------------------------------------
@@ -532,6 +548,12 @@ namespace YukkoView2.ViewModels
 
 				// コメント追加
 				_displayWindowViewModel.AddComment(commentInfo);
+
+				// 全選択（次のコメントを入力する際に置換されるように）
+				// Enter キーで投稿された時用
+				// 投稿ボタンで投稿された場合はフォーカスが失われるので、再度テキストボックスクリックした時に全選択される
+				CommentSelectionStart = 0;
+				CommentSelectionLength = Comment.Length;
 			}
 			catch (Exception ex)
 			{
