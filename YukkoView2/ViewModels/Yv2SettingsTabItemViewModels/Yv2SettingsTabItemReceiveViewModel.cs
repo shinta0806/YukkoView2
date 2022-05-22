@@ -10,9 +10,11 @@
 
 using Livet.Commands;
 
+using Shinta;
 using Shinta.ViewModels;
 
 using System;
+using System.Diagnostics;
 
 using YukkoView2.Models.Settings;
 using YukkoView2.Models.SharedMisc;
@@ -118,6 +120,39 @@ namespace YukkoView2.ViewModels.Yv2SettingsTabItemViewModels
 		public static ListenerCommand<String>? HelpClickedCommand
 		{
 			get => Yv2Model.Instance.EnvModel.HelpClickedCommand;
+		}
+		#endregion
+
+		#region ゆかり設定ファイル参照ボタンの制御
+		private ViewModelCommand? _buttonBrowseYukariConfigPathSeedClickedCommand;
+
+		public ViewModelCommand ButtonBrowseYukariConfigPathSeedClickedCommand
+		{
+			get
+			{
+				if (_buttonBrowseYukariConfigPathSeedClickedCommand == null)
+				{
+					_buttonBrowseYukariConfigPathSeedClickedCommand = new ViewModelCommand(ButtonBrowseYukariConfigPathSeedClicked);
+				}
+				return _buttonBrowseYukariConfigPathSeedClickedCommand;
+			}
+		}
+
+		public void ButtonBrowseYukariConfigPathSeedClicked()
+		{
+			try
+			{
+				String? path = _tabControlWindowViewModel.PathByOpeningDialog("ゆかり設定ファイル", "ゆかり設定ファイル|" + Yv2Constants.FILE_NAME_YUKARI_CONFIG, Yv2Constants.FILE_NAME_YUKARI_CONFIG);
+				if (path != null)
+				{
+					YukariConfigPathSeed = path;
+				}
+			}
+			catch (Exception excep)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "ゆかり設定ファイル参照ボタンクリック時エラー：\n" + excep.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
 		}
 		#endregion
 

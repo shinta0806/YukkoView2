@@ -79,8 +79,9 @@
                     <StackPanel Margin="20,10,0,0" >
                         <RadioButton Content="ゆかりの設定を自動取得 (_A)" IsChecked="{Binding CommentServerAuto}" />
                         <DockPanel Margin="30,5,20,0" IsEnabled="{Binding CommentServerAuto}" >
-                            <Label Content="ゆかり設定ファイル (_Y)：" Width="130" HorizontalContentAlignment="Right" Target="{Binding ElementName=TextBoxYukariConfigPathSeed}" />
-                            <TextBox Name="TextBoxYukariConfigPathSeed" Text="{Binding YukariConfigPathSeed}" />
+                            <Label Content="ゆかり設定ファイル (_Y)：" Width="130" HorizontalContentAlignment="Right" Target="{Binding ElementName=TextBoxYukariConfigPathSeed}" VerticalAlignment="Center" />
+                            <Button Height="Auto" Content="参照 (_B)" Style="{StaticResource MaterialDesignRaisedLightButton}" Margin="0" DockPanel.Dock="Right" Width="100" Command="{Binding ButtonBrowseYukariConfigPathSeedClickedCommand}"/>
+                            <TextBox Name="TextBoxYukariConfigPathSeed" Text="{Binding YukariConfigPathSeed}" Margin="0,0,10,0" />
                         </DockPanel>
                         <RadioButton Content="手動で指定 (_M)" IsChecked="{Binding CommentServerManual}" Margin="0,10,0,0" />
                         <StackPanel Margin="30,5,20,0" IsEnabled="{Binding CommentServerManual}" >
