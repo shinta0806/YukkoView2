@@ -69,6 +69,13 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 		// コマンド
 		// --------------------------------------------------------------------
 
+		#region ヘルプリンクの制御
+		public static ListenerCommand<String>? HelpClickedCommand
+		{
+			get => Yv2Model.Instance.EnvModel.HelpClickedCommand;
+		}
+		#endregion
+
 		#region 初期化ボタンの制御
 		private ViewModelCommand? _buttonDefaultClickedCommand;
 
