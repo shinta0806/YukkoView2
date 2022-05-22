@@ -8,6 +8,7 @@
 // 
 // ----------------------------------------------------------------------------
 
+using Livet.Commands;
 using Shinta;
 using Shinta.ViewModels;
 
@@ -72,6 +73,17 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			get => _selectedMonitorIndex;
 			set => RaisePropertyChangedIfSet(ref _selectedMonitorIndex, value);
 		}
+
+		// --------------------------------------------------------------------
+		// コマンド
+		// --------------------------------------------------------------------
+
+		#region ヘルプリンクの制御
+		public static ListenerCommand<String>? HelpClickedCommand
+		{
+			get => Yv2Model.Instance.EnvModel.HelpClickedCommand;
+		}
+		#endregion
 
 		// ====================================================================
 		// public 関数

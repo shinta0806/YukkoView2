@@ -9,7 +9,7 @@
   <Identity
     Name="22724SHINTA.YukkoView2"
     Publisher="CN=C3D46685-F0CB-48EC-96C4-8660C676A069"
-    Version="1.31.10.0" />
+    Version="1.31.11.0" />
 
   <Properties>
     <DisplayName>Yukko View 2</DisplayName>
