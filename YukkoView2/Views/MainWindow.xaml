@@ -17,6 +17,14 @@
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
+    <Window.InputBindings>
+        <KeyBinding Gesture="F1" Command="{Binding HelpClickedCommand}" />
+        <KeyBinding Gesture="Alt+P" Command="{Binding ButtonPlayClickedCommand}" />
+        <KeyBinding Gesture="Alt+S" Command="{Binding ButtonStopClickedCommand}" />
+        <KeyBinding Gesture="Alt+D" Command="{Binding ButtonSelectMonitorClickedCommand}" />
+        <KeyBinding Gesture="Alt+E" Command="{Binding ButtonYv2SettingsClickedCommand}" />
+    </Window.InputBindings>
+
     <behaviors:Interaction.Behaviors>
         <sb:WindowBindingSupportBehavior IsActive="{Binding IsActive}" MinimizeBox="True" />
     </behaviors:Interaction.Behaviors>
@@ -60,16 +68,16 @@
             </Label.InputBindings>
         </Label>
         <StackPanel Orientation="Horizontal" Margin="20,10,20,0" >
-            <Button ToolTip="開始" Width="100" Height="25" VerticalAlignment="Center" Command="{Binding ButtonPlayClickedCommand}" >
+            <Button ToolTip="開始 (P)" Width="100" Height="25" VerticalAlignment="Center" Command="{Binding ButtonPlayClickedCommand}" >
                 <materialDesign:PackIcon Kind="Play" Height="18" Width="18" />
             </Button>
-            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="停止" Width="100" Height="25" Margin="10,0,0,0" VerticalAlignment="Center" Command="{Binding ButtonStopClickedCommand}" >
+            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="停止 (S)" Width="100" Height="25" Margin="10,0,0,0" VerticalAlignment="Center" Command="{Binding ButtonStopClickedCommand}" >
                 <materialDesign:PackIcon Kind="Stop" Height="18" Width="18" />
             </Button>
-            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="ディスプレイ選択" Width="50" Height="25" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonSelectMonitorClickedCommand}" Margin="50,0,0,0" >
+            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="ディスプレイ選択 (D)" Width="50" Height="25" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonSelectMonitorClickedCommand}" Margin="50,0,0,0" >
                 <materialDesign:PackIcon Kind="MonitorMultiple" Height="18" Width="18" />
             </Button>
-            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="環境設定" Width="50" Height="25" Margin="10,0,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonYv2SettingsClickedCommand}" >
+            <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="環境設定 (E)" Width="50" Height="25" Margin="10,0,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonYv2SettingsClickedCommand}" >
                 <materialDesign:PackIcon Kind="SettingsOutline" Height="18" Width="18" />
             </Button>
             <Button Name="ButtonHelp" Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="ヘルプ" Width="50" Height="25" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="10,0,0,0">
@@ -99,7 +107,7 @@
             <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="コメント投稿" Width="50" Height="25" Margin="10,0,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonCommentClickedCommand}" >
                 <materialDesign:PackIcon Kind="CommentProcessingOutline" Height="18" Width="18" />
             </Button>
-            <TextBox Name="TextBoxComment" Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" ToolTip="投稿したいコメントの内容をここに入力してください。" ToolTipService.ShowDuration="{x:Static msm:Yv2Constants.TOOL_TIP_LONG_DURATION}" materialDesign:HintAssist.Hint="{Binding ElementName=TextBoxComment, Path=ToolTip}" Cursor="IBeam" >
+            <TextBox Name="TextBoxComment" Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" ToolTip="投稿したいコメントの内容をここに入力してください。" ToolTipService.ShowDuration="{x:Static msm:Yv2Constants.TOOL_TIP_LONG_DURATION}" materialDesign:HintAssist.Hint="{Binding ElementName=TextBoxComment, Path=ToolTip}" >
                 <behaviors:Interaction.Behaviors>
                     <sb:TextBoxAutoSelectBehavior />
                     <l:TextBoxBindingSupportBehavior SelectionStart="{Binding CommentSelectionStart}" SelectionLength="{Binding CommentSelectionLength}" />

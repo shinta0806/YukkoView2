@@ -151,6 +151,13 @@ namespace YukkoView2.ViewModels
 		// コマンド
 		// --------------------------------------------------------------------
 
+		#region ヘルプリンクの制御
+		public static ListenerCommand<String>? HelpClickedCommand
+		{
+			get => Yv2Model.Instance.EnvModel.HelpClickedCommand;
+		}
+		#endregion
+
 		#region ゆっこビュー 2 動作状況ラベルの制御
 		private ViewModelCommand? _labelYv2StatusClickedCommand;
 
