@@ -99,7 +99,8 @@
             <Button Style="{StaticResource MaterialDesignRaisedLightButton}" ToolTip="コメント投稿" Width="50" Height="25" Margin="10,0,0,0" DockPanel.Dock="Right" VerticalAlignment="Center" Command="{Binding ButtonCommentClickedCommand}" >
                 <materialDesign:PackIcon Kind="CommentProcessingOutline" Height="18" Width="18" />
             </Button>
-            <TextBox Name="TextBoxComment" Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" ToolTip="投稿したいコメントの内容をここに入力してください。" ToolTipService.ShowDuration="{x:Static msm:Yv2Constants.TOOL_TIP_LONG_DURATION}" materialDesign:HintAssist.Hint="{Binding ElementName=TextBoxComment, Path=ToolTip}" />
+            <TextBox Name="TextBoxComment" Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" ToolTip="投稿したいコメントの内容をここに入力してください。" ToolTipService.ShowDuration="{x:Static msm:Yv2Constants.TOOL_TIP_LONG_DURATION}" materialDesign:HintAssist.Hint="{Binding ElementName=TextBoxComment, Path=ToolTip}" >
+            </TextBox>
         </DockPanel>
 
     </StackPanel>

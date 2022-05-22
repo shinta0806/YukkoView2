@@ -8,20 +8,14 @@
 // 
 // ----------------------------------------------------------------------------
 
-using Livet;
 using Livet.Commands;
-using Livet.EventListeners;
-using Livet.Messaging;
-using Livet.Messaging.IO;
-using Livet.Messaging.Windows;
+
 using Shinta;
 using Shinta.ViewModels;
+
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+
 using YukkoView2.Models.SharedMisc;
 using YukkoView2.Models.YukkoView2Models;
 
@@ -82,6 +76,35 @@ namespace YukkoView2.ViewModels.MiscWindowViewModels
 			{
 				_logWriter?.ShowLogMessage(TraceEventType.Error, "リンククリック時エラー：\n" + excep.Message);
 				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + excep.StackTrace);
+			}
+		}
+		#endregion
+
+		#region 更新プログラムの確認ボタンの制御
+		private ViewModelCommand? _buttonCheckUpdateClickedCommand;
+
+		public ViewModelCommand ButtonCheckUpdateClickedCommand
+		{
+			get
+			{
+				if (_buttonCheckUpdateClickedCommand == null)
+				{
+					_buttonCheckUpdateClickedCommand = new ViewModelCommand(ButtonCheckUpdateClicked);
+				}
+				return _buttonCheckUpdateClickedCommand;
+			}
+		}
+
+		public void ButtonCheckUpdateClicked()
+		{
+			try
+			{
+				Common.OpenMicrosoftStore(Yv2Constants.STORE_PRODUCT_ID);
+			}
+			catch (Exception ex)
+			{
+				_logWriter?.ShowLogMessage(TraceEventType.Error, "更新プログラムの確認ボタンクリック時エラー：\n" + ex.Message);
+				_logWriter?.ShowLogMessage(Common.TRACE_EVENT_TYPE_STATUS, "　スタックトレース：\n" + ex.StackTrace);
 			}
 		}
 		#endregion
